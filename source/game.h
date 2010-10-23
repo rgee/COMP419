@@ -26,5 +26,16 @@ class Game {
         Player * getCellOwner(int row, int col);
         
         CIwArray<Unit> * getUnitsIn(int row, int col);
-        CIwArray<Unit> * getUnitsNear(int row, int col, int radius);       
+        CIwArray<Unit> * getUnitsNear(int row, int col, int radius);
+        
+        
+       // We need to consider how drawing is going to work. Depending on our
+       // options, it might be most efficient to have any change that would
+       // require a redraw to notify some type of Artist object that then
+       // just redraws the necessary cells. For example, if there was only
+       // one unit on the board and it moved from cell A to cell B, it would
+       // redraw both cells A and B.
+       //
+       // If we don't do it this way then getCell should suffice for all
+       // data-accessing purposes.
 }
