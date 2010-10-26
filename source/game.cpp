@@ -3,8 +3,8 @@
 #include "gridcell.h"
 
 void Game::addUnit(Unit *u){
-    u->id = units->size();
-    units->push_back(u);
+    u->uid = units.size();
+    units.push_back(u);
 }
 
 

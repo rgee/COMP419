@@ -1,3 +1,6 @@
+#ifndef _GAME_H
+#define _GAME_H
+
 #include <stdio.h>
 #include "IwArray.h"
 #include "player.h"
@@ -21,8 +24,10 @@ class Game {
 
         GridCell * getCell(int row, int col);
         
-        CIwArray<Unit> * getUnitsNear(int row, int col, int radius);
+        CIwArray<Unit*> getUnitsNear(int row, int col, int radius);
         
         int getWidth();
         int getHeight();
-}
+};
+
+#endif
