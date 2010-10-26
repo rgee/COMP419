@@ -4,8 +4,9 @@ using namespace std;
 class GridCell{
     private:
         Player *owner;
-        set<*Unit> *units;
-        
+        set<*Unit> units;
+        int row, col;
+    
     public:
         Player *getOwner();
         void    setOwner(Player *p);
