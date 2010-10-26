@@ -3,6 +3,13 @@
 
 files
 {
+    (source)
+    game.h
+    game.cpp
+    gridcell.h
+    gridcell.cpp
+    unit.cpp
+    unit.h
 }
 
 subproject iwutil
