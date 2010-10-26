@@ -1,9 +1,15 @@
+#include <stdio.h>
+#include "IwArray.h"
+#include "player.h"
+#include "gridcell.h"
+#include "unit.h"
+
 class Game {
     private:
-        Player players[];
+        CIwArray<Player> players;
         int numPlayers;
         
-        GridCell cells[][]; // Format: cell[row][col]
+        GridCell* cells; // Format: cell[row][col]
         int rows, cols;
         
         CIwArray<Unit> *units;
@@ -12,7 +18,7 @@ class Game {
         Game(int numPlayers, int numRows, int numCols);
         
         void addUnit(Unit *u){
-            u->id = units->size();
+            u->setId(units->size());
             units->push_back(u);
         }
         

@@ -10,6 +10,8 @@ files
     gridcell.cpp
     unit.cpp
     unit.h
+    player.h
+    player.cpp
 }
 
 subproject iwutil
