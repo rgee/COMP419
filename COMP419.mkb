@@ -13,6 +13,8 @@ files
     unit.h
     player.h
     player.cpp
+	uimanager.h
+	uimanager.cpp
 	main.cpp
 }
 
