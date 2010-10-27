@@ -12,7 +12,7 @@ class Game {
         CIwArray<Player> players;
         int numPlayers;
         
-        GridCell* cells; // Format: cell[row][col]
+        GridCell** cells; // Format: cell[row][col]
         int rows, cols;
         
         CIwArray<Unit*> units;
@@ -24,7 +24,7 @@ class Game {
 
         GridCell * getCell(int row, int col);
         
-        CIwArray<Unit*> getUnitsNear(int row, int col, int radius);
+        CIwArray<Unit*>* getUnitsNear(int row, int col, int radius);
         
         int getWidth();
         int getHeight();

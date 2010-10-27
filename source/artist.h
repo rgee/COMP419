@@ -3,11 +3,15 @@
 
 #include <set>
 #include "IwUtil.h"
+#include "Iw2D.h"
 #include "game.h"
 #include "unit.h"
 #include "gridcell.h"
 
-class Artist{
+//forward declare to stop the compiler from complaining
+class UIManager;
+
+class Artist {
 
     private:
     
@@ -31,6 +35,6 @@ class Artist{
         Render the entire game world.
         */
         void render();
-}
+};
 
 #endif
