@@ -2,20 +2,20 @@
 
 Artist::Artist(Game* _game, UIManager* _ui) : game(_game), ui(_ui) {};
 
-void Artist::updateChangeList(CIwArray<GridCell*> _changeList) {
+void Artist::updateChangeList(CIwArray<GridCell*>* _changeList) {
     changeList = _changeList;
 }
 
 void Artist::render() {
     
-    //for(CIwArray<GridCell*>::iterator gc_it = changeList.begin(); gc_it != changeList.end(); ++gc_it) {
-//        
-//        std::set<Unit*> units = (*gc_it)->getUnits();
-//        
-//        for(std::set<Unit*>::iterator u_it= units.begin(); u_it != units.end(); ++u_it) {
-//            (*u_it)->display();
-//        }
-//    }
+    for(CIwArray<GridCell*>::iterator gc_it = changeList->begin(); gc_it != changeList->end(); ++gc_it) {
+       
+        std::set<Unit*>* units = (*gc_it)->getUnits();
+       
+        for(std::set<Unit*>::iterator u_it= units->begin(); u_it != units->end(); ++u_it) {
+            (*u_it)->display(40, 40, 0x80);
+        }
+    }
 	
 	int bgColor = 0xffffffff;
 	int worldColor = 0xff0000ff;

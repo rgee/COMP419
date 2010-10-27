@@ -1,12 +1,17 @@
 #include "s3e.h"
 #include "artist.h"
+#include "IwUtil.h"
 
 //dummy main function, just so I can test Artist's render() method
 int main() {
 	
 	Iw2DInit();
 	
+	CIwArray<GridCell*> cells;
+	GridCell gc;
+	cells.push_back(&gc);
     Artist artist(NULL, NULL);
+	artist.updateChangeList(&cells);
     
 	while (1) {
 		
@@ -23,7 +28,7 @@ int main() {
 		artist.render();
 
 	}
-	
+
 	Iw2DTerminate();
 	
 	return 0;

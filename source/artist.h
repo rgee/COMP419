@@ -7,9 +7,7 @@
 #include "game.h"
 #include "unit.h"
 #include "gridcell.h"
-
-//forward declare to stop the compiler from complaining
-class UIManager;
+#include "uimanager.h"
 
 class Artist {
 
@@ -17,7 +15,7 @@ class Artist {
     
         Game* game;
         UIManager* ui;
-        CIwArray<GridCell*> changeList;
+        CIwArray<GridCell*>* changeList;
     
     public:
         
@@ -29,7 +27,7 @@ class Artist {
         
         @param changeList the list of cells that have changed
         */
-        void updateChangeList(CIwArray<GridCell*> _changeList);
+        void updateChangeList(CIwArray<GridCell*>* _changeList);
         
         /**
         Render the entire game world.
