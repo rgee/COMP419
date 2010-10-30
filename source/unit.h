@@ -6,12 +6,12 @@
 class Unit {
     private:
         float hp, speed, x, y, attackRate;
-        int uid;
         Player *owner;
+        int uuid;
         
     public:
         int getId();
-        void setId(int uid);
+        void setId(int uuid);
         
         Player *getOwner();
         void setOwner(Player *p);
