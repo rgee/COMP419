@@ -2,6 +2,7 @@
 #define _UNIT_H
 
 #include "game.h"
+#include "physics.h"
 #include "player.h"
 
 class Unit {
