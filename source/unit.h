@@ -1,6 +1,8 @@
 #ifndef _UNIT_H
 #define _UNIT_H
 
+class Unit;
+
 #include "game.h"
 #include "player.h"
 

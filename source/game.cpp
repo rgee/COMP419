@@ -1,6 +1,4 @@
 #include "game.h"
-#include "unit.h"
-#include "gridcell.h"
 
 void Game::addUnit(Unit *u){
     u->setId(units.size());

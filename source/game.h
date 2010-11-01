@@ -2,9 +2,13 @@
 #define _GAME_H
 
 #include "IwArray.h"
-#include "player.h"
-#include "gridcell.h"
+
+class Game;
+
 #include "unit.h"
+#include "gridcell.h"
+#include "player.h"
+
 
 class Game {
     private:

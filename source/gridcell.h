@@ -4,6 +4,8 @@
 #include <set>
 using namespace std;
 
+class GridCell;
+
 #include "unit.h"
 #include "player.h"
 

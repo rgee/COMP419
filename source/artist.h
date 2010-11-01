@@ -4,6 +4,9 @@
 #include <set>
 #include "IwUtil.h"
 #include "Iw2D.h"
+
+class Artist;
+
 #include "game.h"
 #include "unit.h"
 #include "gridcell.h"
