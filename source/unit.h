@@ -7,7 +7,7 @@
 #include "IwGeomVec2.h"
 
 class Unit {
-    private:
+    protected:
 		/* Preliminary stats. Subject to change. */
         float hp;
 		float cost;
