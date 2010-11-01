@@ -1,5 +1,13 @@
 #include "unit.h"
 
+bool Unit::update(){
+	return true;
+}
+
+void Unit::display(){
+
+}
+
 int Unit::getId(){
 	return uuid;
 }

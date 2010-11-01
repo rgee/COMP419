@@ -5,6 +5,8 @@ files
     (source)
 	artist.h
 	artist.cpp
+	uimanager.h
+	uimanager.cpp
     game.h
     game.cpp
     gridcell.h

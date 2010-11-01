@@ -5,10 +5,10 @@
 //dummy main function, just so I can test Artist's render() method
 int main() {
 	
-	Iw2DInit();
-	
-    Artist artist(NULL, NULL);
-    
+
+ 	Iw2DInit();
+	Game game = Game(2, 800, 600);
+
 	while (1) {
 		
 		s3eDeviceYield(0);
@@ -20,12 +20,10 @@ int main() {
 		         
 		    break;
 		}
-		
-		artist.render();
 
+		game.tick();
 	}
-	
-	Iw2DTerminate();
+		Iw2DTerminate();
 	
 	return 0;
 }
