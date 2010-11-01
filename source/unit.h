@@ -19,8 +19,8 @@ class Unit {
 		float spread_speed;
 		float spread_radius;
 
-		int row; 
-		int col;
+		float row; 
+		float col;
         Player *owner;
         int uuid;
 		Game* game;
@@ -31,6 +31,8 @@ class Unit {
 				float munch_speed, float range, float sight,
 				float spread_speed, float spread_radius, Player* owner,
 				Game* game, CIwVec2 position);
+
+		virtual ~Unit() {};
 
 		void setPosition(int32 x, int32 y);
 		void setPosition(const CIwVec2& position);

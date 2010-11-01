@@ -2,12 +2,11 @@
 #define _MUNCHER_H
 
 #include "unit.h"
-#include "IwGeomVec2.h"
 
 class Muncher : public Unit {
 	public:
 		Muncher(Player* owner, Game* game, CIwVec2 position);
-		~Muncher();
+		~Muncher(){};
 
 		virtual bool update();
 		virtual void display();
