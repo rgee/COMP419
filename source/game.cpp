@@ -1,11 +1,14 @@
 #include "game.h"
 #include "unit.h"
+#include "artist.h"
+
 
 Game::Game(int numPlayers, int numRows, int numCols)
-	: numPlayers(numPlayers), rows(numRows), cols(numCols)
+	: numPlayers(numPlayers), rows(numRows), cols(numCols),
+	  artist(NULL), ui_manager(NULL)
 {
 	// Allocate grid
-	*cells = (GridCell*)malloc(rows * sizeof(GridCell*));
+	cells = (GridCell**)malloc(rows * sizeof(GridCell*));
 	for(int j = 0; j < rows; j++){
 		cells[j] = (GridCell*)malloc(cols * sizeof(GridCell*));
 	}
@@ -17,6 +20,9 @@ Game::Game(int numPlayers, int numRows, int numCols)
 			cells[x][y].setOwner(NULL);
 		}
 	}
+	
+	ui_manager = new UIManager();
+	artist = new Artist(this, ui_manager);
 }
 
 Game::~Game(){
@@ -24,6 +30,8 @@ Game::~Game(){
 		delete cells[x];
 	}
 	delete cells;
+	delete ui_manager;
+	delete artist;
 }
 
 void Game::addUnit(Unit *u){
@@ -63,10 +71,11 @@ CIwArray<Unit*>* Game::getUnitsNear(int row, int col, int radius){
 }
 
 void Game::tick(){
-	CIwArray<GridCell*> *changes = new CIwArray<GridCell*>();
-	//for(Unit * u = units.begin(); *u <= units.end(); u++){
-		
-	//}
+	for(CIwArray<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr){
+		(*itr)->update();
+	}
+
+	artist->render();
 }
 
 int Game::getHeight(){

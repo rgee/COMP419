@@ -10,6 +10,7 @@
 
 //forward declare to stop the compiler from complaining
 class UIManager;
+class Game;
 
 class Artist {
 
@@ -22,6 +23,7 @@ class Artist {
     public:
         
         Artist(Game* _game, UIManager* _ui);
+		~Artist();
         
         /**
         Alert the Artist object of all cells that changed, and hence

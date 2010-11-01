@@ -1,6 +1,13 @@
 #include "artist.h"
+#include "game.h"
 
-Artist::Artist(Game* _game, UIManager* _ui) : game(_game), ui(_ui) {};
+Artist::Artist(Game* _game, UIManager* _ui) : game(_game), ui(_ui) {
+
+}
+
+Artist::~Artist(){
+
+}
 
 void Artist::updateChangeList(CIwArray<GridCell*> _changeList) {
     changeList = _changeList;
