@@ -1,16 +1,12 @@
 #include "gridcell.h"
 
-GridCell::GridCell() {
-	
-	units = new set<Unit*>();
-	DummyUnit *test = new DummyUnit(5.0, 100);
-	units->insert(test);
+GridCell::GridCell() {}
+
+void GridCell::addUnit(Unit* unit) {
+	units.insert(unit);
 }
 
-GridCell::~GridCell(){
-	delete units;
-}
 
-set<Unit*>* GridCell::getUnits() {
+const set<Unit*>& GridCell::getUnits() const {
 	return units;
 }

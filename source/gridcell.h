@@ -2,7 +2,6 @@
 #define _GRIDCELL_H
 
 #include <set>
-#include "dummyunit.h"
 using namespace std;
 
 #include "unit.h"
@@ -10,21 +9,20 @@ using namespace std;
 
 class GridCell{
     private:
-        Player *owner;
-        set<Unit*>* units;
+        //Player *owner;
+        set<Unit*> units;
         float r, theta;
     
     public:
 		
 		GridCell();
-		~GridCell();
         Player *getOwner();
         void    setOwner(Player *p);
 		int getR();
 		int getTheta();	
         void addUnit(Unit *u);
         bool hasUnit(Unit *u);
-        set<Unit*>* getUnits();
+        const set<Unit*>& getUnits() const;
         void removeUnit(Unit *u);
 };
 

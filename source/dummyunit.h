@@ -8,7 +8,7 @@ class DummyUnit : public Unit {
 	public:
 	
 		DummyUnit(int _r, int _theta) : Unit(_r, _theta) {}
-		void display(int centerX, int centerY, iwangle rotAngle);
+		void display(int centerX, int centerY, iwangle rotAngle, int frameNumber);
 };
 
 #endif

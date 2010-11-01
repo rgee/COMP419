@@ -30,9 +30,11 @@ class Artist {
         void updateChangeList(CIwArray<GridCell*>* _changeList);
         
         /**
-        Render the entire game world.
+        Render the entire screen.
+		 
+		@param frameNumber the number of the current frame - gets passed down to Units' display() methods
         */
-        void render();
+        void render(int frameNumber);
 };
 
 #endif

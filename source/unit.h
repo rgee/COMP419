@@ -2,7 +2,7 @@
 #define _UNIT_H
 
 #include "player.h"
-#include "IwGeomCore.h"
+#include "Iw2D.h"
 
 class Unit {
 	
@@ -14,7 +14,7 @@ class Unit {
         
     public:
 	
-		Unit(float r, float theta);
+		Unit(float _r, float _theta);
 	
         int getId();
         void setId(int uid);
@@ -36,8 +36,9 @@ class Unit {
 		 @param centerY vertical screen coordinate of the point this unit is centered a
 		 @param rotAngle angle to rotate the rendering by so that, as the world is rotated, the unit's
 				orientation adjusts appropriately
+		 @param frameNumber the current frame that we're rendering. Useful for animating sprites.
 		 */
-        virtual void display(int centerX, int centerY, iwangle rotAngle) = 0;
+        virtual void display(int centerX, int centerY, iwangle rotAngle, int frameNumber) = 0;
 };
 
 #endif

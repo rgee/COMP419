@@ -13,18 +13,18 @@ GridCell * Game::getCell(int row, int col){
 
 CIwArray<Unit*>* Game::getUnitsNear(int row, int col, int radius){
     
-	CIwArray<Unit*> *units = new CIwArray<Unit*>();
+	CIwArray<Unit*>* unitsNear = new CIwArray<Unit*>();
     for (int r = row-radius; r <= row+radius; r++) {
         for (int c = col-radius; c <= col+radius; c++) {
             if (r >= 0 && r <= rows && c >= 0 && c <= cols) {
 				
-				set<Unit*> cellUnits = *(getCell(r, c)->getUnits());
+				set<Unit*> cellUnits = getCell(r, c)->getUnits();
 				for (set<Unit*>::iterator it = cellUnits.begin(); it != cellUnits.end(); ++it) {
-					units->push_back(*it);
+					unitsNear->push_back(*it);
 				}
             }
         }
     }
     
-    return units;
+    return unitsNear;
 }
