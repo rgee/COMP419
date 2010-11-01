@@ -26,6 +26,14 @@ subprojects
 	iw2d
 }
 
+assets
+{
+	(data)
+	images/pacman-01.bmp
+	images/pacman-02.bmp
+	images/pacman-03.bmp
+}
+
 includepath .
 
 

@@ -1,8 +1,14 @@
 #include "s3e.h"
+#include "s3eDebug.h"
 #include "artist.h"
 #include "uimanager.h"
 #include "dummyunit.h"
+#include <stdio.h>
+#include <stdarg.h>
 #include "IwUtil.h"
+
+#define FRAME_RATE 30
+#define	MS_PER_FRAME (1000 / 30)
 
 void doMain() {
 	
@@ -10,8 +16,8 @@ void doMain() {
 	UIManager ui;
 	GridCell gc;
 	DummyUnit d1(10, 10);
-	DummyUnit d2(40, 40);
-	DummyUnit d3(70, 25);
+	DummyUnit d2(40, 50);
+	DummyUnit d3(70, 100);
 
 	gc.addUnit(&d1);
 	gc.addUnit(&d2);
@@ -21,6 +27,8 @@ void doMain() {
     Artist artist(NULL, &ui);
 	artist.updateChangeList(&cells);
     	
+	int curFrame = 0;
+	
 	while (1) {
 		
 		s3eDeviceYield(0);
@@ -33,8 +41,33 @@ void doMain() {
 		    break;
 		}
 		
+		int64 start = s3eTimerGetMs();
+		
+		// Attempt frame rate
+		while ((s3eTimerGetMs() - start) < MS_PER_FRAME)
+		{
+			int32 yield = (int32) (MS_PER_FRAME - (s3eTimerGetMs() - start));
+			if (yield < 0) {
+				break;
+			}
+				
+			s3eDeviceYield(yield);
+		}
+		
+		if(curFrame >= FRAME_RATE) {
+			curFrame = 0;
+		} 
+		else {
+			curFrame++;
+		}
+				
+		char* str;
+		sprintf(str ,"%i", curFrame);
+		
 		ui.updateOffset();
-		artist.render(5);
+		artist.render(curFrame);
+		
+		s3eDebugOutputString(str);
 		
 	}
 }

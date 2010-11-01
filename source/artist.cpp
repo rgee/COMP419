@@ -8,7 +8,6 @@ void Artist::updateChangeList(CIwArray<GridCell*>* _changeList) {
 
 void Artist::render(int frameNumber) {
     
-	
 	int bgColor = 0xffffffff;
 	int worldColor = 0xff0000ff;
 	
@@ -34,7 +33,7 @@ void Artist::render(int frameNumber) {
 			int r = curUnit->getR();
 			float theta = curUnit->getTheta();
 			
-            curUnit->display(r, surfaceHeight - theta - ui->getWorldOffset(), 0x80, 5);
+            curUnit->display(r, surfaceHeight - theta - ui->getWorldOffset(), 0x80, frameNumber);
         }
     }
 	
