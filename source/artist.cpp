@@ -23,6 +23,12 @@ void Artist::render() {
 //            (*u_it)->display();
 //        }
 //    }
+
+	CIwArray<Unit*> units = *game->getUnits();
+
+	for(CIwArray<Unit*>::iterator unit_itr = units.begin(); unit_itr != units.end(); ++unit_itr){
+		(*unit_itr)->display();
+	}
 	
 	int bgColor = 0xffffffff;
 	int worldColor = 0xff0000ff;

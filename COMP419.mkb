@@ -13,6 +13,8 @@ files
     gridcell.cpp
     unit.h
     unit.cpp
+	muncher.h
+	muncher.cpp
     player.h
     player.cpp
 	main.cpp

@@ -1,7 +1,6 @@
 #ifndef _UNIT_H
 #define _UNIT_H
 
-class Unit;
 
 #include "game.h"
 #include "player.h"
@@ -9,13 +8,29 @@ class Unit;
 
 class Unit {
     private:
-        float hp, speed, row, col, attackRate, attackRadius;
+		/* Preliminary stats. Subject to change. */
+        float hp;
+		float cost;
+		float attack;
+		float speed;
+		float munch_speed;
+		float range;
+		float sight;
+		float spread_speed;
+		float spread_radius;
+
+		int row; 
+		int col;
         Player *owner;
         int uuid;
 		Game* game;
 		CIwVec2 position;
         
     public:
+		Unit(float hp, float cost, float attack, float speed, 
+				float munch_speed, float range, float sight,
+				float spread_speed, float spread_radius, Player* owner,
+				Game* game, CIwVec2 position);
 
 		void setPosition(int32 x, int32 y);
 		void setPosition(const CIwVec2& position);

@@ -1,10 +1,14 @@
 #include "unit.h"
 
-bool Unit::update(){
-	return true;
-}
-
-void Unit::display(){
+Unit::Unit(float hp, float cost, float attack, float speed, 
+		float munch_speed, float range, float sight,
+		float spread_speed, float spread_radius, Player* owner,
+		Game* game, CIwVec2 position)
+		: hp(hp), cost(cost), attack(attack), speed(speed),
+		  munch_speed(munch_speed), range(range), sight(sight),
+		  spread_speed(spread_speed), spread_radius(spread_radius),
+		  owner(owner), game(game), position(position)
+{
 
 }
 

@@ -33,6 +33,10 @@ Game::~Game(){
 	delete artist;
 }
 
+CIwArray<Unit*>* Game::getUnits(){
+	return &units;
+}
+
 void Game::addUnit(Unit *u){
     u->setId(units.size());
     units.push_back(u);

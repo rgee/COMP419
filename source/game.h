@@ -42,6 +42,8 @@ class Game {
 		 * is responsible for deleting it.
 		 */
         CIwArray<Unit*>* getUnitsNear(int row, int col, int radius);
+
+		CIwArray<Unit*>* getUnits();
         
         int getWidth();
         int getHeight();
