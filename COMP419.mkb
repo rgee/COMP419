@@ -15,6 +15,10 @@ files
     unit.cpp
 	muncher.h
 	muncher.cpp
+    statemanager.h
+    statemanager.cpp
+    gamestate.h
+    gamestate.cpp
     player.h
     player.cpp
 	main.cpp
