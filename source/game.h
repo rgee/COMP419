@@ -1,10 +1,15 @@
 #ifndef _GAME_H
 #define _GAME_H
 
+#include <set>
+
 #include "IwArray.h"
 #include "player.h"
 #include "gridcell.h"
-#include "unit.h"
+
+using namespace std;
+
+class Unit;
 
 class Game {
     private:

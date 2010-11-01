@@ -1,6 +1,5 @@
 #include "game.h"
 #include "unit.h"
-#include "gridcell.h"
 
 void Game::addUnit(Unit *u){
     u->setId(units.size());
@@ -26,6 +25,7 @@ CIwArray<Unit*>* Game::getUnitsNear(int row, int col, int radius){
         for (int c = col-radius; c <= col+radius; c++) {
             if (r >= 0 && r <= rows && c >= 0 && c <= cols) {
 				
+				
 				set<Unit*> cellUnits = getCell(r, c)->getUnits();
 				for (set<Unit*>::iterator it = cellUnits.begin(); it != cellUnits.end(); ++it) {
 					units->push_back(*it);
@@ -42,4 +42,12 @@ void Game::tick(){
 	//for(Unit * u = units.begin(); *u <= units.end(); u++){
 		
 	//}
+}
+
+int Game::getHeight(){
+	return rows;
+}
+
+int Game::getWidth(){
+	return cols;
 }

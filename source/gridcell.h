@@ -4,13 +4,14 @@
 #include <set>
 using namespace std;
 
-#include "unit.h"
-#include "player.h"
 
-class GridCell{
+#include "unit.h"
+
+
+class GridCell {
     private:
         Player *owner;
-        set<Unit> units;
+        set<Unit*> units;
         int row, col;
     
     public:
