@@ -4,16 +4,21 @@ CIwArray<Unit*> GridCell::getUnits(){
 	return units;
 }
 
-bool GridCell::hasUnit(Unit* u){
-	return units.find(u) != -1 ? true : false;
+
+// This takes a ref instead of a pointer because the search parameters
+// should never be null.
+bool GridCell::hasUnit(Unit& u){
+	return units.find(&u) != -1 ? true : false;
 }
 
-void GridCell::addUnit(Unit* u){
-	units.append(u);
+void GridCell::addUnit(Unit& u){
+	units.append(&u);
 }
 
-void GridCell::removeUnit(Unit* u){
-	units.find_and_remove_fast(u);
+// This takes a ref instead of a pointer because the search parameters
+// should never be null.
+void GridCell::removeUnit(Unit& u){
+	units.find_and_remove_fast(&u);
 }
 
 void GridCell::setCoords(int x, int y){

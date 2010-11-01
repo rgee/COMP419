@@ -23,7 +23,7 @@ int main() {
 
 		game.tick();
 	}
-		Iw2DTerminate();
+	Iw2DTerminate();
 	
 	return 0;
 }

@@ -18,14 +18,14 @@ class GridCell {
 		~GridCell(){}
 
         Player *getOwner();
-        void    setOwner(Player *p);
+        void setOwner(Player *p);
 
 		void setCoords(int x, int y);
         
-        void addUnit(Unit *u);
-        bool hasUnit(Unit *u);
+        void addUnit(Unit& u);
+        bool hasUnit(Unit& u);
         CIwArray<Unit*> getUnits();
-        void removeUnit(Unit *u);
+        void removeUnit(Unit& u);
 };
 
 #endif

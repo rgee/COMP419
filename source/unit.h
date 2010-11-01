@@ -5,6 +5,7 @@ class Unit;
 
 #include "game.h"
 #include "player.h"
+#include "IwGeomVec2.h"
 
 class Unit {
     private:
@@ -12,38 +13,41 @@ class Unit {
         Player *owner;
         int uuid;
 		Game* game;
+		CIwVec2 position;
         
     public:
 
+		void setPosition(int32 x, int32 y);
+		void setPosition(const CIwVec2& position);
     
-    int getId();
-    void setId(int uuid);
+		int getId();
+		void setId(int uuid);
         
-    Player *getOwner();
-    void setOwner(Player *p);
+		Player& getOwner();
+		void setOwner(Player& p);
         
-    float getHp();
-    void setHp(float f);
-    void decrementHp(float f);
+		float getHp();
+		void setHp(float f);
+		void decrementHp(float f);
 	
-	void setRow(float x);
-	float getRow();
+		void setRow(float x);
+		float getRow();
 	
-	void setCol(float y);
-	float getCol();
+		void setCol(float y);
+		float getCol();
 
-	/* Units are going to keep track of their location in terms of r, theta, but
-	   the following methods preserve distance, so calling increaseX(5.0f) might
-	   change theta by more or less than 5. Additionally, it will wrap around
-	   as appropriate.
-	 */
-	void increaseX(float x);
-	void increaseY(float y);
-	float getX();
-	float getY();
+		/* Units are going to keep track of their location in terms of r, theta, but
+		   the following methods preserve distance, so calling increaseX(5.0f) might
+		   change theta by more or less than 5. Additionally, it will wrap around
+		   as appropriate.
+		 */
+		void increaseX(float x);
+		void increaseY(float y);
+		float getX();
+		float getY();
 
-	virtual bool update() = 0;
-    virtual void display() = 0;
+		virtual bool update() = 0;
+		virtual void display() = 0;
 };
 
 #endif

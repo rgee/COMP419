@@ -16,12 +16,12 @@ void Unit::setId(int uuid){
 	this->uuid = uuid;
 }
 
-Player *Unit::getOwner(){
-	return owner;
+Player& Unit::getOwner(){
+	return *owner;
 }
 
-void Unit::setOwner(Player *p){
-	owner = p;
+void Unit::setOwner(Player& p){
+	owner = &p;
 }
 
 float Unit::getHp(){
@@ -42,6 +42,15 @@ void Unit::setRow(float x){
 
 float Unit::getRow(){
 	return row;
+}
+
+void Unit::setPosition(int x, int y){
+	position.x = x;
+	position.y = y;
+}
+
+void Unit::setPosition(const CIwVec2& newPosition){
+	position = newPosition;
 }
 
 void Unit::setCol(float y){
