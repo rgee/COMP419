@@ -1,13 +1,10 @@
 #ifndef _GAME_H
 #define _GAME_H
 
-#include <set>
-
 #include "IwArray.h"
 #include "player.h"
 #include "gridcell.h"
 
-using namespace std;
 
 class Unit;
 
@@ -25,6 +22,7 @@ class Game {
                     
     public:
         Game(int numPlayers, int numRows, int numCols);
+		~Game();
         
         void addUnit(Unit *u);
 
