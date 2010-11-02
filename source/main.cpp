@@ -14,7 +14,7 @@ void doMain() {
 	
  	Iw2DInit();
 	Game game = Game(2, 800, 600);
-	
+	/*
 	CIwArray<GridCell*> cells;
 	GridCell gc;
 	DummyUnit d1(10, 10);
@@ -28,6 +28,7 @@ void doMain() {
 	cells.push_back(&gc);
 	
 	game.getArtist()->updateChangeList(&cells);
+	*/
     	
 	int curFrame = 0;
 	while (1) {

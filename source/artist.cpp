@@ -40,7 +40,9 @@ void Artist::render(int frameNumber) {
 			int r = curUnit->getR();
 			float theta = curUnit->getTheta();
 			
-            curUnit->display(r, surfaceHeight - theta - ui->getWorldOffset(), 0x80, frameNumber);
+            //curUnit->display(r, surfaceHeight - theta - ui->getWorldOffset(), 0x80, frameNumber);
+
+			curUnit->display();
         }
     }
 	

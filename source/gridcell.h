@@ -24,7 +24,7 @@ class GridCell {
         
         void addUnit(Unit& u);
         bool hasUnit(Unit& u);
-        CIwArray<Unit*> getUnits();
+        CIwArray<Unit*> getUnits() const;
         void removeUnit(Unit& u);
     
 

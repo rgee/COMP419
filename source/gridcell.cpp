@@ -2,7 +2,7 @@
 
 GridCell::GridCell() {}
 
-const CIwArray<Unit*> GridCell::getUnits() const{
+CIwArray<Unit*> GridCell::getUnits() const{
 	return units;
 }
 
