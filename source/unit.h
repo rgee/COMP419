@@ -26,7 +26,7 @@ class Unit {
 
 		Player *owner;
 		Game* game;
-		CIwVec2 position;
+		CIwSVec2 position;
 		int uid;
         
     public:

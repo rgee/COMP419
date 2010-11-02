@@ -14,21 +14,17 @@ void doMain() {
 	
  	Iw2DInit();
 	Game game = Game(2, 800, 600);
-	/*
+
 	CIwArray<GridCell*> cells;
 	GridCell gc;
-	DummyUnit d1(10, 10);
-	DummyUnit d2(40, 50);
-	DummyUnit d3(70, 100);
+	DummyUnit d1(NULL, &game, CIwVec2(10, 10));
 
-	gc.addUnit(&d1);
-	gc.addUnit(&d2);
-	gc.addUnit(&d3);
-	
+	gc.addUnit(d1);
+
 	cells.push_back(&gc);
 	
 	game.getArtist()->updateChangeList(&cells);
-	*/
+	
     	
 	int curFrame = 0;
 	while (1) {
@@ -64,13 +60,7 @@ void doMain() {
 		} 
 		else {
 			curFrame++;
-		}
-				
-		char* str;
-		sprintf(str ,"%i", curFrame);
-		
-		s3eDebugOutputString(str);
-		
+		}	
 	}
 }
 
