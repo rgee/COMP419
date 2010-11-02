@@ -12,13 +12,15 @@
 
 void doMain() {
 	
- 	Iw2DInit();
-	Game game = Game(2, 800, 600);
-
+	Game game = Game(2);
+    
+    CIw2DImage* img = Iw2DCreateImage("pacman-01.bmp");
+    
 	CIwArray<GridCell*> cells;
 	GridCell gc;
 	DummyUnit d1(NULL, &game, CIwVec2(10, 10));
 
+    
 	gc.addUnit(d1);
 
 	cells.push_back(&gc);
@@ -39,6 +41,7 @@ void doMain() {
 			
 		    break;
 		}
+
 		
 		game.tick();
 				

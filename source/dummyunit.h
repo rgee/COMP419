@@ -5,6 +5,10 @@
 #include "IwUtil.h"
 
 class DummyUnit : public Unit {
+    
+    private:
+        int frameNumber;
+        CIwArray<CIw2DImage*> frames;
 	
 	public:
 	
@@ -18,10 +22,6 @@ class DummyUnit : public Unit {
 
 		virtual void display();
 		virtual bool update();
-
-	private:
-		
-		CIwArray<CIw2DImage*> frames;
 };
 
 
