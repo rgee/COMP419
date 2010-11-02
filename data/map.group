@@ -1,0 +1,6 @@
+CIwResGroup
+{
+    name "Map"
+    
+    "../assets/textures/disc.bmp"
+}
