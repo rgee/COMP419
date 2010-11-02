@@ -13,8 +13,12 @@ files
     gridcell.cpp
     unit.h
     unit.cpp
+	dummyunit.h
+	dummyunit.cpp
     player.h
     player.cpp
+	uimanager.h
+	uimanager.cpp
 	main.cpp
 }
 
@@ -22,6 +26,14 @@ subprojects
 {
 	iwutil
 	iw2d
+}
+
+assets
+{
+	(data)
+	images/pacman-01.bmp
+	images/pacman-02.bmp
+	images/pacman-03.bmp
 }
 
 includepath .

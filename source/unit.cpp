@@ -1,56 +1,22 @@
 #include "unit.h"
 
-bool Unit::update(){
-	return true;
-}
+Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
 
-void Unit::display(){
+int Unit::getId(){ return uid; }
+void Unit::setId(int uid){ this->uid = uid; }
 
-}
+Player *Unit::getOwner(){ return owner; }
+void Unit::setOwner(Player *p){ owner = p; }
 
-int Unit::getId(){
-	return uuid;
-}
+float Unit::getHp(){ return hp; }
+void Unit::setHp(float f){ hp = f; }
+void Unit::decrementHp(float f){ hp -= f; }
 
-void Unit::setId(int uuid){
-	this->uuid = uuid;
-}
+void Unit::setR(float x){ r = x; }
+void Unit::setTheta(float y){ theta = y; }
 
-Player *Unit::getOwner(){
-	return owner;
-}
-
-void Unit::setOwner(Player *p){
-	owner = p;
-}
-
-float Unit::getHp(){
-	return hp;
-}
-
-void Unit::setHp(float f){
-	hp = f;
-}
-
-void Unit::decrementHp(float f){
-	hp -= f;
-}
-
-void Unit::setRow(float x){
-	row = x;
-}
-
-float Unit::getRow(){
-	return row;
-}
-
-void Unit::setCol(float y){
-	col = y;
-}
-
-float Unit::getCol(){
-	return col;
-}
+float Unit::getR(){ return r; }
+float Unit::getTheta(){ return theta; }
 
 void Unit::increaseX(float x){}
 void Unit::increaseY(float y){}

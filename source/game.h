@@ -45,6 +45,7 @@ class Game {
         
         int getWidth();
         int getHeight();
+        Artist* getArtist();
 	
 		void tick();
 		

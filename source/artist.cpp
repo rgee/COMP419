@@ -9,21 +9,12 @@ Artist::~Artist(){
 
 }
 
-void Artist::updateChangeList(CIwArray<GridCell*> _changeList) {
+void Artist::updateChangeList(CIwArray<GridCell*>* _changeList) {
     changeList = _changeList;
 }
 
-void Artist::render() {
+void Artist::render(int frameNumber) {
     
-    //for(CIwArray<GridCell*>::iterator gc_it = changeList.begin(); gc_it != changeList.end(); ++gc_it) {
-//        
-//        std::set<Unit*> units = (*gc_it)->getUnits();
-//        
-//        for(std::set<Unit*>::iterator u_it= units.begin(); u_it != units.end(); ++u_it) {
-//            (*u_it)->display();
-//        }
-//    }
-	
 	int bgColor = 0xffffffff;
 	int worldColor = 0xff0000ff;
 	
@@ -31,18 +22,27 @@ void Artist::render() {
 	int surfaceWidth = Iw2DGetSurfaceWidth();
 	
 	Iw2DSurfaceClear(bgColor);
-
-	CIwSVec2 arcCenter = CIwSVec2(0, surfaceHeight/2);
-	int fillWidth = surfaceWidth/1.5;
-	int fillHeight = surfaceHeight/2.2;
-	CIwSVec2 fillSize = CIwSVec2(fillWidth, fillHeight);
-	CIwSVec2 cutOutSize = CIwSVec2(fillWidth/3.0, fillHeight/3.0);
-
-	Iw2DSetColour(worldColor);
-	Iw2DFillArc(arcCenter, fillSize, 0, 0x800);
 	
-	Iw2DSetColour(bgColor);
-	Iw2DFillArc(arcCenter, cutOutSize, 0, 0x800);
+	CIwSVec2 topLeft = CIwSVec2(0, 0);
+	CIwSVec2 size = CIwSVec2(surfaceWidth/2, surfaceHeight);
+	
+	Iw2DSetColour(worldColor);
+	Iw2DFillRect(topLeft, size);
+	
+    for(CIwArray<GridCell*>::iterator gc_it = changeList->begin(); gc_it != changeList->end(); ++gc_it) {
+       
+        CIwArray<Unit*> units = (*gc_it)->getUnits();
+       
+        for(CIwArray<Unit*>::iterator u_it= units.begin(); u_it != units.end(); ++u_it) {
+			
+			Unit* curUnit = *u_it;
+			
+			int r = curUnit->getR();
+			float theta = curUnit->getTheta();
+			
+            curUnit->display(r, surfaceHeight - theta - ui->getWorldOffset(), 0x80, frameNumber);
+        }
+    }
 	
 	Iw2DSurfaceShow();
 }
