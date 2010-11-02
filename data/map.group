@@ -2,5 +2,5 @@ CIwResGroup
 {
     name "Map"
     
-    "../assets/textures/disc.bmp"
+    "./textures/disc.bmp"
 }
