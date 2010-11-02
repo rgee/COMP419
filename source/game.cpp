@@ -56,16 +56,12 @@ GridCell * Game::getCell(float r, float c){
 
 CIwArray<Unit*>* Game::getUnitsNear(int row, int col, int radius){
     
-	CIwArray<Unit*> *units = new CIwArray<Unit*>();
+	CIwArray<Unit*>* units = new CIwArray<Unit*>();
     for (int r = row-radius; r <= row+radius; r++) {
         for (int c = col-radius; c <= col+radius; c++) {
             if (r >= 0 && r <= rows && c >= 0 && c <= cols) {
-				
-				
 				CIwArray<Unit*> cellUnits = getCell(r, c)->getUnits();
-				for (CIwArray<Unit*>::iterator it = cellUnits.begin(); it != cellUnits.end(); ++it) {
-					units->push_back(*it);
-				}
+				units->append(cellUnits);
             }
         }
     }
@@ -74,17 +70,15 @@ CIwArray<Unit*>* Game::getUnitsNear(int row, int col, int radius){
 }
 
 void Game::tick(){
+
 	for(CIwArray<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr){
 		(*itr)->update();
 	}
-
-	artist->render();
+	
+	ui_manager->updateOffset();
+	artist->render(++timesteps);
 }
 
-int Game::getHeight(){
-	return rows;
-}
-
-int Game::getWidth(){
-	return cols;
-}
+int Game::getHeight(){ return rows; }
+int Game::getWidth(){  return cols; }
+Artist* Game::getArtist(){ return artist; }

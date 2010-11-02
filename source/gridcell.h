@@ -11,7 +11,7 @@ class GridCell {
     private:
         Player *owner;
         CIwArray<Unit*> units;
-        int row, col;
+        int r, theta;
     
     public:
 		GridCell();
@@ -26,6 +26,11 @@ class GridCell {
         bool hasUnit(Unit& u);
         CIwArray<Unit*> getUnits();
         void removeUnit(Unit& u);
+    
+
+		int getR();
+		int getTheta();
+
 };
 
 #endif

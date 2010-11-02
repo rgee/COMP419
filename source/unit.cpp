@@ -1,5 +1,6 @@
 #include "unit.h"
 
+
 Unit::Unit(float hp, float cost, float attack, float speed, 
 		float munch_speed, float range, float sight,
 		float spread_speed, float spread_radius, Player* owner,
@@ -9,16 +10,23 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  spread_speed(spread_speed), spread_radius(spread_radius),
 		  owner(owner), game(game), position(position)
 {
-
 }
+/*
+Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
 
-int Unit::getId(){
-	return uuid;
-}
+int Unit::getId(){ return uid; }
+void Unit::setId(int uid){ this->uid = uid; }
+*/
 
-void Unit::setId(int uuid){
-	this->uuid = uuid;
-}
+Player *Unit::getOwner(){ return owner; }
+void Unit::setOwner(Player *p){ owner = p; }
+
+float Unit::getHp(){ return hp; }
+void Unit::setHp(float f){ hp = f; }
+void Unit::decrementHp(float f){ hp -= f; }
+
+void Unit::setR(float x){ r = x; }
+void Unit::setTheta(float y){ theta = y; }
 
 Player& Unit::getOwner(){
 	return *owner;
@@ -40,14 +48,6 @@ void Unit::decrementHp(float f){
 	hp -= f;
 }
 
-void Unit::setRow(float x){
-	row = x;
-}
-
-float Unit::getRow(){
-	return row;
-}
-
 void Unit::setPosition(int x, int y){
 	position.x = x;
 	position.y = y;
@@ -57,13 +57,8 @@ void Unit::setPosition(const CIwVec2& newPosition){
 	position = newPosition;
 }
 
-void Unit::setCol(float y){
-	col = y;
-}
-
-float Unit::getCol(){
-	return col;
-}
+float Unit::getR(){ return r; }
+float Unit::getTheta(){ return theta; }
 
 void Unit::increaseX(float x){}
 void Unit::increaseY(float y){}

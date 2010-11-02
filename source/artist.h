@@ -1,18 +1,16 @@
 #ifndef _ARTIST_H
 #define _ARTIST_H
 
-#include <set>
+class Artist;
+
+
 #include "IwUtil.h"
 #include "Iw2D.h"
-
-class Artist;
 
 #include "game.h"
 #include "unit.h"
 #include "gridcell.h"
 
-class UIManager;
-class Game;
 
 class Artist {
 
@@ -20,7 +18,7 @@ class Artist {
     
         Game* game;
         UIManager* ui;
-        CIwArray<GridCell*> changeList;
+        CIwArray<GridCell*>* changeList;
     
     public:
         
@@ -33,12 +31,14 @@ class Artist {
         
         @param changeList the list of cells that have changed
         */
-        void updateChangeList(CIwArray<GridCell*> _changeList);
+        void updateChangeList(CIwArray<GridCell*>* _changeList);
         
         /**
-        Render the entire game world.
+        Render the entire screen.
+		 
+		@param frameNumber the number of the current frame - gets passed down to Units' display() methods
         */
-        void render();
+        void render(int frameNumber);
 };
 
 #endif

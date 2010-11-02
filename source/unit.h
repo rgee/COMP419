@@ -4,12 +4,14 @@
 
 #include "game.h"
 #include "player.h"
+#include "Iw2D.h"
+
 #include "IwGeomVec2.h"
 
 class Unit {
-    private:
+    protected:
 		/* Preliminary stats. Subject to change. */
-        float hp;
+	    float hp;
 		float cost;
 		float attack;
 		float speed;
@@ -19,12 +21,13 @@ class Unit {
 		float spread_speed;
 		float spread_radius;
 
-		float row; 
-		float col;
-        Player *owner;
-        int uuid;
+		float r; 
+		float theta;
+
+		Player *owner;
 		Game* game;
 		CIwVec2 position;
+		int uid;
         
     public:
 		Unit(float hp, float cost, float attack, float speed, 
@@ -46,12 +49,12 @@ class Unit {
 		float getHp();
 		void setHp(float f);
 		void decrementHp(float f);
+		
+		float getR();
+		float getTheta();
 	
-		void setRow(float x);
-		float getRow();
-	
-		void setCol(float y);
-		float getCol();
+		void setR(float x);
+		void setTheta(float y);
 
 		/* Units are going to keep track of their location in terms of r, theta, but
 		   the following methods preserve distance, so calling increaseX(5.0f) might
@@ -62,9 +65,22 @@ class Unit {
 		void increaseY(float y);
 		float getX();
 		float getY();
-
 		virtual bool update() = 0;
 		virtual void display() = 0;
+	
+		/**
+		 Render the unit to the screen. Units are responsible for orienting themselves
+		 properly on screen. 
+		 
+		 @param centerX horizontal screen coordinate of the point this unit is centered at
+		 @param centerY vertical screen coordinate of the point this unit is centered a
+		 @param rotAngle angle to rotate the rendering by so that, as the world is rotated, the unit's
+				orientation adjusts appropriately
+		 @param frameNumber the current frame that we're rendering. Useful for animating sprites.
+		 */
+        //virtual void display(int centerX, int centerY, iwangle rotAngle, int frameNumber) = 0;
+		//virtual bool update() = 0;
+	
 };
 
 #endif

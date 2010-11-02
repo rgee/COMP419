@@ -1,6 +1,8 @@
 #include "gridcell.h"
 
-CIwArray<Unit*> GridCell::getUnits(){
+GridCell::GridCell() {}
+
+const CIwArray<Unit*> GridCell::getUnits() const{
 	return units;
 }
 
@@ -21,9 +23,9 @@ void GridCell::removeUnit(Unit& u){
 	units.find_and_remove_fast(&u);
 }
 
-void GridCell::setCoords(int x, int y){
-	row = x;
-	col = y;
+void GridCell::setCoords(int _r, int _theta){
+	r = _r;
+	theta = _theta;
 }
 
 Player* GridCell::getOwner(){
