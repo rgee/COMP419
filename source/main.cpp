@@ -13,9 +13,7 @@
 void doMain() {
 	
 	Game game = Game(2);
-    
-    CIw2DImage* img = Iw2DCreateImage("pacman-01.bmp");
-    
+      
 	CIwArray<GridCell*> cells;
 	GridCell gc;
 	DummyUnit d1(NULL, &game, CIwVec2(10, 10));
