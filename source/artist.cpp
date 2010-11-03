@@ -3,11 +3,9 @@
 
 Artist::Artist(Game* _game, UIManager* _ui) : game(_game), ui(_ui) {
 	IwGxInit();
-	IwResManagerInit();
 }
 
 Artist::~Artist(){
-	IwResManagerTerminate();
 	IwGxTerminate();
 }
 
