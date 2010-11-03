@@ -6,6 +6,7 @@ class Artist;
 
 #include "IwUtil.h"
 #include "Iw2D.h"
+#include "IwGx.h"
 
 #include "game.h"
 #include "unit.h"
@@ -19,6 +20,11 @@ class Artist {
         Game* game;
         UIManager* ui;
         CIwArray<GridCell*>* changeList;
+
+		// A group of all the resources being used currently
+		CIwResGroup* resources;
+		CIwMaterial* current_material;
+		CIwTexture* current_texture;
     
     public:
         
@@ -39,6 +45,10 @@ class Artist {
 		@param frameNumber the number of the current frame - gets passed down to Units' display() methods
         */
         void render(int frameNumber);
+
+		// Simply changes the resource group pointer. Game object
+		// still responsible for releasing old resources.
+		void set_resources(CIwResGroup& new_resources);
 };
 
 #endif

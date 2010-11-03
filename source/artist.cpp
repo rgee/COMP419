@@ -2,11 +2,17 @@
 #include "game.h"
 
 Artist::Artist(Game* _game, UIManager* _ui) : game(_game), ui(_ui) {
-
+	IwGxInit();
+	IwResManagerInit();
 }
 
 Artist::~Artist(){
+	IwResManagerTerminate();
+	IwGxTerminate();
+}
 
+void Artist::set_resources(CIwResGroup& new_resources) {
+	resources = &new_resources;
 }
 
 void Artist::updateChangeList(CIwArray<GridCell*>* _changeList) {
@@ -14,7 +20,11 @@ void Artist::updateChangeList(CIwArray<GridCell*>* _changeList) {
 }
 
 void Artist::render(int frameNumber) {
+
+	IwGxFlush();
+	IwGxSwapBuffers();
     
+	/*
 	int bgColor = 0xffffffff;
 	int worldColor = 0xff0000ff;
 	
@@ -47,4 +57,5 @@ void Artist::render(int frameNumber) {
     }
 	
 	Iw2DSurfaceShow();
+	*/
 }
