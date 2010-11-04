@@ -80,13 +80,10 @@ class Unit {
 				orientation adjusts appropriately
 		 @param frameNumber the current frame that we're rendering. Useful for animating sprites.
 		 */
-<<<<<<< HEAD
         virtual void display(int centerX, int centerY, int rotAngle, int frameNumber) = 0;
-=======
+
         //virtual void display(int centerX, int centerY, iwangle rotAngle, int frameNumber) = 0;
 		//virtual bool update() = 0;
-	
->>>>>>> 2a390feea0a1a1a3e0aa5fb66e46785523cdae36
 };
 
 #endif
