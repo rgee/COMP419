@@ -28,6 +28,7 @@ class Unit {
 		Game* game;
 		CIwSVec2 position;
 		int uid;
+		char* texture_name;
         
     public:
 		Unit(float hp, float cost, float attack, float speed, 
@@ -42,6 +43,8 @@ class Unit {
     
 		int getId();
 		void setId(int uuid);
+
+		char* get_tex_name();
         
 		Player& getOwner();
 		void setOwner(Player& p);

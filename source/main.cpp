@@ -14,18 +14,9 @@ void doMain() {
 	
 	Game game = Game(2);
       
-	CIwArray<GridCell*> cells;
-	GridCell gc;
-	DummyUnit d1(NULL, &game, CIwVec2(10, 10));
+	DummyUnit d1(NULL, &game, CIwVec2(10, 10));	
+	game.addUnit(&d1);	
 
-    
-	gc.addUnit(d1);
-
-	cells.push_back(&gc);
-	
-	game.getArtist()->updateChangeList(&cells);
-	
-    	
 	int curFrame = 0;
 	while (1) {
 		
@@ -67,12 +58,8 @@ void doMain() {
 
 //dummy main function, just so I can test Artist's render() method
 int main() {
-	
-	Iw2DInit();
-	
+
 	doMain();
-	
-	Iw2DTerminate();
 	
 	return 0;
 }

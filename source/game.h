@@ -10,6 +10,7 @@ class Unit;
 #include "player.h"
 #include "gridcell.h"
 #include "uimanager.h"
+#include "IwResManager.h"
 
 class Game {
     private:
@@ -20,6 +21,8 @@ class Game {
 
 		Artist* artist;
 		UIManager* ui_manager;
+
+		CIwResGroup* resources;
 	
 		long timesteps;
                     

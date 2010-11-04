@@ -5,10 +5,12 @@
 DummyUnit::DummyUnit(Player* owner, Game* game, CIwVec2 position)
 	: Unit(100.0f, 50.0f, 10.0f, 15.0f, 10.0f, 5.0f, 10.0f, 0.0f, 0.0f, owner, game, position)
 {
+	texture_name = "pacman-01";
+
     frameNumber = 0;
-	frames.push_back(Iw2DCreateImage("images/pacman-01.bmp"));
-	frames.push_back(Iw2DCreateImage("images/pacman-02.bmp"));
-	frames.push_back(Iw2DCreateImage("images/pacman-03.bmp"));
+	//frames.push_back(Iw2DCreateImage("images/pacman-01.bmp"));
+	//frames.push_back(Iw2DCreateImage("images/pacman-02.bmp"));
+	//frames.push_back(Iw2DCreateImage("images/pacman-03.bmp"));
 }
 
 void DummyUnit::display() {

@@ -17,7 +17,9 @@ Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
 int Unit::getId(){ return uid; }
 void Unit::setId(int uid){ this->uid = uid; }
 
-
+char* Unit::get_tex_name() {
+	return texture_name;
+}
 
 void Unit::setR(float x){ r = x; }
 void Unit::setTheta(float y){ theta = y; }

@@ -5,11 +5,19 @@
 Game::Game(int numPlayers) : numPlayers(numPlayers) {
 	ui_manager = new UIManager();
 	artist = new Artist(this, ui_manager);
+	IwResManagerInit();
+	IwGetResManager()->SetMode(CIwResManager::MODE_BUILD);
+	IwGetResManager()->LoadGroup("main.group");
+
+	resources = IwGetResManager()->GetGroupNamed("main");
+
+	artist->set_resources(*resources);
 }
 
 Game::~Game(){
-	delete ui_manager;
+	IwGetResManager()->DestroyGroup("main");
 	delete artist;
+	IwResManagerTerminate();
 }
 
 CIwArray<Unit*>* Game::getUnits(){
