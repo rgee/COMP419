@@ -21,6 +21,6 @@
 MemSize = 100000000
 MemSizeDebug = 100000000
 
-
-[GX]
-DataCacheSize = 90000
+[gx]
+# HW mode requires slightly more datacache
+DataCacheSizeHW=32000

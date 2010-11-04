@@ -1,29 +1,36 @@
 #ifndef _GRIDCELL_H
 #define _GRIDCELL_H
 
-#include <set>
-using namespace std;
+#include "IwArray.h"
+
+class GridCell;
 
 #include "unit.h"
-#include "player.h"
 
-class GridCell{
+class GridCell {
     private:
-        //Player *owner;
-        set<Unit*> units;
-        float r, theta;
+        Player *owner;
+        CIwArray<Unit*> units;
+        int r, theta;
     
     public:
-		
 		GridCell();
+		~GridCell(){}
+
         Player *getOwner();
-        void    setOwner(Player *p);
+        void setOwner(Player *p);
+
+		void setCoords(int x, int y);
+        
+        void addUnit(Unit& u);
+        bool hasUnit(Unit& u);
+        CIwArray<Unit*> getUnits() const;
+        void removeUnit(Unit& u);
+    
+
 		int getR();
-		int getTheta();	
-        void addUnit(Unit *u);
-        bool hasUnit(Unit *u);
-        const set<Unit*>& getUnits() const;
-        void removeUnit(Unit *u);
+		int getTheta();
+
 };
 
 #endif

@@ -1,30 +1,42 @@
 #include "game.h"
 #include "unit.h"
-#include "gridcell.h"
+#include "artist.h"
+
+Game::Game(int numPlayers) : numPlayers(numPlayers) {
+	ui_manager = new UIManager();
+	artist = new Artist(this, ui_manager);
+	IwResManagerInit();
+	IwGetResManager()->SetMode(CIwResManager::MODE_BUILD);
+	IwGetResManager()->LoadGroup("main.group");
+
+	resources = IwGetResManager()->GetGroupNamed("main");
+
+	artist->set_resources(*resources);
+}
+
+Game::~Game(){
+	IwGetResManager()->DestroyGroup("main");
+	delete artist;
+	IwResManagerTerminate();
+}
+
+CIwArray<Unit*>* Game::getUnits(){
+	return &units;
+}
 
 void Game::addUnit(Unit *u){
     u->setId(units.size());
     units.push_back(u);
 }
 
-GridCell * Game::getCell(int row, int col){
-    return &(cells[row][col]);
+void Game::tick(){
+
+	for(CIwArray<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr){
+		(*itr)->update();
+	}
+	
+	ui_manager->updateOffset();
+	artist->render(++timesteps);
 }
 
-CIwArray<Unit*>* Game::getUnitsNear(int row, int col, int radius){
-    
-	CIwArray<Unit*>* unitsNear = new CIwArray<Unit*>();
-    for (int r = row-radius; r <= row+radius; r++) {
-        for (int c = col-radius; c <= col+radius; c++) {
-            if (r >= 0 && r <= rows && c >= 0 && c <= cols) {
-				
-				set<Unit*> cellUnits = getCell(r, c)->getUnits();
-				for (set<Unit*>::iterator it = cellUnits.begin(); it != cellUnits.end(); ++it) {
-					unitsNear->push_back(*it);
-				}
-            }
-        }
-    }
-    
-    return unitsNear;
-}
+Artist* Game::getArtist(){ return artist; }

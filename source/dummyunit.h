@@ -5,13 +5,20 @@
 #include "IwUtil.h"
 
 class DummyUnit : public Unit {
+    
+    private:
+        int frameNumber;
+        CIwArray<CIw2DImage*> frames;
 	
 	public:
 	
-		DummyUnit(int _r, int _theta);
+		DummyUnit(Player* owner, Game* game, CIwVec2 position);
 		~DummyUnit();
 		void display(int centerX, int centerY, iwangle rotAngle, int frameNumber);
-	
+
+		virtual void display();
+		virtual bool update();
 };
+
 
 #endif

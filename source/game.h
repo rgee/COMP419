@@ -1,33 +1,43 @@
 #ifndef _GAME_H
 #define _GAME_H
 
-#include <stdio.h>
 #include "IwArray.h"
+
+class Game;
+class Artist;
+class Unit;
+
 #include "player.h"
 #include "gridcell.h"
-#include "unit.h"
+#include "uimanager.h"
+#include "IwResManager.h"
 
 class Game {
     private:
-        CIwArray<Player> players;
+        CIwArray<Player*> players;
         int numPlayers;
         
-        GridCell** cells; // Format: cell[row][col]
-        int rows, cols;
-        
         CIwArray<Unit*> units;
+
+		Artist* artist;
+		UIManager* ui_manager;
+
+		CIwResGroup* resources;
+	
+		long timesteps;
                     
     public:
-        Game(int numPlayers, int numRows, int numCols);
+        Game(int numPlayers);
+		~Game();
         
         void addUnit(Unit *u);
-
-        GridCell * getCell(int row, int col);
+		CIwArray<Unit*>* getUnits();
         
-        CIwArray<Unit*>* getUnitsNear(int row, int col, int radius);
-        
-        int getWidth();
-        int getHeight();
+        Artist* getArtist();
+	
+		void tick();
+		
+		long getTimesteps();
 };
 
 #endif

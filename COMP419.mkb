@@ -3,21 +3,23 @@
 files
 {
     (source)
-	artist.h
-	artist.cpp
+    artist.h
+    artist.cpp
     game.h
     game.cpp
     gridcell.h
     gridcell.cpp
     unit.h
     unit.cpp
-	dummyunit.h
-	dummyunit.cpp
+    muncher.h
+    muncher.cpp
+    dummyunit.h
+    dummyunit.cpp
     player.h
     player.cpp
-	uimanager.h
-	uimanager.cpp
-	main.cpp
+    uimanager.h
+    uimanager.cpp
+    main.cpp
 }
 
 subprojects
