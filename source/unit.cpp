@@ -17,7 +17,7 @@ int getId() { return 0; }
 
 void setId(int uid) {}
 
-Player *getOwner() { return NULL; }
+Player *getOwner() { return 0; }
 
 void setOwner(Player *p) {}
 

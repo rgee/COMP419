@@ -1,28 +1,54 @@
 #include "artist.h"
 
-Artist::Artist(Game* _game, UIManager* _ui) : game(_game), ui(_ui) {};
+#define DEFAULT_WORLD_WIDTH 480
+#define DEFAULT_WORLD_HEIGHT 480
+#define DEFAULT_WORLD_X -280
 
+Artist::Artist(Game* _game, UIManager* _ui) : game(_game), ui(_ui) {
+
+	IwGetResManager()->LoadGroup("resource_groups/world.group");
+	CIwResGroup* worldRes = IwGetResManager()->GetGroupNamed("World");
+	
+	CIwTexture* worldTexture = (CIwTexture*)worldRes->GetResNamed("paper-world", IW_GX_RESTYPE_TEXTURE);
+	worldMaterial = new CIwMaterial();
+	worldMaterial->SetModulateMode(CIwMaterial::MODULATE_NONE);
+	worldMaterial->SetTexture(worldTexture);
+	
+}
+
+Artist::~Artist() {
+	delete worldMaterial;
+}
+	
 void Artist::updateChangeList(CIwArray<GridCell*>* _changeList) {
     changeList = _changeList;
 }
 
 void Artist::render(int frameNumber) {
+	
+	int screenWidth = IwGxGetScreenWidth();
+	int screenHeight = IwGxGetScreenHeight();
+	
+	// Set screen clear colour
+    IwGxSetColClear(0xff, 0xff, 0xff, 0x00);
     
-	int bgColor = 0xffffffff;
-	int worldColor = 0xff0000ff;
+	// Turn all lighting off
+    IwGxLightingOff();
 	
-	int surfaceHeight = Iw2DGetSurfaceHeight();
-	int surfaceWidth = Iw2DGetSurfaceWidth();
+	//clear the screen
+	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	
-	Iw2DSurfaceClear(bgColor);
+	IwGxSetScreenSpaceSlot(-1);
 	
-	CIwSVec2 topLeft = CIwSVec2(0, 0);
-	CIwSVec2 size = CIwSVec2(surfaceWidth/2, surfaceHeight);
+
+	//draw the world donut
+	IwGxSetMaterial(worldMaterial);
+	CIwSVec2 world_wh(DEFAULT_WORLD_WIDTH, DEFAULT_WORLD_HEIGHT);
+	CIwSVec2 world_pos = CIwSVec2(DEFAULT_WORLD_X, 0);
+	IwGxDrawRectScreenSpace(&world_pos, &world_wh);
 	
-	Iw2DSetColour(worldColor);
-	Iw2DFillRect(topLeft, size);
 	
-    for(CIwArray<GridCell*>::iterator gc_it = changeList->begin(); gc_it != changeList->end(); ++gc_it) {
+    /*for(CIwArray<GridCell*>::iterator gc_it = changeList->begin(); gc_it != changeList->end(); ++gc_it) {
        
         std::set<Unit*> units = (*gc_it)->getUnits();
        
@@ -35,7 +61,15 @@ void Artist::render(int frameNumber) {
 			
             curUnit->display(r, surfaceHeight - theta - ui->getWorldOffset(), 0x80, frameNumber);
         }
-    }
+    }*/
 	
-	Iw2DSurfaceShow();
+	
+	//char* str;
+	//asprintf(&str, "width: %i | height: %i", width, height);	
+	//IwGxPrintSetColour(0, 0, 0);
+	//IwGxPrintString(10, 10, str);
+	
+	// Flush and swap
+	IwGxFlush();
+	IwGxSwapBuffers();
 }

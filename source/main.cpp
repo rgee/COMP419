@@ -1,14 +1,14 @@
 #include "s3e.h"
 #include "s3eDebug.h"
+#include "IwUtil.h"
+#include "IwGx.h"
 #include "artist.h"
 #include "uimanager.h"
 #include "dummyunit.h"
-#include <stdio.h>
-#include <stdarg.h>
-#include "IwUtil.h"
 
-#define FRAME_RATE 30
-#define	MS_PER_FRAME (1000 / 30)
+
+#define FRAME_RATE 60
+#define	MS_PER_FRAME (1000 / 60)
 
 void doMain() {
 	
@@ -43,6 +43,9 @@ void doMain() {
 		
 		int64 start = s3eTimerGetMs();
 		
+		ui.updateOffset();
+		artist.render(curFrame);
+		
 		// Attempt frame rate
 		while ((s3eTimerGetMs() - start) < MS_PER_FRAME)
 		{
@@ -60,26 +63,19 @@ void doMain() {
 		else {
 			curFrame++;
 		}
-				
-		char* str;
-		sprintf(str ,"%i", curFrame);
-		
-		ui.updateOffset();
-		artist.render(curFrame);
-		
-		s3eDebugOutputString(str);
-		
 	}
 }
 
 //dummy main function, just so I can test Artist's render() method
 int main() {
 	
-	Iw2DInit();
+	IwGxInit();
+	IwResManagerInit();
 	
 	doMain();
 	
-	Iw2DTerminate();
+	IwResManagerTerminate();
+	IwGxTerminate();
 	
 	return 0;
 }

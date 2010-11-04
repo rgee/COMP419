@@ -2,7 +2,6 @@
 #define _UNIT_H
 
 #include "player.h"
-#include "Iw2D.h"
 
 class Unit {
 	
@@ -38,7 +37,7 @@ class Unit {
 				orientation adjusts appropriately
 		 @param frameNumber the current frame that we're rendering. Useful for animating sprites.
 		 */
-        virtual void display(int centerX, int centerY, iwangle rotAngle, int frameNumber) = 0;
+        virtual void display(int centerX, int centerY, int rotAngle, int frameNumber) = 0;
 };
 
 #endif

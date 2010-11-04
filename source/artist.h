@@ -3,7 +3,8 @@
 
 #include <set>
 #include "IwUtil.h"
-#include "Iw2D.h"
+#include "IwGx.h"
+#include "IwResManager.h"
 #include "game.h"
 #include "unit.h"
 #include "gridcell.h"
@@ -16,10 +17,12 @@ class Artist {
         Game* game;
         UIManager* ui;
         CIwArray<GridCell*>* changeList;
-    
+		CIwMaterial* worldMaterial;
+	
     public:
         
         Artist(Game* _game, UIManager* _ui);
+		~Artist();
         
         /**
         Alert the Artist object of all cells that changed, and hence

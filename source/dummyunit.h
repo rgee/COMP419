@@ -11,10 +11,7 @@ class DummyUnit : public Unit {
 		DummyUnit(int _r, int _theta);
 		~DummyUnit();
 		void display(int centerX, int centerY, iwangle rotAngle, int frameNumber);
-
-	private:
-		
-		CIwArray<CIw2DImage*> frames;
+	
 };
 
 #endif

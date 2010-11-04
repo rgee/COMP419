@@ -1,7 +1,6 @@
 #ifndef UI_MANAGER_H
 #define UI_MANAGER_H
 
-#include "Iw2D.h"
 #include "s3e.h"
 
 class UIManager {

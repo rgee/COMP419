@@ -5,7 +5,7 @@ UIManager::UIManager() {
 }
 
 int UIManager::getWorldOffset() {
-	return Iw2DGetSurfaceHeight() - pointerOffset;
+	return pointerOffset;
 }
 
 void UIManager::updateOffset() {
