@@ -1,4 +1,4 @@
-#include "dummyunit.h"
+/*#include "dummyunit.h"
 
 void DummyUnit::display(int centerX, int centerY, int rotAngle, int frameNumber) {
 	
@@ -30,5 +30,5 @@ DummyUnit::~DummyUnit() {
 	}
 }
 
-bool DummyUnit::update(){++frameNumber; return true;}
+bool DummyUnit::update(){++frameNumber; return true;}*/
 

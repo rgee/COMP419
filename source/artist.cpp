@@ -45,7 +45,7 @@ void Artist::render(int frameNumber) {
 	IwGxSetScreenSpaceSlot(-1);
 
 	for(CIwArray<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
-		current_texture = (CIwTexture*)resources->GetResNamed((*itr)->get_tex_name(), IW_GX_RESTYPE_TEXTURE);
+		current_texture = (CIwTexture*)resources->GetResNamed((*itr)->getTextureName(), IW_GX_RESTYPE_TEXTURE);
 		
 		if(current_texture) {
 			current_material->SetTexture(current_texture);
@@ -64,39 +64,4 @@ void Artist::render(int frameNumber) {
 
 	IwGxFlush();
 	IwGxSwapBuffers();
-    
-	/*
-	int bgColor = 0xffffffff;
-	int worldColor = 0xff0000ff;
-	
-	int surfaceHeight = Iw2DGetSurfaceHeight();
-	int surfaceWidth = Iw2DGetSurfaceWidth();
-	
-	Iw2DSurfaceClear(bgColor);
-	
-	CIwSVec2 topLeft = CIwSVec2(0, 0);
-	CIwSVec2 size = CIwSVec2(surfaceWidth/2, surfaceHeight);
-	
-	Iw2DSetColour(worldColor);
-	Iw2DFillRect(topLeft, size);
-	
-    for(CIwArray<GridCell*>::iterator gc_it = changeList->begin(); gc_it != changeList->end(); ++gc_it) {
-       
-        CIwArray<Unit*> units = (*gc_it)->getUnits();
-       
-        for(CIwArray<Unit*>::iterator u_it= units.begin(); u_it != units.end(); ++u_it) {
-			
-			Unit* curUnit = *u_it;
-			
-			int r = curUnit->getR();
-			float theta = curUnit->getTheta();
-			
-            //curUnit->display(r, surfaceHeight - theta - ui->getWorldOffset(), 0x80, frameNumber);
-
-			curUnit->display();
-        }
-    }
-	
-	Iw2DSurfaceShow();
-	*/
 }

@@ -1,11 +1,9 @@
 #ifndef _UNIT_H
 #define _UNIT_H
 
-
+#include "IwGx.h"
 #include "game.h"
 #include "player.h"
-
-#include "IwGeomVec2.h"
 
 class Unit {
     protected:
@@ -20,16 +18,31 @@ class Unit {
 		float spread_speed;
 		float spread_radius;
 
-		float r; 
+		float r;
 		float theta;
 
 		Player *owner;
 		Game* game;
 		CIwSVec2 position;
 		int uid;
-		char* texture_name;
+	
+		//info for sprite animation
+		int spriteSize;
+		int numFrames;
+		int curFrame;
+	
+		/**
+		Utility method that subclasses will use to render their sprites. Assumes that 
+		current material has already been set to the sprite image by Artist.
+		 
+		@param frameNumber which frame of the sprite sheet to display (indexed from 0)
+		@param angle angle to rotate the sprite by
+		*/
+		void renderSprite(int frameNumber, float angle);
+
         
     public:
+	
 		Unit(float hp, float cost, float attack, float speed, 
 				float munch_speed, float range, float sight,
 				float spread_speed, float spread_radius, Player* owner,
@@ -42,8 +55,6 @@ class Unit {
     
 		int getId();
 		void setId(int uuid);
-
-		char* get_tex_name();
         
 		Player& getOwner();
 		void setOwner(Player& p);
@@ -67,23 +78,10 @@ class Unit {
 		void increaseY(float y);
 		float getX();
 		float getY();
+	
+		virtual char* getTextureName() = 0;
 		virtual bool update() = 0;
 		virtual void display() = 0;
-	
-		/**
-		 Render the unit to the screen. Units are responsible for orienting themselves
-		 properly on screen. 
-		 
-		 @param centerX horizontal screen coordinate of the point this unit is centered at
-		 @param centerY vertical screen coordinate of the point this unit is centered a
-		 @param rotAngle angle to rotate the rendering by so that, as the world is rotated, the unit's
-				orientation adjusts appropriately
-		 @param frameNumber the current frame that we're rendering. Useful for animating sprites.
-		 */
-        virtual void display(int centerX, int centerY, int rotAngle, int frameNumber) = 0;
-
-        //virtual void display(int centerX, int centerY, iwangle rotAngle, int frameNumber) = 0;
-		//virtual bool update() = 0;
 };
 
 #endif

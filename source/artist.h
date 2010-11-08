@@ -5,7 +5,6 @@ class Artist;
 
 
 #include "IwUtil.h"
-#include "Iw2D.h"
 #include "IwGx.h"
 
 #include "game.h"

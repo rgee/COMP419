@@ -4,13 +4,16 @@
 #include "unit.h"
 
 class Muncher : public Unit {
+	
 	public:
+	
 		Muncher(Player* owner, Game* game, CIwVec2 position);
-		~Muncher(){};
+	
+		~Muncher() {};
 
+		virtual char* getTextureName();
 		virtual bool update();
 		virtual void display();
-	private:
 };
 
 #endif

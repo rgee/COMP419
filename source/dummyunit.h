@@ -1,4 +1,4 @@
-#ifndef DUMMY_UNIT_H
+/*#ifndef DUMMY_UNIT_H
 #define DUMMY_UNIT_H
 
 #include "unit.h"
@@ -21,4 +21,4 @@ class DummyUnit : public Unit {
 };
 
 
-#endif
+#endif*/
