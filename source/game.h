@@ -13,7 +13,9 @@ class Unit;
 #include "IwResManager.h"
 
 class Game {
+	
     private:
+	
         CIwArray<Player*> players;
         int numPlayers;
         
@@ -25,8 +27,9 @@ class Game {
 		CIwResGroup* resources;
 	
 		long timesteps;
-                    
+	                    
     public:
+	
         Game(int numPlayers);
 		~Game();
         
@@ -36,8 +39,11 @@ class Game {
         Artist* getArtist();
 	
 		void tick();
+	
+		void render();
 		
 		long getTimesteps();
+
 };
 
 #endif

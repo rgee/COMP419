@@ -12,37 +12,42 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 	
 }
 
-
-void Unit::renderSprite(int frameNumber, float angle) {
-
-	int top = position.x;
-	int left = position.y;
+void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
+		
+	int left = position.x;
+	int top = position.y;	
 	
-	CIwSVec2* vertices = (CIwSVec2*)malloc(sizeof(CIwSVec2)*4);
+	CIwSVec3* vertices = (CIwSVec3*)malloc(sizeof(CIwSVec3)*4);
 	CIwSVec2* UVs = (CIwSVec2*)malloc(sizeof(CIwSVec2)*4);
 	
-	vertices[0] = CIwSVec2(left, top);
-	vertices[2] = CIwSVec2(left+spriteSize, top);
-	vertices[3] = CIwSVec2(left+spriteSize, top+spriteSize);
-	vertices[1] = CIwSVec2(left, top+spriteSize);
+	//set up model space vertices
+	
+	int vertexDist = scaleFactor*spriteSize/2;
+	
+	vertices[0] = CIwSVec3(-1*vertexDist, -1*vertexDist, -1);
+	vertices[2] = CIwSVec3(vertexDist, -1*vertexDist, -1);
+	vertices[3] = CIwSVec3(vertexDist, vertexDist, -1);
+	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist, -1);
+	
+	CIwMat modelTransform = CIwMat::g_Identity;
+	modelTransform.SetRotZ(angle);
+	modelTransform.SetTrans(CIwVec3(left, -1*top, 1));
+	IwGxSetModelMatrix(&modelTransform, false);
 	
 	//set up UV offset for the given frame number
 	//TODO This was figured out purely by trial and error, and only works
 	//for sheets with 64x64 sprites. Need to figure out how Airplay interprets
 	//UV coordinates - makes no sense to me right now.
-
 	UVs[0] = CIwSVec2(frameNumber*682, 0);
 	UVs[2] = CIwSVec2((frameNumber+1)*682, 0);
 	UVs[3] = CIwSVec2((frameNumber+1)*682, 4096);
 	UVs[1] = CIwSVec2(frameNumber*682, 4096);
-	
+
 	//render the image to screen
-	//TODO add support for rotation/scaling
 	IwGxSetUVStream(UVs);
 	IwGxSetColStream(NULL);
-	IwGxSetVertStreamScreenSpace(vertices, 4);
+	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
-	
 	IwGxFlush();
 	
 	free(vertices);

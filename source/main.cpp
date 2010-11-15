@@ -9,7 +9,7 @@
 #include "muncher.h"
 
 #define FRAME_RATE 10
-#define	MS_PER_FRAME (2000 / 10)
+#define	MS_PER_FRAME (1000 / 10)
 
 CIwSVec2 anim_xy[4];
 
@@ -29,12 +29,18 @@ void doMain() {
 	Game* game;
 	Player* player;
 	
-	Unit* munch = new Muncher(player, game, CIwVec2(100, 100)); 
-	Unit* munch1 = new Muncher(player, game, CIwVec2(180, 180)); 
-	Unit* munch2 = new Muncher(player, game, CIwVec2(40, 40)); 
+	Unit* munch = new Muncher(player, game, CIwVec2(300, 50)); 
+	//Unit* munch1 = new Muncher(player, game, CIwVec2(180, 180)); 
+	//Unit* munch2 = new Muncher(player, game, CIwVec2(40, 40)); 
+	
+	//set up the view transform
+	IwGxSetPerspMul(0xa0);
+	IwGxSetFarZNearZ(0x1000, 0x10);
+	CIwMat view = CIwMat::g_Identity;
+	view.SetTrans(CIwVec3(300, 1, -0xa0));
+	IwGxSetViewMatrix(&view);
 
 	while (1) {
-		
 	
 		s3eDeviceYield(0);
 		s3eKeyboardUpdate();
@@ -47,21 +53,19 @@ void doMain() {
 		    break;
 		}
 		
-		
-		
 		IwGxSetColClear(255, 255, 255, 255);
 		IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 		
 		IwGxLightingOff();
 		IwGxSetMaterial(muncherMat);
 		
-		munch->display();
-		munch1->display();
-		munch2->display();
-
 		munch->update();
-		munch1->update();
-		munch2->update();
+		//munch1->update();
+		//munch2->update();
+		
+		munch->display();
+		//munch1->display();
+		//munch2->display();
 		
 		IwGxFlush();
 		IwGxSwapBuffers();
@@ -82,8 +86,8 @@ void doMain() {
 	
 	delete muncherMat;
 	delete munch;
-	delete munch1;
-	delete munch2;
+	//delete munch1;
+	//delete munch2;
 }
 
 int main() {
