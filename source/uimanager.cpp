@@ -11,3 +11,12 @@ int UIManager::getWorldOffset() {
 void UIManager::updateOffset() {
 	pointerOffset = s3ePointerGetY();
 }
+
+
+int getWidth(){
+    return IwGxGetScreenHeight();
+}
+
+int getHeight(){
+    return IwGxGetScreenHeight();
+}

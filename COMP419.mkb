@@ -3,6 +3,7 @@
 files
 {
     (source)
+	linkedlist.h
     artist.h
     artist.cpp
     game.h

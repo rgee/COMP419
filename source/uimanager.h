@@ -1,6 +1,8 @@
 #ifndef UI_MANAGER_H
 #define UI_MANAGER_H
 
+
+#include "IwGx.h"
 #include "s3e.h"
 
 class UIManager {
@@ -21,6 +23,9 @@ class UIManager {
 		int getWorldOffset();
 	
 		void updateOffset();
+    
+        int getWidth();
+        int getHeight();
 };
 
 #endif
