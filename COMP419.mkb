@@ -4,8 +4,6 @@ files
 {
     (source)
 	linkedlist.h
-    artist.h
-    artist.cpp
     game.h
     game.cpp
     unit.h
@@ -16,8 +14,6 @@ files
     dummyunit.cpp
     player.h
     player.cpp
-    uimanager.h
-    uimanager.cpp
     main.cpp
 }
 

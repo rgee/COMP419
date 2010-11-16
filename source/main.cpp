@@ -3,8 +3,6 @@
 #include "IwUtil.h"
 #include "IwGx.h"
 #include "IwGeomMat.h"
-#include "artist.h"
-#include "uimanager.h"
 #include "unit.h"
 #include "muncher.h"
 
