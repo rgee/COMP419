@@ -13,7 +13,6 @@ bool Muncher::update() {
 	//a silly "pathing" calculation for testing purposes only
 	curFrame = (curFrame < numFrames-1) ? curFrame+1 : 0;
 	circleOffset += .3;
-	position = CIwVec2(300 + 50*sin(circleOffset), 50 + 90*cos(circleOffset)); 
 	return true;
 }
 

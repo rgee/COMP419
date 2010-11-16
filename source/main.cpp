@@ -16,30 +16,18 @@ CIwSVec2 anim_xy[4];
 CIwSVec2 cel_UVs[4];
 
 void doMain() {
-	
-	IwGetResManager()->LoadGroup("resource_groups/sprites.group");
-	CIwResGroup* res = IwGetResManager()->GetGroupNamed("Sprites");
-	
-	CIwTexture* muncherTex = (CIwTexture*)res->GetResNamed("muncher_sprite_sheet", IW_GX_RESTYPE_TEXTURE);
-	CIwMaterial* muncherMat = new CIwMaterial();
-	muncherMat->SetTexture(muncherTex);
-	muncherMat->SetModulateMode(CIwMaterial::MODULATE_NONE);
-	muncherMat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 
-	Game* game;
-	Player* player;
+	Game* game = new Game(2);
 	
-	Unit* munch = new Muncher(player, game, CIwVec2(300, 50)); 
-	//Unit* munch1 = new Muncher(player, game, CIwVec2(180, 180)); 
-	//Unit* munch2 = new Muncher(player, game, CIwVec2(40, 40)); 
+	/*for(int x = 64; x < 320; x+= 64) {
+		for (int y = 64; y < 480; y+= 64) {
+			game->addUnit(new Muncher(NULL, game, CIwVec2(140+x, y-240)));
+		}
+	}*/
 	
-	//set up the view transform
-	IwGxSetPerspMul(0xa0);
-	IwGxSetFarZNearZ(0x1000, 0x10);
-	CIwMat view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3(300, 1, -0xa0));
-	IwGxSetViewMatrix(&view);
-
+	Muncher *munch = new Muncher(NULL, game, CIwVec2(300, 200));
+	game->addUnit(munch);
+	
 	while (1) {
 	
 		s3eDeviceYield(0);
@@ -53,22 +41,8 @@ void doMain() {
 		    break;
 		}
 		
-		IwGxSetColClear(255, 255, 255, 255);
-		IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
-		
-		IwGxLightingOff();
-		IwGxSetMaterial(muncherMat);
-		
-		munch->update();
-		//munch1->update();
-		//munch2->update();
-		
-		munch->display();
-		//munch1->display();
-		//munch2->display();
-		
-		IwGxFlush();
-		IwGxSwapBuffers();
+		game->render();
+		game->tick();
 		
 		int64 start = s3eTimerGetMs();
 		
@@ -84,10 +58,8 @@ void doMain() {
 		}
 	}
 	
-	delete muncherMat;
 	delete munch;
-	//delete munch1;
-	//delete munch2;
+	delete game;
 }
 
 int main() {

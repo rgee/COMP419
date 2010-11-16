@@ -7,10 +7,18 @@ class Game;
 class Artist;
 class Unit;
 
+#include <map>
+#include <set>
+#include "string.h"
+#include "IwResManager.h"
+#include "IwResGroup.h"
+#include "IwManagedList.h"
+#include "IwGx.h"
 #include "player.h"
 #include "gridcell.h"
 #include "uimanager.h"
-#include "IwResManager.h"
+
+typedef std::map<char*, std::set<Unit*>* > UnitBucket;
 
 class Game {
 	
@@ -25,8 +33,12 @@ class Game {
 		UIManager* ui_manager;
 
 		CIwResGroup* resources;
+		
+		UnitBucket unitBucket;
 	
 		long timesteps;
+	
+		void initRenderState();
 	                    
     public:
 	
