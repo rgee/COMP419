@@ -2,6 +2,7 @@
 #define _MUNCHER_H
 
 #include "unit.h"
+#include <math.h>
 
 class Muncher : public Unit {
 	
@@ -14,6 +15,10 @@ class Muncher : public Unit {
 		virtual char* getTextureName();
 		virtual bool update();
 		virtual void display();
+	
+	private:
+	
+		float circleOffset;
 };
 
 #endif
