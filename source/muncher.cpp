@@ -13,6 +13,9 @@ bool Muncher::update() {
 	//a silly "pathing" calculation for testing purposes only
 	curFrame = (curFrame < numFrames-1) ? curFrame+1 : 0;
 	circleOffset += .3;
+    
+    
+    
 	return true;
 }
 
