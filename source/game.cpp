@@ -1,19 +1,15 @@
 #include "game.h"
 #include "unit.h"
-#include "artist.h"
 
 Game::Game(int numPlayers) : numPlayers(numPlayers) {
-	
-	uiManager = new UIManager();
+    
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	resources = IwGetResManager()->GetGroupNamed("Sprites");
 	initRenderState();
 }
 
 Game::~Game(){
-	
-	delete uiManager;
-	
+    	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
 		(*itr).second->clear();
 		delete (*itr).second;
@@ -57,7 +53,7 @@ void Game::tick(){
 		(*itr)->update();
 	}
 	
-	uiManager->updateOffset();
+    ++timesteps;
 	render();
 }
 

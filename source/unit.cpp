@@ -1,4 +1,5 @@
 #include "unit.h"
+#include "s3ePointer.h"
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
 		float munch_speed, float range, float sight,

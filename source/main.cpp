@@ -2,7 +2,6 @@
 #include "IwUtil.h"
 #include "IwGx.h"
 #include "IwGeomMat.h"
-#include "uimanager.h"
 #include "unit.h"
 #include "muncher.h"
 

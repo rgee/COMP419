@@ -4,7 +4,6 @@
 #include "IwArray.h"
 
 class Game;
-class Artist;
 class Unit;
 
 #include <map>
@@ -15,8 +14,6 @@ class Unit;
 #include "IwManagedList.h"
 #include "IwGx.h"
 #include "player.h"
-#include "gridcell.h"
-#include "uimanager.h"
 
 typedef std::map<char*, std::set<Unit*>* > UnitBucket;
 
@@ -28,9 +25,6 @@ class Game {
         int numPlayers;
         
         CIwArray<Unit*> units;
-
-		Artist* artist;
-		UIManager* uiManager;
 
 		CIwResGroup* resources;
 		
@@ -47,9 +41,7 @@ class Game {
         
         void addUnit(Unit *u);
 		CIwArray<Unit*>* getUnits();
-        
-        Artist* getArtist();
-	
+        	
 		void tick();
 	
 		void render();
