@@ -13,14 +13,11 @@ bool Muncher::update() {
 	//a silly "pathing" calculation for testing purposes only
 	curFrame = (curFrame < numFrames-1) ? curFrame+1 : 0;
 	circleOffset += .3;
-    
-    
-    
 	return true;
 }
 
 void Muncher::display() {
-	renderSprite(curFrame, 0x8*20*circleOffset, 1.0 - .5*sin(circleOffset));
+	renderSprite(curFrame, 0x8*20*circleOffset, 1.0);
 }
 
 char* Muncher::getTextureName() {

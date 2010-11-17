@@ -2,13 +2,14 @@
 #include "unit.h"
 
 Game::Game(int numPlayers) : numPlayers(numPlayers) {
+    
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	resources = IwGetResManager()->GetGroupNamed("Sprites");
 	initRenderState();
 }
 
 Game::~Game(){
-		
+    	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
 		(*itr).second->clear();
 		delete (*itr).second;
@@ -18,11 +19,12 @@ Game::~Game(){
 }
 
 void Game::initRenderState() {
-	//set up the view transform
-	IwGxSetPerspMul(0xa0);
-	IwGxSetFarZNearZ(0x1000, 0x10);
+	
+	//set up the camera position and view transform
+	IwGxSetPerspMul(0x9);
+	IwGxSetFarZNearZ(0xa, 0x8);
 	CIwMat view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3(300, 1, -0xa0));
+	view.SetTrans(CIwVec3(300, 0, -0x9));
 	IwGxSetViewMatrix(&view);
 }
 
@@ -36,10 +38,6 @@ void Game::addUnit(Unit *u){
     units.push_back(u);
 	
 	if(unitBucket.find(u->getTextureName()) == unitBucket.end()) {
-		CIwMaterial* mat = new CIwMaterial();
-		mat->SetTexture((CIwTexture*)resources->GetResNamed(u->getTextureName(), IW_GX_RESTYPE_TEXTURE));
-		mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
-		mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 		std::set<Unit*>* bucket = new std::set<Unit*>();
 		bucket->insert(u);
 		unitBucket[u->getTextureName()] = bucket;
@@ -61,7 +59,7 @@ void Game::tick(){
 
 void Game::render() {
 	
-	IwGxSetColClear(255, 100, 255, 255);
+	IwGxSetColClear(255, 255, 255, 255);
 	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	
 	char* curTexture = "";
@@ -84,7 +82,7 @@ void Game::render() {
 		}
 	}
 	
-	IwGxSwapBuffers();
+	delete mat;
 	
-	delete(mat);
+	IwGxSwapBuffers();
 }
