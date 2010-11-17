@@ -1,5 +1,5 @@
 CIwResGroup
 {
 	name "Game"
-	"sprites.group"
+	"./sprites.group"
 }

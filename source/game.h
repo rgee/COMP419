@@ -30,7 +30,7 @@ class Game {
         CIwArray<Unit*> units;
 
 		Artist* artist;
-		UIManager* ui_manager;
+		UIManager* uiManager;
 
 		CIwResGroup* resources;
 		
