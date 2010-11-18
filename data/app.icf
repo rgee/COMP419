@@ -16,10 +16,10 @@
 # Some conditional operations are also permitted, see the
 # S3E documentation for details.
 
-
 [S3E]
 MemSize = 100000000
 MemSizeDebug = 100000000
+
 
 [gx]
 # HW mode requires slightly more datacache

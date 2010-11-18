@@ -3,12 +3,9 @@
 files
 {
     (source)
-    artist.h
-    artist.cpp
+	linkedlist.h
     game.h
     game.cpp
-    gridcell.h
-    gridcell.cpp
     unit.h
     unit.cpp
     muncher.h
@@ -17,8 +14,6 @@ files
     dummyunit.cpp
     player.h
     player.cpp
-    uimanager.h
-    uimanager.cpp
     main.cpp
 }
 

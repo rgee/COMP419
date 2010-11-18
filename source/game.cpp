@@ -1,23 +1,31 @@
 #include "game.h"
 #include "unit.h"
-#include "artist.h"
 
 Game::Game(int numPlayers) : numPlayers(numPlayers) {
-	ui_manager = new UIManager();
-	artist = new Artist(this, ui_manager);
-	IwResManagerInit();
-	IwGetResManager()->SetMode(CIwResManager::MODE_BUILD);
-	IwGetResManager()->LoadGroup("main.group");
-
-	resources = IwGetResManager()->GetGroupNamed("main");
-
-	artist->set_resources(*resources);
+    
+	IwGetResManager()->LoadGroup("resource_groups/game.group");
+	resources = IwGetResManager()->GetGroupNamed("Sprites");
+	initRenderState();
 }
 
 Game::~Game(){
-	IwGetResManager()->DestroyGroup("main");
-	delete artist;
-	IwResManagerTerminate();
+    	
+	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
+		(*itr).second->clear();
+		delete (*itr).second;
+	}
+	
+	units.clear_optimised();
+}
+
+void Game::initRenderState() {
+	
+	//set up the camera position and view transform
+	IwGxSetPerspMul(0x9);
+	IwGxSetFarZNearZ(0xa, 0x8);
+	CIwMat view = CIwMat::g_Identity;
+	view.SetTrans(CIwVec3(300, 0, -0x9));
+	IwGxSetViewMatrix(&view);
 }
 
 CIwArray<Unit*>* Game::getUnits(){
@@ -25,8 +33,18 @@ CIwArray<Unit*>* Game::getUnits(){
 }
 
 void Game::addUnit(Unit *u){
+	
     u->setId(units.size());
     units.push_back(u);
+	
+	if(unitBucket.find(u->getTextureName()) == unitBucket.end()) {
+		std::set<Unit*>* bucket = new std::set<Unit*>();
+		bucket->insert(u);
+		unitBucket[u->getTextureName()] = bucket;
+	}
+	else {
+		(unitBucket[u->getTextureName()])->insert(u);
+	}
 }
 
 void Game::tick(){
@@ -35,8 +53,36 @@ void Game::tick(){
 		(*itr)->update();
 	}
 	
-	ui_manager->updateOffset();
-	artist->render(++timesteps);
+    ++timesteps;
+	render();
 }
 
-Artist* Game::getArtist(){ return artist; }
+void Game::render() {
+	
+	IwGxSetColClear(255, 255, 255, 255);
+	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
+	
+	char* curTexture = "";
+	CIwMaterial* mat = new CIwMaterial();
+	
+	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
+		
+		if (strcmp((*itr).first, curTexture) != 0) {
+			curTexture = (*itr).first;
+			mat->SetTexture((CIwTexture*)resources->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
+			mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
+			mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+			IwGxSetMaterial(mat);
+		}
+		
+		std::set<Unit*>* renderUnits = (*itr).second;
+		
+		for (std::set<Unit*>::iterator u_it = renderUnits->begin(); u_it != renderUnits->end(); ++u_it) {
+			(*u_it)->display();
+		}
+	}
+	
+	delete mat;
+	
+	IwGxSwapBuffers();
+}

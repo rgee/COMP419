@@ -2,6 +2,7 @@
 #define _UNIT_H
 
 #include "IwGx.h"
+#include "IwGeom.h"
 #include "game.h"
 #include "player.h"
 
@@ -33,12 +34,13 @@ class Unit {
 	
 		/**
 		Utility method that subclasses will use to render their sprites. Assumes that 
-		current material has already been set to the sprite image by Artist.
+		current material has already been set to the sprite image.
 		 
 		@param frameNumber which frame of the sprite sheet to display (indexed from 0)
 		@param angle angle to rotate the sprite by
+		@param scaleFactor factor to scale the sprite by
 		*/
-		void renderSprite(int frameNumber, float angle);
+		void renderSprite(int frameNumber, float angle, float scaleFactor);
 
         
     public:

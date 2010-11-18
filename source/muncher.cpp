@@ -6,15 +6,18 @@ Muncher::Muncher(Player* owner, Game* game, CIwVec2 position)
 	spriteSize = 64;
 	numFrames = 6;
 	curFrame = 0;
+	circleOffset = 0.0;
 }
 
 bool Muncher::update() {
+	//a silly "pathing" calculation for testing purposes only
 	curFrame = (curFrame < numFrames-1) ? curFrame+1 : 0;
+	circleOffset += .3;
 	return true;
 }
 
 void Muncher::display() {
-	renderSprite(curFrame, 0.0);
+	renderSprite(curFrame, 0x8*20*circleOffset, 1.0);
 }
 
 char* Muncher::getTextureName() {
