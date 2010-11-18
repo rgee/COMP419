@@ -17,7 +17,7 @@ bool Muncher::update() {
 }
 
 void Muncher::display() {
-	renderSprite(curFrame, 0x8*20*circleOffset, 1.0);
+	renderSprite(curFrame, 0, 1.0);
 }
 
 char* Muncher::getTextureName() {

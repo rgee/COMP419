@@ -35,16 +35,16 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 	modelTransform.SetTrans(CIwVec3(left, -1*top, 1));
 	IwGxSetModelMatrix(&modelTransform, false);
 	
-	//set up UV offset for the given frame number
-	//TODO This was figured out purely by trial and error, and only works
-	//for sheets with 64x64 sprites. Need to figure out how Airplay interprets
-	//UV coordinates - makes no sense to me right now.
-	UVs[0] = CIwSVec2(frameNumber*682, 0);
-	UVs[2] = CIwSVec2((frameNumber+1)*682, 0);
-	UVs[3] = CIwSVec2((frameNumber+1)*682, 4096);
-	UVs[1] = CIwSVec2(frameNumber*682, 4096);
+	int squaredSize = spriteSize*spriteSize;
+	int offset = squaredSize/numFrames;
+	
+	//set up sprite UV's
+	UVs[0] = CIwSVec2(frameNumber*offset, 0);
+	UVs[2] = CIwSVec2((frameNumber+1)*offset, 0);
+	UVs[3] = CIwSVec2((frameNumber+1)*offset, squaredSize);
+	UVs[1] = CIwSVec2(frameNumber*offset, squaredSize);
 
-	//render the image to screen
+	//render the unit in model space
 	IwGxSetUVStream(UVs);
 	IwGxSetColStream(NULL);
 	IwGxSetVertStreamModelSpace(vertices, 4);
