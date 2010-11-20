@@ -12,6 +12,8 @@ files
     player.h
     player.cpp
     main.cpp
+	util.h
+	util.cpp
 }
 
 subprojects

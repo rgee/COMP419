@@ -36,6 +36,14 @@ class Game {
 		long timesteps;
 	
 		void initRenderState();
+	
+		void render();
+	
+		void renderSprites();
+	
+		void renderWorld();
+	
+		void renderUI();
 	                    
     public:
 	
@@ -46,9 +54,7 @@ class Game {
 		CIwArray<Unit*>* getUnits();
         	
 		void tick();
-	
-		void render();
-		
+			
 		long getTimesteps();
 
 };

@@ -108,6 +108,5 @@ void Unit::setVelocity(const CIwSVec2& vel)
 {
     float angle = acos(vel.Dot(velocity));
 
-
     velocity = vel;
 }

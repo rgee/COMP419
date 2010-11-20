@@ -27,7 +27,6 @@ void doMain() {
 		    break;
 		}
 		
-		game->render();
 		game->tick();
 		
 		int64 start = s3eTimerGetMs();

@@ -61,6 +61,13 @@ void Game::render() {
 	
 	IwGxSetColClear(255, 255, 255, 255);
 	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
+
+	renderSprites();
+	
+	IwGxSwapBuffers();
+}
+
+void Game::renderSprites() {
 	
 	char* curTexture = "";
 	CIwMaterial* mat = new CIwMaterial();
@@ -83,6 +90,25 @@ void Game::render() {
 	}
 	
 	delete mat;
-	
-	IwGxSwapBuffers();
 }
+
+void Game::renderWorld() {
+	
+	CIwMaterial* mat = new CIwMaterial();
+	mat->SetTexture((CIwTexture*)resources->GetResNamed("paper-world.png", IW_GX_RESTYPE_TEXTURE));
+	mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
+	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+	IwGxSetMaterial(mat);
+	
+	static CIwSVec3 vertices[4];
+	static CIwSVec2 UVs[4];
+}
+
+
+
+
+
+
+
+
+
