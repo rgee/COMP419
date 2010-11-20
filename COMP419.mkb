@@ -3,7 +3,6 @@
 files
 {
     (source)
-	linkedlist.h
     game.h
     game.cpp
     unit.h
