@@ -38,7 +38,8 @@ class Game {
 		// Queue of units we're set to 
 		std::list<Unit*> unitBuffer;
 
-		CIwResGroup* resources;
+		CIwResGroup* sprites;
+		CIwResGroup* game;
 		
 		UnitBucket unitBucket;
 	
@@ -48,6 +49,14 @@ class Game {
 		float outerRadius;
 	
 		void initRenderState();
+	
+		void render();
+	
+		void renderSprites();
+	
+		void renderWorld();
+	
+		void renderUI();
 	                    
     public:
 	
@@ -66,9 +75,7 @@ class Game {
 		CIwFVec2 getWorldRadius();
         	
 		void tick();
-	
-		void render();
-		
+			
 		long getTimesteps();
 
 };

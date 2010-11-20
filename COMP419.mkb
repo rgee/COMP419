@@ -17,6 +17,8 @@ files
 	AI.cpp
 	shooter.h
 	shooter.cpp
+	util.h
+	util.cpp
 }
 
 subprojects

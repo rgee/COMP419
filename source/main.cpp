@@ -126,6 +126,8 @@ void doMain() {
         game->tick();
 		
 		int64 start = s3eTimerGetMs();
+        
+        IwGxSwapBuffers();
 		
 		// Attempt frame rate
 		while ((s3eTimerGetMs() - start) < MS_PER_FRAME)

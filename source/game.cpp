@@ -4,7 +4,8 @@
 Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0) {
 	//ai = AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
-	resources = IwGetResManager()->GetGroupNamed("Sprites");
+	sprites = IwGetResManager()->GetGroupNamed("Sprites");
+	game = IwGetResManager()->GetGroupNamed("Game");
 	initRenderState();
 }
 
@@ -76,6 +77,13 @@ void Game::tick(){
 }
 
 void Game::render() {
+	renderWorld();
+	renderSprites();
+	
+	IwGxSwapBuffers();
+}
+
+void Game::renderSprites() {
 	
 	char* curTexture = "";
 	CIwMaterial* mat = new CIwMaterial();
@@ -84,7 +92,7 @@ void Game::render() {
 		
 		if (strcmp((*itr).first, curTexture) != 0) {
 			curTexture = (*itr).first;
-			mat->SetTexture((CIwTexture*)resources->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
+			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
 			mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
 			mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 			IwGxSetMaterial(mat);
@@ -97,8 +105,22 @@ void Game::render() {
 		}
 	}
 	delete mat;
+}
+
+void Game::renderWorld() {
+
+	CIwMaterial* mat = new CIwMaterial();
+	mat->SetTexture((CIwTexture*)game->GetResNamed("paper-world", IW_GX_RESTYPE_TEXTURE));
+	mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
+	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+	IwGxSetMaterial(mat);
+    
+    static int rot = 0;
+    rot++;
 	
-	IwGxSwapBuffers();
+    renderImageWorldSpace(CIwSVec2(60, 0), rot, .7, 960);
+	
+	delete mat;
 }
 
 CIwFVec2 Game::getWorldRadius() {

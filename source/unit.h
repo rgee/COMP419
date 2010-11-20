@@ -6,9 +6,7 @@
 #include "IwGeomCore.h"
 #include "game.h"
 #include "player.h"
-
-
-#define TO_RADIANS(X) X * (180.0f / PI) 
+#include "util.h"
 
 class Unit {
     protected:
