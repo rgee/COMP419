@@ -104,7 +104,7 @@ class Unit {
 	
 		void setRTheta(float x, float y);
 	
-		/* IGNORE THE FAllOWING.  I already updated set position to change theta and r
+		/* IGNORE THE FOLLOWING.  I already updated set position to change theta and r
 		 and vice versa so use which ever coordinate system works best for you cause
 		 their are times where either works.
 		 
