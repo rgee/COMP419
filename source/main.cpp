@@ -5,11 +5,23 @@
 #include "unit.h"
 #include "muncher.h"
 
-#define FRAME_RATE 10
 #define	MS_PER_FRAME (1000 / 10)
 
 void doMain() {
 
+    IwGetResManager()->LoadGroup("resource_groups/palate.group");
+    CIwResGroup* palateGroup = IwGetResManager()->GetGroupNamed("Palate");
+    CIwMaterial* mat = new CIwMaterial();
+    mat->SetTexture((CIwTexture*)palateGroup->GetResNamed("palate", IW_GX_RESTYPE_TEXTURE));
+    mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
+    mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+        
+	static CIwSVec2 xy(280, 0);
+	static CIwSVec2 wh(40, 480);
+	static CIwSVec2 uv(0, 0);
+	static CIwSVec2 duv(1 << 11, 1 << 11);
+
+    
 	Game* game = new Game(2);
 	Muncher *munch = new Muncher(NULL, game, CIwVec2(300, 0));
 	game->addUnit(munch);
@@ -26,8 +38,14 @@ void doMain() {
 			
 		    break;
 		}
+        
+        IwGxSetMaterial(mat);
+        IwGxSetScreenSpaceSlot(-1);
+        IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
 		
-		game->render();
+        IwGxSetColClear(255, 255, 255, 255);
+        IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
+        
 		game->tick();
 		
 		int64 start = s3eTimerGetMs();

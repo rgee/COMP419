@@ -14,7 +14,7 @@ Game::~Game(){
 		(*itr).second->clear();
 		delete (*itr).second;
 	}
-	
+
 	units.clear_optimised();
 }
 
@@ -58,9 +58,6 @@ void Game::tick(){
 }
 
 void Game::render() {
-	
-	IwGxSetColClear(255, 255, 255, 255);
-	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	
 	char* curTexture = "";
 	CIwMaterial* mat = new CIwMaterial();
