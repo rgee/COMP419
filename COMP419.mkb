@@ -18,6 +18,8 @@ files
     main.cpp
 	AI.h
 	AI.cpp
+	shooter.h
+	shooter.cpp
 }
 
 subprojects
