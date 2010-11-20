@@ -11,6 +11,7 @@ Unit::Unit(const Unit& newUnit)
 }
 
 
+
 Unit::Unit(float hp, float cost, float attack, float speed, 
 		float munch_speed, float range, float sight,
 		float spread_speed, float spread_radius, Player* owner,
@@ -20,8 +21,11 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  spread_speed(spread_speed), spread_radius(spread_radius),
 		  owner(owner), game(game), position(position)
 {
-	
 }
+/*
+Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
+*/
+
 
 void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 		
@@ -62,47 +66,88 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 	IwGxFlush();
 }
 
-int Unit::getId(){ return uid; }
 
+int Unit::getId(){ return uid; }
 void Unit::setId(int uid){ this->uid = uid; }
 
-void Unit::setR(float x){ r = x; }
 
-void Unit::setTheta(float y){ theta = y; }
 
-Player& Unit::getOwner(){ return *owner; }
+void Unit::setRTheta(float rad, float ang){ 
+	r = rad;
+	theta = ang;
+	position.x = (r/sin(theta))-1;
+	position.y = position.x*sin(theta);
+}
 
-void Unit::setOwner(Player& p){ owner = &p;}
+Player& Unit::getOwner(){
+	return *owner;
+}
 
-float Unit::getHp(){ return hp; }
+Game* Unit::getGame(){
+	return game;
+}
 
-void Unit::setHp(float f){ hp = f; }
+Unit* Unit::getAttacking(){return Attacking;}
+void Unit::setAttacking(Unit* unit){Attacking = unit;}
 
-Player *getOwner() { return 0; }
+Unit* Unit::getPursuing(){return Pursuing;}
+void Unit::setPursuing(Unit* unit){Pursuing=unit;}
 
-void Unit::decrementHp(float f){ hp -= f; }
+bool Unit::attacking(){if(Attacking!=NULL){return true;}else{return false;}}
+bool Unit::pursuing(){if(Pursuing!=NULL){return true;}else{return false;}}
+
+
+
+void Unit::setOwner(Player& p){
+	owner = &p;
+}
+
+float Unit::getHp(){
+	return hp;
+}
+float Unit::getRange(){return range;}
+
+void Unit::setHp(float f){
+	hp = f;
+}
+
+void Unit::decrementHp(float f){
+	hp -= f;
+}
 
 void Unit::setPosition(int x, int y){
 	position.x = x;
 	position.y = y;
+	r = sqrt(x^2 + y^2);
+	theta = asin(y/x);
+	
 }
 
 void Unit::setPosition(const CIwVec2& newPosition){
 	position = newPosition;
+	float x = newPosition.x;
+	float y = newPosition.y;
+	r = sqrt(x*x + y*y);
+	theta = asin(y/x);
 }
 
 
-float Unit::getR(){ return r; }
+CIwSVec2 Unit::getPosition(){return position;}
 
+float Unit::getR(){ return r; }
 float Unit::getTheta(){ return theta; }
 
 void Unit::increaseX(float x){}
-
 void Unit::increaseY(float y){}
-
 float Unit::getX(){return 0.0f;}
-
 float Unit::getY(){return 0.0f;}
+
+
+float Unit::getSpeed(){return speed;}
+
+void Unit::Attack(){};
+void Unit::RecieveDamage(){};
+
 
 void Unit::setVelocity(const CIwSVec2& vel)
 {
