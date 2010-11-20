@@ -14,7 +14,7 @@ class Muncher : public Unit {
 
 		virtual char* getTextureName();
 		virtual bool update();
-		virtual void display();
+		virtual void display(float worldRot);
 	
 	private:
 	
