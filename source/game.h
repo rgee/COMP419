@@ -33,6 +33,7 @@ class Game {
         //CIwArray<Unit*> units;
 
         std::list<Unit*> units;
+        int numUnits;
 
 		// Queue of units we're set to 
 		std::list<Unit*> unitBuffer;

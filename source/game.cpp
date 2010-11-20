@@ -1,7 +1,7 @@
 #include "game.h"
 #include "unit.h"
  
-Game::Game(int numPlayers) : numPlayers(numPlayers) {
+Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0) {
 	//ai = AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	resources = IwGetResManager()->GetGroupNamed("Sprites");
@@ -34,7 +34,7 @@ std::list<Unit*>* Game::getUnits(){
 
 void Game::addUnit(Unit *u){
 	
-    u->setId(units.size());
+    u->setId(numUnits++);
 
 	if(units.empty()) {
 		units.push_back(u);
