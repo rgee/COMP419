@@ -2,6 +2,7 @@
 #include "AI.h"
   
 AI::AI(){}
+AI::~AI(){}
 
 void AI::Path(Unit& unit){ 
 	float rad = unit.getR();
@@ -36,13 +37,15 @@ bool AI::Attack(Unit& unit){
 		unit.setPursuing(NULL);
 	}
 	
-} 
-Unit& AI::Detect_Enemy(Unit& unit){
-	//CIwArray<Unit*>* Units = unit.getGame().getUnits();
+
+	return true;
 }
+
 void AI::UpdateAI(Unit& unit){
 	
 	
 }
-Unit* CollisionDetection(Unit& unit, CIwArray<Unit*>* Units){}
+Unit* CollisionDetection(Unit& unit, CIwArray<Unit*>* Units){
+	return NULL;
+}
  

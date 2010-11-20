@@ -19,7 +19,8 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		: hp(hp), cost(cost), attack(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), game(game), position(position)
+		  owner(owner), game(game), position(position),
+		  theta(0.0f)
 {
 }
 /*

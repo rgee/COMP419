@@ -43,6 +43,9 @@ class Game {
 		UnitBucket unitBucket;
 	
 		long timesteps;
+
+		float innerRadius;
+		float outerRadius;
 	
 		void initRenderState();
 	                    
@@ -53,6 +56,14 @@ class Game {
         
         void addUnit(Unit *u);
 		std::list<Unit*>* getUnits();
+
+		/**
+		 * Gets the inner and outer radii of the world donut.
+		 *
+		 * Returns a CIwFVec2 where the x coord is the inner radius
+		 * and the y coord is the outer radius.
+		 */
+		CIwFVec2 getWorldRadius();
         	
 		void tick();
 	
