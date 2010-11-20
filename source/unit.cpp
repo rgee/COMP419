@@ -31,7 +31,7 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist, -1);
 	
 	CIwMat modelTransform = CIwMat::g_Identity;
-	modelTransform.SetRotZ(angle);
+	modelTransform.SetRotZ(TO_RADIANS(angle));
 	modelTransform.SetTrans(CIwVec3(left, -1*top, 1));
 	IwGxSetModelMatrix(&modelTransform, false);
 	
@@ -92,3 +92,11 @@ void Unit::increaseY(float y){}
 float Unit::getX(){return 0.0f;}
 
 float Unit::getY(){return 0.0f;}
+
+void Unit::setVelocity(const CIwSVec2& vel)
+{
+    float angle = acos(vel.Dot(velocity));
+
+
+    velocity = vel;
+}
