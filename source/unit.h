@@ -37,6 +37,9 @@ class Unit {
 		int numFrames;
 		int curFrame;
 	
+		Unit *Attacking;
+		Unit *Pursuing;
+	
 		/**
 		Utility method that subclasses will use to render their sprites. Assumes that 
 		current material has already been set to the sprite image.
@@ -62,13 +65,31 @@ class Unit {
 		void setPosition(int32 x, int32 y);
 		void setPosition(const CIwVec2& position);
 
+		
+		CIwSVec2 getPosition();
+
+
         void setVelocity(const CIwSVec2& velocity);
+
     
+		float getSpeed(); 
+		float getRange();
 		int getId();
 		void setId(int uuid);
         
 		Player& getOwner();
 		void setOwner(Player& p);
+		
+		Game* getGame();
+	
+		Unit* getAttacking();
+		void setAttacking(Unit* unit);
+		
+		Unit* getPursuing();
+		void setPursuing(Unit* unit);
+	
+		bool attacking();
+		bool pursuing();
         
 		float getHp();
 		void setHp(float f);
@@ -77,10 +98,17 @@ class Unit {
 		float getR();
 		float getTheta();
 	
-		void setR(float x);
-		void setTheta(float y);
-
-		/* Units are going to keep track of their location in terms of r, theta, but
+	
+		//To deal with simultaneous altering of R Theta and X,Y Pos setR and setTheta must be combined
+		//Please Refractor accordingly.
+	
+		void setRTheta(float x, float y);
+	
+		/* IGNORE THE FAllOWING.  I already updated set position to change theta and r
+		 and vice versa so use which ever coordinate system works best for you cause
+		 their are times where either works.
+		 
+		   Units are going to keep track of their location in terms of r, theta, but
 		   the following methods preserve distance, so calling increaseX(5.0f) might
 		   change theta by more or less than 5. Additionally, it will wrap around
 		   as appropriate.
@@ -90,9 +118,14 @@ class Unit {
 		float getX();
 		float getY();
 	
+	
 		virtual char* getTextureName() = 0;
 		virtual bool update() = 0;
 		virtual void display() = 0;
+		
+		void Attack();
+		void RecieveDamage(); 
+	
 };
 
 #endif

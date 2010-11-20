@@ -1,3 +1,4 @@
+
 #!/usr/bin/env mkb
 
 files
@@ -15,6 +16,10 @@ files
     player.h
     player.cpp
     main.cpp
+	AI.h
+	AI.cpp
+	shooter.h
+	shooter.cpp
 }
 
 subprojects
