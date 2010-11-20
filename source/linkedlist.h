@@ -9,11 +9,13 @@ class LinkedList {
         void append(Unit *unit){
             Node *node = new Node(unit);
             if(tail){
-                node->prev = tail;
                 tail->next = node;
+                head->prev = node;
             }else{
                 head = node;
             }
+            node->next = head;
+            node->prev = tail;
             tail = node;
         }
     
