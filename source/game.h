@@ -9,6 +9,7 @@ class Unit;
 #include <map>
 #include <set>
 #include <list>
+#include <deque>
 #include "string.h"
 #include "IwResManager.h"
 #include "IwResGroup.h"
@@ -25,9 +26,12 @@ class Game {
         CIwArray<Player*> players;
         int numPlayers;
         
-        CIwArray<Unit*> units;
+        //CIwArray<Unit*> units;
 
-        std::list<Unit*> sortedUnits;
+        std::list<Unit*> units;
+
+		// Queue of units we're set to 
+		std::list<Unit*> unitBuffer;
 
 		CIwResGroup* resources;
 		
@@ -43,7 +47,7 @@ class Game {
 		~Game();
         
         void addUnit(Unit *u);
-		CIwArray<Unit*>* getUnits();
+		std::list<Unit*>* getUnits();
         	
 		void tick();
 	

@@ -15,7 +15,7 @@ Game::~Game(){
 		delete (*itr).second;
 	}
 	
-	units.clear_optimised();
+	units.clear();
 }
 
 void Game::initRenderState() {
@@ -28,14 +28,19 @@ void Game::initRenderState() {
 	IwGxSetViewMatrix(&view);
 }
 
-CIwArray<Unit*>* Game::getUnits(){
+std::list<Unit*>* Game::getUnits(){
 	return &units;
 }
 
 void Game::addUnit(Unit *u){
 	
     u->setId(units.size());
-    units.push_back(u);
+
+	if(units.empty()) {
+		units.push_back(u);
+	} else {
+		unitBuffer.push_back(u);
+	}
 	
 	if(unitBucket.find(u->getTextureName()) == unitBucket.end()) {
 		std::set<Unit*>* bucket = new std::set<Unit*>();
@@ -49,8 +54,19 @@ void Game::addUnit(Unit *u){
 
 void Game::tick(){
 
-	for(CIwArray<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr){
+	float curr_theta, new_theta;
+	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
 		(*itr)->update();
+
+		curr_theta = (*itr)->getTheta();
+		for(std::list<Unit*>::iterator new_itr = unitBuffer.begin(); new_itr != unitBuffer.end(); ++new_itr) {
+			new_theta = (*new_itr)->getTheta();
+
+			if( (curr_theta < new_theta) || (new_theta <= (*(++itr))->getTheta())) {
+				units.insert((++itr), (*new_itr));
+				unitBuffer.erase(new_itr);
+			}
+		}
 	}
 	
     ++timesteps;
