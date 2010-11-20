@@ -1,6 +1,16 @@
 #include "unit.h"
 #include "s3ePointer.h"
 
+Unit::Unit(const Unit& newUnit)
+	: hp(newUnit.hp), cost(newUnit.cost), attack(newUnit.attack), speed(newUnit.speed),
+	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
+	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
+	owner(newUnit.owner), game(newUnit.game), position(newUnit.position)
+{
+
+}
+
+
 Unit::Unit(float hp, float cost, float attack, float speed, 
 		float munch_speed, float range, float sight,
 		float spread_speed, float spread_radius, Player* owner,
@@ -83,6 +93,7 @@ void Unit::setPosition(int x, int y){
 void Unit::setPosition(const CIwVec2& newPosition){
 	position = newPosition;
 }
+
 
 float Unit::getR(){ return r; }
 

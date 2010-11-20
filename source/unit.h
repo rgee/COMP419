@@ -50,6 +50,8 @@ class Unit {
 				float spread_speed, float spread_radius, Player* owner,
 				Game* game, CIwVec2 position);
 
+		Unit(const Unit& newUnit);
+
 		virtual ~Unit() {};
 
 		void setPosition(int32 x, int32 y);
