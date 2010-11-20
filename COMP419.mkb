@@ -9,8 +9,6 @@ files
     unit.cpp
     muncher.h
     muncher.cpp
-    dummyunit.h
-    dummyunit.cpp
     player.h
     player.cpp
     main.cpp
