@@ -29,7 +29,8 @@ class Game {
 
         std::list<Unit*> sortedUnits;
 
-		CIwResGroup* resources;
+		CIwResGroup* sprites;
+		CIwResGroup* game;
 		
 		UnitBucket unitBucket;
 	
