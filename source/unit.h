@@ -3,8 +3,12 @@
 
 #include "IwGx.h"
 #include "IwGeom.h"
+#include "IwGeomCore.h"
 #include "game.h"
 #include "player.h"
+
+
+#define TO_RADIANS(X) X * (180.0f / PI) 
 
 class Unit {
     protected:
@@ -25,6 +29,7 @@ class Unit {
 		Player *owner;
 		Game* game;
 		CIwSVec2 position;
+        CIwSVec2 velocity;
 		int uid;
 	
 		//info for sprite animation
@@ -56,6 +61,8 @@ class Unit {
 
 		void setPosition(int32 x, int32 y);
 		void setPosition(const CIwVec2& position);
+
+        void setVelocity(const CIwSVec2& velocity);
     
 		int getId();
 		void setId(int uuid);
