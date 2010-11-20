@@ -14,6 +14,7 @@ class Unit;
 #include "IwManagedList.h"
 #include "IwGx.h"
 #include "player.h"
+#include "AI.h"
 
 typedef std::map<char*, std::set<Unit*>* > UnitBucket;
 
@@ -23,6 +24,7 @@ class Game {
 	
         CIwArray<Player*> players;
         int numPlayers;
+		//AI* ai; 
         
         CIwArray<Unit*> units;
 

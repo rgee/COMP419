@@ -12,11 +12,10 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  owner(owner), game(game), position(position)
 {
 }
-<<<<<<< HEAD
 /*
 Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
 */
-=======
+
 
 void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 		
@@ -60,18 +59,37 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 	free(UVs);
 }
 
->>>>>>> 5a2d34d96985c48431ae48762366a12c96776871
+
 int Unit::getId(){ return uid; }
 void Unit::setId(int uid){ this->uid = uid; }
 
 
 
-void Unit::setR(float x){ r = x; }
-void Unit::setTheta(float y){ theta = y; }
+void Unit::setRTheta(float rad, float ang){ 
+	r = rad;
+	theta = ang;
+	position.x = (r/sin(theta))-1;
+	position.y = position.x*sin(theta);
+}
 
 Player& Unit::getOwner(){
 	return *owner;
 }
+
+Game* Unit::getGame(){
+	return game;
+}
+
+Unit* Unit::getAttacking(){return Attacking;}
+void Unit::setAttacking(Unit* unit){Attacking = unit;}
+
+Unit* Unit::getPursuing(){return Pursuing;}
+void Unit::setPursuing(Unit* unit){Pursuing=unit;}
+
+bool Unit::attacking(){if(Attacking!=NULL){return true;}else{return false;}}
+bool Unit::pursuing(){if(Pursuing!=NULL){return true;}else{return false;}}
+
+
 
 void Unit::setOwner(Player& p){
 	owner = &p;
@@ -80,6 +98,7 @@ void Unit::setOwner(Player& p){
 float Unit::getHp(){
 	return hp;
 }
+float Unit::getRange(){return range;}
 
 void Unit::setHp(float f){
 	hp = f;
@@ -92,12 +111,20 @@ void Unit::decrementHp(float f){
 void Unit::setPosition(int x, int y){
 	position.x = x;
 	position.y = y;
+	r = sqrt(x^2 + y^2);
+	theta = asin(y/x);
 	
 }
 
 void Unit::setPosition(const CIwVec2& newPosition){
 	position = newPosition;
+	float x = newPosition.x;
+	float y = newPosition.y;
+	r = sqrt(x*x + y*y);
+	theta = asin(y/x);
 }
+
+CIwSVec2 Unit::getPosition(){return position;}
 
 float Unit::getR(){ return r; }
 float Unit::getTheta(){ return theta; }
@@ -106,3 +133,9 @@ void Unit::increaseX(float x){}
 void Unit::increaseY(float y){}
 float Unit::getX(){return 0.0f;}
 float Unit::getY(){return 0.0f;}
+
+float Unit::getSpeed(){return speed;}
+
+void Unit::Attack(){};
+void Unit::RecieveDamage(){};
+
