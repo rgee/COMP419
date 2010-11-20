@@ -97,7 +97,7 @@ void doMain() {
 	static CIwSVec2 duv(1 << 11, 1 << 11);
 
     
-	Game* game = new Game(2);
+	game = new Game(2);
 	Muncher *munch = new Muncher(NULL, game, CIwVec2(300, 0));
 	game->addUnit(munch);
 	
