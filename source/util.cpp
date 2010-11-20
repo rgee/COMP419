@@ -1,5 +1,14 @@
 #include "util.h"
 
+CIwMat* worldToScreenMatrix(float r, float theta, int screen_width, int screen_height) {
+    theta = TO_RADIANS(theta);
+
+    CIwMat* matrix = CIwMat();
+    CIwVec3* translation_vect = CIwVec3(w/2 - r*cos(theta), h/2 - r*sin(theta), 0);
+    matrix.SetTrans(translation_vect);
+    matrix.SetRotZ(r=theta);
+}
+
 void renderImageWorldSpace(CIwSVec2 position, float angle, float scaleFactor, int textureSize, int frameNumber, int numFrames) {
 	
 	int left = position.x;
