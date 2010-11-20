@@ -3,15 +3,12 @@
 files
 {
     (source)
-	linkedlist.h
     game.h
     game.cpp
     unit.h
     unit.cpp
     muncher.h
     muncher.cpp
-    dummyunit.h
-    dummyunit.cpp
     player.h
     player.cpp
     main.cpp
