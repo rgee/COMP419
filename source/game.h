@@ -6,6 +6,7 @@
 class Game;
 class Unit;
 
+
 #include <map>
 #include <set>
 #include "string.h"
@@ -16,6 +17,7 @@ class Unit;
 #include "player.h"
 #include "AI.h"
 
+
 typedef std::map<char*, std::set<Unit*>* > UnitBucket;
 
 class Game {
@@ -24,7 +26,7 @@ class Game {
 	
         CIwArray<Player*> players;
         int numPlayers;
-		//AI* ai; 
+		AI ai; 
         
         CIwArray<Unit*> units;
 

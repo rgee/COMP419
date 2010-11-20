@@ -15,6 +15,8 @@ files
     player.h
     player.cpp
     main.cpp
+	AI.h
+	AI.cpp
 }
 
 subprojects

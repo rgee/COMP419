@@ -112,7 +112,7 @@ class Unit {
 		virtual void display() = 0;
 		
 		void Attack();
-		void RecieveDammage(); 
+		void RecieveDamage(); 
 	
 };
 
