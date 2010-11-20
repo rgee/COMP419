@@ -1,6 +1,16 @@
 #include "unit.h"
 #include "s3ePointer.h"
 
+Unit::Unit(const Unit& newUnit)
+	: hp(newUnit.hp), cost(newUnit.cost), attack(newUnit.attack), speed(newUnit.speed),
+	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
+	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
+	owner(newUnit.owner), game(newUnit.game), position(newUnit.position)
+{
+
+}
+
+
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
 		float munch_speed, float range, float sight,
@@ -22,8 +32,8 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 	int left = position.x;
 	int top = position.y;	
 	
-	CIwSVec3* vertices = (CIwSVec3*)malloc(sizeof(CIwSVec3)*4);
-	CIwSVec2* UVs = (CIwSVec2*)malloc(sizeof(CIwSVec2)*4);
+	static CIwSVec3 vertices[4];
+	static CIwSVec2 UVs[4];
 	
 	//set up model space vertices
 	
@@ -35,28 +45,25 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist, -1);
 	
 	CIwMat modelTransform = CIwMat::g_Identity;
-	modelTransform.SetRotZ(angle);
+	modelTransform.SetRotZ(TO_RADIANS(angle));
 	modelTransform.SetTrans(CIwVec3(left, -1*top, 1));
 	IwGxSetModelMatrix(&modelTransform, false);
 	
-	//set up UV offset for the given frame number
-	//TODO This was figured out purely by trial and error, and only works
-	//for sheets with 64x64 sprites. Need to figure out how Airplay interprets
-	//UV coordinates - makes no sense to me right now.
-	UVs[0] = CIwSVec2(frameNumber*682, 0);
-	UVs[2] = CIwSVec2((frameNumber+1)*682, 0);
-	UVs[3] = CIwSVec2((frameNumber+1)*682, 4096);
-	UVs[1] = CIwSVec2(frameNumber*682, 4096);
+	int squaredSize = spriteSize*spriteSize;
+	int offset = squaredSize/numFrames;
+	
+	//set up sprite UV's
+	UVs[0] = CIwSVec2(frameNumber*offset, 0);
+	UVs[2] = CIwSVec2((frameNumber+1)*offset, 0);
+	UVs[3] = CIwSVec2((frameNumber+1)*offset, squaredSize);
+	UVs[1] = CIwSVec2(frameNumber*offset, squaredSize);
 
-	//render the image to screen
+	//render the unit in model space
 	IwGxSetUVStream(UVs);
 	IwGxSetColStream(NULL);
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
 	IwGxFlush();
-	
-	free(vertices);
-	free(UVs);
 }
 
 
@@ -124,6 +131,7 @@ void Unit::setPosition(const CIwVec2& newPosition){
 	theta = asin(y/x);
 }
 
+
 CIwSVec2 Unit::getPosition(){return position;}
 
 float Unit::getR(){ return r; }
@@ -134,8 +142,17 @@ void Unit::increaseY(float y){}
 float Unit::getX(){return 0.0f;}
 float Unit::getY(){return 0.0f;}
 
+
 float Unit::getSpeed(){return speed;}
 
 void Unit::Attack(){};
 void Unit::RecieveDamage(){};
 
+
+void Unit::setVelocity(const CIwSVec2& vel)
+{
+    float angle = acos(vel.Dot(velocity));
+
+
+    velocity = vel;
+}

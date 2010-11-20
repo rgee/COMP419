@@ -2,7 +2,7 @@
 #include "unit.h"
  
 Game::Game(int numPlayers) : numPlayers(numPlayers) {
-	ai = AI();
+	//ai = AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	resources = IwGetResManager()->GetGroupNamed("Sprites");
 	initRenderState();
