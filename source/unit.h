@@ -72,10 +72,13 @@ class Unit {
 
 
         void setVelocity(const CIwSVec2& velocity);
+    
+        CIwSVec2 getVelocity();
 
     
 		float getSpeed(); 
 		float getRange();
+        float getSize();
 		int getId();
 		void setId(int uuid);
         
@@ -128,6 +131,9 @@ class Unit {
 		
 		void Attack();
 		void RecieveDamage(); 
+        CIwSVec2 ConvertToRTheta(CIwSVec2 pos);
+    
+        float getSight();
 	
 =======
 		virtual void display(float worldRot) = 0;
