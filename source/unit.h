@@ -46,7 +46,7 @@ class Unit {
 		@param angle angle to rotate the sprite by
 		@param scaleFactor factor to scale the sprite by
 		*/
-		void renderSprite(int frameNumber, float angle, float scaleFactor);
+		void renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot);
 
         
     public:
@@ -123,11 +123,15 @@ class Unit {
 	
 		virtual char* getTextureName() = 0;
 		virtual bool update() = 0;
+<<<<<<< HEAD
 		virtual void display() = 0;
 		
 		void Attack();
 		void RecieveDamage(); 
 	
+=======
+		virtual void display(float worldRot) = 0;
+>>>>>>> 173108e33b7d759b2492a7fd6987b6611c58d1c4
 };
 
 #endif

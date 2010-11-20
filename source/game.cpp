@@ -74,14 +74,17 @@ void Game::tick(){
 	render();
 }
 
-void Game::render() {
-	renderWorld();
-	renderSprites();
+void Game::render() {	
+	IwGxSetColClear(255, 255, 255, 255);
+	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
+	
+	renderWorld(0.0);
+	renderSprites(0.0);
 	
 	IwGxSwapBuffers();
 }
 
-void Game::renderSprites() {
+void Game::renderSprites(float worldRot) {
 	
 	char* curTexture = "";
 	CIwMaterial* mat = new CIwMaterial();
@@ -98,16 +101,14 @@ void Game::renderSprites() {
 		
 		std::set<Unit*>* renderUnits = (*itr).second;
 		
-        int c = 0;
 		for (std::set<Unit*>::iterator u_it = renderUnits->begin(); u_it != renderUnits->end(); ++u_it) {
-            c++;
-			(*u_it)->display();
+			(*u_it)->display(worldRot);
 		}
 	}
 	delete mat;
 }
 
-void Game::renderWorld() {
+void Game::renderWorld(float worldRot) {
 
 	CIwMaterial* mat = new CIwMaterial();
 	mat->SetTexture((CIwTexture*)game->GetResNamed("paper-world", IW_GX_RESTYPE_TEXTURE));
@@ -115,10 +116,7 @@ void Game::renderWorld() {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
     
-    static int rot = 0;
-    rot++;
-	
-    renderImageWorldSpace(CIwSVec2(60, 0), rot, .7, 960);
+	renderImageWorldSpace(CIwSVec2(0, 0), 0.0, .7, 960, 0.0);
 	
 	delete mat;
 }

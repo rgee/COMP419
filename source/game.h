@@ -52,9 +52,9 @@ class Game {
 	
 		void render();
 	
-		void renderSprites();
+		void renderSprites(float worldRot);
 	
-		void renderWorld();
+		void renderWorld(float worldRot);
 	
 		void renderUI();
 	                    

@@ -31,9 +31,9 @@ Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
 //    return foo.getTheta() < u.getTheta();
 //}
 
-void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
+void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot) {
 	
-	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, frameNumber, numFrames);
+	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, worldRot, frameNumber, numFrames);
 }
 
 
