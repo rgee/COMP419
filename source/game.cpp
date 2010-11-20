@@ -59,10 +59,6 @@ void Game::tick(){
 	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
 		(*itr)->update();
 		curr_theta = (*itr)->getTheta();
-        
-        //while(curr_theta >= unitBuffer.front()){
-        //    units.insert((++itr), unitBuffer.pop_front());
-        //} 
 	}
     
     units.merge(unitBuffer);
