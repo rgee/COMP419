@@ -12,7 +12,9 @@ void doMain() {
 
 	Game* game = new Game(2);
 	Muncher *munch = new Muncher(NULL, game, CIwVec2(300, 0));
+	Muncher *munch2 = new Muncher(NULL, game, CIwVec2(300, 0));
 	game->addUnit(munch);
+	game->addUnit(munch2);
 	
 	while (1) {
 	
@@ -46,6 +48,7 @@ void doMain() {
 	
 	delete game;
 	delete munch;
+	delete munch2;
 }
 
 int main() {

@@ -16,6 +16,7 @@ Game::~Game(){
 	}
 	
 	units.clear();
+	unitBuffer.clear();
 }
 
 void Game::initRenderState() {
@@ -57,14 +58,15 @@ void Game::tick(){
 	float curr_theta, new_theta;
 	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
 		(*itr)->update();
-
 		curr_theta = (*itr)->getTheta();
 		for(std::list<Unit*>::iterator new_itr = unitBuffer.begin(); new_itr != unitBuffer.end(); ++new_itr) {
+
 			new_theta = (*new_itr)->getTheta();
 
-			if( (curr_theta < new_theta) || (new_theta <= (*(++itr))->getTheta())) {
+			if( (curr_theta < new_theta)) { //|| (new_theta <= (*(++itr))->getTheta())) {
 				units.insert((++itr), (*new_itr));
 				unitBuffer.erase(new_itr);
+				//break;
 			}
 		}
 	}
@@ -97,8 +99,11 @@ void Game::render() {
 			(*u_it)->display();
 		}
 	}
-	
 	delete mat;
 	
 	IwGxSwapBuffers();
+}
+
+CIwFVec2 Game::getWorldRadius() {
+	return CIwFVec2(innerRadius, outerRadius);
 }
