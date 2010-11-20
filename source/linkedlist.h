@@ -1,7 +1,17 @@
 #ifndef _LL_H
 #define _LL_H
 
+#include "unit.h"
+
 class LinkedList {
+    class Node {
+    public:
+        Unit *unit;
+        Node *next, *prev;
+        
+        Node(Unit *_unit) : unit(_unit) {}
+    };
+
     public:
         Node *head;
         Node *tail;
@@ -20,7 +30,7 @@ class LinkedList {
         /* Only use me initially, probably; I'm slow */
         void insert(Unit *unit){
             Node *ptr = head;
-            while(ptr && ptr->unit->theta > unit->theta && ptr->next)
+            while(ptr && ptr->unit->getTheta() > unit->getTheta() && ptr->next)
                 ptr = ptr->next;
 
             if(ptr){
@@ -37,14 +47,8 @@ class LinkedList {
             }
 
         }
-}
+};
 
-class Node {
-    public:
-        Unit *unit;
-        Node *next, *prev;
-        
-        Node(Unit *_unit) : unit(_unit) {}
-}
+
 
 #endif
