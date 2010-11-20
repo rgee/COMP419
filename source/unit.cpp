@@ -27,6 +27,10 @@ Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
 */
 
 
+//bool Unit::operator<(const Unit& foo, const Unit& u) const{    
+//    return foo.getTheta() < u.getTheta();
+//}
+
 void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 	
 	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, frameNumber, numFrames);

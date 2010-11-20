@@ -59,6 +59,10 @@ class Unit {
 		Unit(const Unit& newUnit);
 
 		virtual ~Unit() {};
+    
+        bool operator<(const Unit& u) const{
+            return theta < u.theta;
+        }
 
 		void setPosition(int32 x, int32 y);
 		void setPosition(const CIwVec2& position);
