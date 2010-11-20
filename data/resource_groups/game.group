@@ -1,5 +1,6 @@
 CIwResGroup
 {
 	name "Game"
+	"../images/paper-world.png"
 	"./sprites.group"
 }

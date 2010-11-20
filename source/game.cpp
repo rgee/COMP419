@@ -1,12 +1,13 @@
 #include "game.h"
 #include "unit.h"
  
-Game::Game(int numPlayers) : numPlayers(numPlayers) {
-	//ai = AI();
+Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0) {
+	ai = AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
-	resources = IwGetResManager()->GetGroupNamed("Sprites");
+	sprites = IwGetResManager()->GetGroupNamed("Sprites");
+	game = IwGetResManager()->GetGroupNamed("Game");
 	initRenderState();
-}
+} 
 
 Game::~Game(){
     	
@@ -15,7 +16,8 @@ Game::~Game(){
 		delete (*itr).second;
 	}
 	
-	units.clear_optimised();
+	units.clear();
+	unitBuffer.clear();
 }
 
 void Game::initRenderState() {
@@ -28,14 +30,19 @@ void Game::initRenderState() {
 	IwGxSetViewMatrix(&view);
 }
 
-CIwArray<Unit*>* Game::getUnits(){
+std::list<Unit*>* Game::getUnits(){
 	return &units;
 }
 
 void Game::addUnit(Unit *u){
 	
-    u->setId(units.size());
-    units.push_back(u);
+    u->setId(numUnits++);
+
+	if(units.empty()) {
+		units.push_back(u);
+	} else {
+		unitBuffer.push_back(u);
+	}
 	
 	if(unitBucket.find(u->getTextureName()) == unitBucket.end()) {
 		std::set<Unit*>* bucket = new std::set<Unit*>();
@@ -49,8 +56,20 @@ void Game::addUnit(Unit *u){
 
 void Game::tick(){
 
-	for(CIwArray<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr){
+	float curr_theta, new_theta;
+	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
 		(*itr)->update();
+		curr_theta = (*itr)->getTheta();
+		for(std::list<Unit*>::iterator new_itr = unitBuffer.begin(); new_itr != unitBuffer.end(); ++new_itr) {
+
+			new_theta = (*new_itr)->getTheta();
+
+			if( (curr_theta < new_theta)) { //|| (new_theta <= (*(++itr))->getTheta())) {
+				units.insert((++itr), (*new_itr));
+				unitBuffer.erase(new_itr);
+				//break;
+			}
+		}
 	}
 	
     ++timesteps;
@@ -58,9 +77,13 @@ void Game::tick(){
 }
 
 void Game::render() {
+	renderWorld();
+	renderSprites();
 	
-	IwGxSetColClear(255, 255, 255, 255);
-	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
+	IwGxSwapBuffers();
+}
+
+void Game::renderSprites() {
 	
 	char* curTexture = "";
 	CIwMaterial* mat = new CIwMaterial();
@@ -69,7 +92,7 @@ void Game::render() {
 		
 		if (strcmp((*itr).first, curTexture) != 0) {
 			curTexture = (*itr).first;
-			mat->SetTexture((CIwTexture*)resources->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
+			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
 			mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
 			mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 			IwGxSetMaterial(mat);
@@ -81,8 +104,27 @@ void Game::render() {
 			(*u_it)->display();
 		}
 	}
+	delete mat;
+}
+
+void Game::renderWorld() {
+
+	CIwMaterial* mat = new CIwMaterial();
+	mat->SetTexture((CIwTexture*)game->GetResNamed("paper-world", IW_GX_RESTYPE_TEXTURE));
+	mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
+	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+	IwGxSetMaterial(mat);
+    
+    static int rot = 0;
+    rot++;
+	
+    renderImageWorldSpace(CIwSVec2(60, 0), rot, .7, 960);
 	
 	delete mat;
-	
-	IwGxSwapBuffers();
 }
+
+CIwFVec2 Game::getWorldRadius() {
+	return CIwFVec2(innerRadius, outerRadius);
+}
+
+AI Game::getAI(){return ai;}

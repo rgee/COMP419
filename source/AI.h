@@ -10,11 +10,10 @@ class AI{
 protected:  
 	void Path(Unit& unit);
 	bool Attack(Unit& unit);
-	Unit* Detect_Enemy(Unit& unit, CIwArray<Unit*>* Units);
-    CIwArray<Unit*>* CollisionDetection(Unit& unit, CIwArray<Unit*>* Units);
+	Unit* Detect_Enemy(Unit& unit, std::list<Unit*>* Units);
+    std::list<Unit*>* CollisionDetection(Unit& unit, std::list<Unit*>* Units);
 public: 
 	AI();
-	virtual ~AI();
 	void UpdateAI(Unit& unit);
 	
 	

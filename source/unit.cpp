@@ -1,5 +1,4 @@
 #include "unit.h"
-#include "s3ePointer.h"
 
 Unit::Unit(const Unit& newUnit)
 	: hp(newUnit.hp), cost(newUnit.cost), attack(newUnit.attack), speed(newUnit.speed),
@@ -19,7 +18,8 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		: hp(hp), cost(cost), attack(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), game(game), position(position)
+		  owner(owner), game(game), position(position),
+		  theta(0.0f)
 {
 }
 /*
@@ -28,42 +28,8 @@ Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
 
 
 void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
-		
-	int left = position.x;
-	int top = position.y;	
 	
-	static CIwSVec3 vertices[4];
-	static CIwSVec2 UVs[4];
-	
-	//set up model space vertices
-	
-	int vertexDist = scaleFactor*spriteSize/2;
-	
-	vertices[0] = CIwSVec3(-1*vertexDist, -1*vertexDist, -1);
-	vertices[2] = CIwSVec3(vertexDist, -1*vertexDist, -1);
-	vertices[3] = CIwSVec3(vertexDist, vertexDist, -1);
-	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist, -1);
-	
-	CIwMat modelTransform = CIwMat::g_Identity;
-	modelTransform.SetRotZ(TO_RADIANS(angle));
-	modelTransform.SetTrans(CIwVec3(left, -1*top, 1));
-	IwGxSetModelMatrix(&modelTransform, false);
-	
-	int squaredSize = spriteSize*spriteSize;
-	int offset = squaredSize/numFrames;
-	
-	//set up sprite UV's
-	UVs[0] = CIwSVec2(frameNumber*offset, 0);
-	UVs[2] = CIwSVec2((frameNumber+1)*offset, 0);
-	UVs[3] = CIwSVec2((frameNumber+1)*offset, squaredSize);
-	UVs[1] = CIwSVec2(frameNumber*offset, squaredSize);
-
-	//render the unit in model space
-	IwGxSetUVStream(UVs);
-	IwGxSetColStream(NULL);
-	IwGxSetVertStreamModelSpace(vertices, 4);
-	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
-	IwGxFlush();
+	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, frameNumber, numFrames);
 }
 
 
@@ -153,7 +119,6 @@ void Unit::RecieveDamage(){};
 void Unit::setVelocity(const CIwSVec2& vel)
 {
     float angle = acos(vel.Dot(velocity));
-
 
     velocity = vel;
 }

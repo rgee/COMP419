@@ -5,18 +5,19 @@
 
 class Game;
 class Unit;
-
+class AI;
 
 #include <map>
 #include <set>
 #include <list>
+#include <deque>
+#include "AI.h"
 #include "string.h"
 #include "IwResManager.h"
 #include "IwResGroup.h"
 #include "IwManagedList.h"
 #include "IwGx.h"
 #include "player.h"
-#include "AI.h"
 
 
 typedef std::map<char*, std::set<Unit*>* > UnitBucket;
@@ -27,19 +28,35 @@ class Game {
 	
         CIwArray<Player*> players;
         int numPlayers;
-		//AI ai; 
+		AI ai; 
         
-        CIwArray<Unit*> units;
+        //CIwArray<Unit*> units;
 
-        std::list<Unit*> sortedUnits;
+        std::list<Unit*> units;
+        int numUnits;
 
-		CIwResGroup* resources;
+		// Queue of units we're set to 
+		std::list<Unit*> unitBuffer;
+
+		CIwResGroup* sprites;
+		CIwResGroup* game;
 		
 		UnitBucket unitBucket;
 	
 		long timesteps;
+
+		float innerRadius;
+		float outerRadius;
 	
 		void initRenderState();
+	
+		void render();
+	
+		void renderSprites();
+	
+		void renderWorld();
+	
+		void renderUI();
 	                    
     public:
 	
@@ -47,13 +64,21 @@ class Game {
 		~Game();
         
         void addUnit(Unit *u);
-		CIwArray<Unit*>* getUnits();
+		std::list<Unit*>* getUnits();
+
+		/**
+		 * Gets the inner and outer radii of the world donut.
+		 *
+		 * Returns a CIwFVec2 where the x coord is the inner radius
+		 * and the y coord is the outer radius.
+		 */
+		CIwFVec2 getWorldRadius();
         	
 		void tick();
-	
-		void render();
-		
+			
 		long getTimesteps();
+    
+        AI getAI();
 
 };
 

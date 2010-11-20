@@ -6,9 +6,7 @@
 #include "IwGeomCore.h"
 #include "game.h"
 #include "player.h"
-
-
-#define TO_RADIANS(X) X * (180.0f / PI) 
+#include "util.h"
 
 class Unit {
     protected:
@@ -107,7 +105,7 @@ class Unit {
 	
 		void setRTheta(float x, float y);
 	
-		/* IGNORE THE FAllOWING.  I already updated set position to change theta and r
+		/* IGNORE THE FOLLOWING.  I already updated set position to change theta and r
 		 and vice versa so use which ever coordinate system works best for you cause
 		 their are times where either works.
 		 

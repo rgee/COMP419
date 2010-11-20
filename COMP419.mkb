@@ -4,15 +4,12 @@
 files
 {
     (source)
-	linkedlist.h
     game.h
     game.cpp
     unit.h
     unit.cpp
     muncher.h
     muncher.cpp
-    dummyunit.h
-    dummyunit.cpp
     player.h
     player.cpp
     main.cpp
@@ -20,6 +17,8 @@ files
 	AI.cpp
 	shooter.h
 	shooter.cpp
+	util.h
+	util.cpp
 }
 
 subprojects
@@ -34,5 +33,5 @@ assets
 	images/pacman.png
 	images/world.png
 	images/muncher_sprite_sheet.png
+	images/palate.png
 }
-
