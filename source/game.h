@@ -8,6 +8,7 @@ class Unit;
 
 #include <map>
 #include <set>
+#include <list>
 #include "string.h"
 #include "IwResManager.h"
 #include "IwResGroup.h"
@@ -25,6 +26,8 @@ class Game {
         int numPlayers;
         
         CIwArray<Unit*> units;
+
+        std::list<Unit*> sortedUnits;
 
 		CIwResGroup* resources;
 		

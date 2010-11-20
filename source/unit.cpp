@@ -18,8 +18,8 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 	int left = position.x;
 	int top = position.y;	
 	
-	CIwSVec3* vertices = (CIwSVec3*)malloc(sizeof(CIwSVec3)*4);
-	CIwSVec2* UVs = (CIwSVec2*)malloc(sizeof(CIwSVec2)*4);
+	static CIwSVec3 vertices[4];
+	static CIwSVec2 UVs[4];
 	
 	//set up model space vertices
 	
@@ -50,9 +50,6 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor) {
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
 	IwGxFlush();
-	
-	free(vertices);
-	free(UVs);
 }
 
 int Unit::getId(){ return uid; }
