@@ -10,12 +10,13 @@ class AI{
 protected:  
 	void Path(Unit& unit);
 	bool Attack(Unit& unit);
-	Unit& Detect_Enemy(Unit& unit);
+	Unit* Detect_Enemy(Unit& unit, CIwArray<Unit*>* Units);
+    CIwArray<Unit*>* CollisionDetection(Unit& unit, CIwArray<Unit*>* Units);
 public: 
 	AI();
 	virtual ~AI();
 	void UpdateAI(Unit& unit);
-	Unit* CollisionDetection(Unit& unit, CIwArray<Unit*>* Units);
+	
 	
 	
 };
