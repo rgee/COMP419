@@ -1,22 +1,27 @@
 #ifndef _AI_H 
 #define _AI_H
 
+class AI;
+
 #include "game.h"
 #include "unit.h"
-
  
 class AI{
-	
-protected:  
-	void Path(Unit& unit);
-	bool Attack(Unit& unit);
-	Unit* Detect_Enemy(Unit& unit, std::list<Unit*>* Units);
-    std::list<Unit*>* CollisionDetection(Unit& unit, std::list<Unit*>* Units);
-public: 
-	AI();
-	void UpdateAI(Unit& unit);
-	
-	
-	
+
+    public: 
+    
+        AI();
+    
+        void updateAI(Unit* unit);
+    
+        void path(Unit& unit);
+    
+        bool attack(Unit& unit);
+    
+        Unit* detectEnemy(Unit& unit, std::list<Unit*>* Units);
+    
+        std::list<Unit*>* collisionDetection(Unit& unit, std::list<Unit*>* Units);
+            
 };
+
 #endif

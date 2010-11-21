@@ -2,7 +2,11 @@
 #include "IwUtil.h"
 #include "IwGx.h"
 #include "IwGeomMat.h"
+
+#include "game.h"
 #include "unit.h"
+#include "AI.h"
+
 #include "muncher.h"
 
 #define	MS_PER_FRAME (1000 / 10)

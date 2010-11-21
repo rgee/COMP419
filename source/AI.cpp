@@ -1,32 +1,35 @@
-
 #include "AI.h"
   
 AI::AI(){}
 
-void AI::Path(Unit& unit){ 
+void AI::path(Unit& unit){ 
 	float rad = unit.getR();
 	float theta = unit.getTheta();
 	float speed = unit.getSpeed();
 	float range = unit.getRange();
 	 
-	if(unit.attacking()){Attack(unit);};
+	if(unit.attacking())
+        attack(unit);
+    
 	if(unit.pursuing()){ 
 		Unit *pursuing = unit.getPursuing();
 		CIwSVec2 pursuingPos = pursuing->getPosition();
 		CIwSVec2 pursuitVector = pursuingPos - unit.getPosition();
 		CIwSVec2 tempPos; 
-		if (pursuitVector.GetLength()<range) {Attack(unit);}
+		if (pursuitVector.GetLength()<range)
+            attack(unit);
 		tempPos = (pursuitVector/speed)+unit.getPosition();
         unit.setVelocity(tempPos-unit.getPosition());
 		
-        std::list<Unit*> *tempArray = CollisionDetection(unit, unit.getGame()->getUnits());
-         if (tempArray == NULL || !tempArray->empty()) {
+        std::list<Unit*> *tempArray = collisionDetection(unit, unit.getGame()->getUnits());
+        
+        if (tempArray == NULL || !tempArray->empty())
             unit.setVelocity(CIwSVec2::g_Zero);
-        }
+        
         delete tempArray;
 	}
 	else {
-		Unit *Enemy = Detect_Enemy(unit, unit.getGame()->getUnits());
+		Unit *Enemy = detectEnemy(unit, unit.getGame()->getUnits());
 		float thetaChange = speed/rad;
 		float tempTheta = thetaChange + theta;
         unit.setRTheta(rad, tempTheta);
@@ -34,7 +37,7 @@ void AI::Path(Unit& unit){
         unit.setRTheta(rad, theta);
         unit.setVelocity(tempPos-unit.getPosition());
         
-        std::list<Unit*> *tempArray = CollisionDetection(unit, unit.getGame()->getUnits());
+        std::list<Unit*> *tempArray = collisionDetection(unit, unit.getGame()->getUnits());
         if (tempArray == NULL || !tempArray->empty()) {
             unit.setVelocity(CIwSVec2::g_Zero);
         }
@@ -43,7 +46,7 @@ void AI::Path(Unit& unit){
 		
 }
 			
-bool AI::Attack(Unit& unit){
+bool AI::attack(Unit& unit){
 	if(!unit.attacking()){
 	unit.setAttacking(unit.getPursuing());
 	}
@@ -53,7 +56,9 @@ bool AI::Attack(Unit& unit){
     return false;
     
 } 
-Unit* AI::Detect_Enemy(Unit& unit, std::list<Unit*>* Units){
+
+
+Unit* AI::detectEnemy(Unit& unit, std::list<Unit*>* Units){
 	float sight = unit.getSight();
     float lowTheta = unit.getTheta()-sight;
     float upTheta = unit.getTheta()+sight;
@@ -75,11 +80,11 @@ Unit* AI::Detect_Enemy(Unit& unit, std::list<Unit*>* Units){
 
 }
 
-void AI::UpdateAI(Unit& unit){
-	Path(unit);
-	
+void AI::updateAI(Unit* unit){
+	//Path(unit);
 }
-std::list<Unit*>* CollisionDetection(Unit& unit, std::list<Unit*>* Units){
+
+std::list<Unit*>* AI::collisionDetection(Unit& unit, std::list<Unit*>* Units){
     float lowTheta = unit.getTheta()-10;
     float upTheta = unit.getTheta()+10;
     float upRad = unit.getGame()->getWorldRadius().y;
