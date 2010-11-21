@@ -14,8 +14,8 @@ bool Muncher::update() {
 	return true;
 }
 
-void Muncher::display() {
-	renderSprite(curFrame, 90, 1.0);
+void Muncher::display(float worldRot) {
+	renderSprite(curFrame, 90, 1.0, worldRot);
 }
 
 char* Muncher::getTextureName() {

@@ -6,6 +6,6 @@
 #include "IwGx.h"
 #include "IwGeom.h"
 
-void renderImageWorldSpace(CIwSVec2 position, float angle, float scaleFactor, int textureSize, int frameNumber = 0, int numFrames = 1);
+void renderImageWorldSpace(CIwSVec2 position, float angle, float scaleFactor, int textureSize, float worldRot = 0.0, int frameNumber = 0, int numFrames = 1);
 
 #endif

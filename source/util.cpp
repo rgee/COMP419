@@ -1,9 +1,9 @@
 #include "util.h"
 
-void renderImageWorldSpace(CIwSVec2 position, float angle, float scaleFactor, int textureSize, int frameNumber, int numFrames) {
+void renderImageWorldSpace(CIwSVec2 position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
 	
 	int left = position.x;
-	int top = position.y;	
+	int top = position.y;
 	
 	static CIwSVec3 vertices[4];
 	static CIwSVec2 UVs[4];
@@ -20,6 +20,11 @@ void renderImageWorldSpace(CIwSVec2 position, float angle, float scaleFactor, in
 	CIwMat modelTransform = CIwMat::g_Identity;
 	modelTransform.SetRotZ(TO_RADIANS(angle));
 	modelTransform.SetTrans(CIwVec3(left, -1*top, 1));
+	
+	CIwMat rot = CIwMat::g_Identity;
+	rot.SetRotZ(TO_RADIANS(worldRot));
+	modelTransform = modelTransform*rot;
+	
 	IwGxSetModelMatrix(&modelTransform, false);
 	
 	int squaredSize = textureSize*textureSize;
