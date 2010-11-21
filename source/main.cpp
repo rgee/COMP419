@@ -4,8 +4,6 @@
 #include "IwGeomMat.h"
 
 #include "game.h"
-#include "unit.h"
-#include "AI.h"
 
 #include "muncher.h"
 
@@ -103,10 +101,8 @@ void doMain() {
     
 	game = new Game(2);
 	Muncher *munch = new Muncher(NULL, game, CIwVec2(300, 0));
-	Muncher *munch2 = new Muncher(NULL, game, CIwVec2(350, 100));
 
 	game->addUnit(munch);
-	game->addUnit(munch2);
 	
 	while (1) {
 	
@@ -154,7 +150,6 @@ void doMain() {
     
 	delete game;
 	delete munch;
-	delete munch2;
 }
 
 int main() {

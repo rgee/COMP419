@@ -1,7 +1,7 @@
 #include "game.h"
  
 Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0) {
-	//ai = AI();
+	ai = AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
@@ -25,7 +25,7 @@ void Game::initRenderState() {
 	IwGxSetPerspMul(0x9);
 	IwGxSetFarZNearZ(0xa, 0x8);
 	CIwMat view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3(300, 0, -9));
+	view.SetTrans(CIwVec3(220, 0, -9));
 	IwGxSetViewMatrix(&view);
 }
 
@@ -73,8 +73,11 @@ void Game::render() {
 	IwGxSetColClear(255, 255, 255, 255);
 	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	
-	renderWorld(0.0);
-	renderSprites(0.0);
+	static int r;
+	r--;
+	
+	renderWorld(r);
+	renderSprites(r);
 	
 	IwGxSwapBuffers();
 }
@@ -110,8 +113,8 @@ void Game::renderWorld(float worldRot) {
 	mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
-    
-	renderImageWorldSpace(CIwSVec2(0, 0), 0.0, .7, 960, 0.0);
+
+	renderImageWorldSpace(CIwSVec2(0, 0), 0.0, 0.6, 960, worldRot);
 	
 	delete mat;
 }
@@ -120,4 +123,4 @@ CIwFVec2 Game::getWorldRadius() {
 	return CIwFVec2(innerRadius, outerRadius);
 }
 
-AI Game::getAI(){return ai;}
+AI Game::getAI(){ return ai; }
