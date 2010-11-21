@@ -28,7 +28,10 @@ class Game {
 	
         CIwArray<Player*> players;
         int numPlayers;
-		AI ai; 
+		
+        //Must solve AI type error on line bellow.  Think it is an include/preconstruction issue.  Until this is solved
+        //I see no way to run AI any suggestions would be appreciated.
+        //AI ai; 
         
         //CIwArray<Unit*> units;
 
@@ -78,7 +81,7 @@ class Game {
 			
 		long getTimesteps();
     
-        AI getAI();
+        //AI getAI();
 
 };
 
