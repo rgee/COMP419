@@ -1,7 +1,7 @@
 #include "game.h"
  
 Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0) {
-	ai = AI();
+	ai = new AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
@@ -123,4 +123,4 @@ CIwFVec2 Game::getWorldRadius() {
 	return CIwFVec2(innerRadius, outerRadius);
 }
 
-AI Game::getAI(){ return ai; }
+AI *Game::getAI(){ return ai; }

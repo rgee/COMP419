@@ -15,11 +15,10 @@
 
 class Game;
 
-#include "unit.h"
-#include "AI.h"
-
 #include "player.h"
+#include "unit.h"
 
+#include "AI.h"
 
 
 typedef std::map<char*, std::set<Unit*>* > UnitBucket;
@@ -30,7 +29,7 @@ class Game {
 	
         CIwArray<Player*> players;
         int numPlayers;
-		AI ai;
+		AI *ai;
         
         std::list<Unit*> units;
         int numUnits;
@@ -78,7 +77,7 @@ class Game {
 			
 		long getTimesteps();
     
-        AI getAI();
+        AI *getAI();
 
 };
 

@@ -10,12 +10,12 @@ Muncher::Muncher(Player* owner, Game* game, CIwVec2 position)
 }
 
 bool Muncher::update() {
-	game->getAI().updateAI(this);
+	game->getAI()->updateAI(this);
 	return true;
 }
 
 void Muncher::display(float worldRot) {
-	renderSprite(curFrame, 90, 0.5, worldRot);
+	renderSprite(curFrame++, 90, 0.5, worldRot);
 }
 
 char* Muncher::getTextureName() {

@@ -6,6 +6,7 @@
 #include "game.h"
 
 #include "muncher.h"
+#include "shooter.h"
 
 #define	MS_PER_FRAME (1000 / 10)
 

@@ -1,12 +1,10 @@
 #ifndef _AI_H 
 #define _AI_H
-
-#include <list>
-
+ 
 class AI;
 
 #include "unit.h"
- 
+
 class AI{
 
     public: 
