@@ -4,6 +4,9 @@
 #include "IwGx.h"
 #include "IwGeom.h"
 #include "IwGeomCore.h"
+
+class Unit;
+
 #include "game.h"
 #include "player.h"
 #include "util.h"
@@ -126,14 +129,16 @@ class Unit {
 	
 		virtual char* getTextureName() = 0;
 		virtual bool update() = 0;
+
+        virtual void display(float worldRot) = 0;
+
 		
 		void Attack();
 		void RecieveDamage(); 
         CIwSVec2 ConvertToRTheta(CIwSVec2 pos);
     
         float getSight();
-	
-		virtual void display(float worldRot) = 0;
+
 
 };
 
