@@ -48,7 +48,19 @@ bool update() {
 }
 
 void renderTouch(int32 x, int32 y) {
-	Muncher* munch = new Muncher(NULL, game, CIwVec2(x,y));
+    CIwFVec2& screen_pos = CIwFVec2(x, y);
+
+    float r = 300.0;
+    float theta = 0.0;
+    int w = IwGxGetScreenWidth();
+    int h = IwGxGetScreenHeight();
+    
+    const CIwFMat2D world_to_screen_matrix = worldToScreenMatrix(r, theta, w, h);
+    const CIwFMat2D screen_to_world_matrix = world_to_screen_matrix.GetInverse();
+
+    CIwFVec2& world_pos = screen_to_world_matrix.TransformVec(screen_pos);
+
+	Muncher* munch = new Muncher(NULL, game, world_pos);
 	game->addUnit(munch);
 }
 
@@ -98,8 +110,8 @@ void doMain() {
 
     
 	game = new Game(2);
-	Muncher *munch = new Muncher(NULL, game, CIwVec2(300, 0));
-	Muncher *munch2 = new Muncher(NULL, game, CIwVec2(300, 0));
+	Muncher *munch = new Muncher(NULL, game, CIwFVec2(300, 0));
+	Muncher *munch2 = new Muncher(NULL, game, CIwFVec2(300, 0));
 	game->addUnit(munch);
 	game->addUnit(munch2);
 	

@@ -1,22 +1,25 @@
 #include "util.h"
 
+/* r is the radius of the donut which is always centered when the user scrolls
+ * around the donut. theta is the angle from the positive x-axis on r that
+ * the screen is centered on.
+ */
+CIwFMat2D& worldToScreenMatrix(float r, float theta, int screen_width, int screen_height) {
+    theta = PI - TO_RADIANS(theta);
 
-CIwFMat2D* worldToScreenMatrix(float r, float theta, int screen_width, int screen_height) {
-    theta = TO_RADIANS(theta);
-
-    CIwFMat2D* matrix = new CIwFMat2D();
+    CIwFMat2D& matrix = CIwFMat2D();
 
     float trans_x = screen_width/2 - r*cos(theta);
     float trans_y = screen_height/2 - r*sin(theta);
     CIwFVec2& translation_vect = CIwFVec2(trans_x, trans_y);
 
-    matrix->SetTrans(translation_vect);
-    matrix->SetRot(r=theta);
-
+    matrix.SetRot(r=theta);
+    matrix.SetTrans(translation_vect);
+    
     return matrix;
 }
 
-void renderImageWorldSpace(CIwSVec2 position, float angle, float scaleFactor, int textureSize, int frameNumber, int numFrames) {
+void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, int textureSize, int frameNumber, int numFrames) {
 	
 	int left = position.x;
 	int top = position.y;	

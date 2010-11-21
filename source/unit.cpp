@@ -14,7 +14,7 @@ Unit::Unit(const Unit& newUnit)
 Unit::Unit(float hp, float cost, float attack, float speed, 
 		float munch_speed, float range, float sight,
 		float spread_speed, float spread_radius, Player* owner,
-		Game* game, CIwVec2 position)
+		Game* game, CIwFVec2 position)
 		: hp(hp), cost(cost), attack(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
@@ -98,7 +98,7 @@ void Unit::setPosition(const CIwVec2& newPosition){
 }
 
 
-CIwSVec2 Unit::getPosition(){return position;}
+CIwFVec2 Unit::getPosition(){return position;}
 
 float Unit::getR(){ return r; }
 float Unit::getTheta(){ return theta; }
@@ -115,7 +115,7 @@ void Unit::Attack(){};
 void Unit::RecieveDamage(){};
 
 
-void Unit::setVelocity(const CIwSVec2& vel)
+void Unit::setVelocity(const CIwFVec2& vel)
 {
     float angle = acos(vel.Dot(velocity));
 

@@ -13,9 +13,9 @@ void AI::Path(Unit& unit){
 	if(unit.attacking()){Attack(unit);};
 	if(unit.pursuing()){ 
 		Unit *pursuing = unit.getPursuing();
-		CIwSVec2 pursuingPos = pursuing->getPosition();
-		CIwSVec2 pursuitVector = pursuingPos - unit.getPosition();
-		CIwSVec2 tempPos; 
+		CIwFVec2 pursuingPos = pursuing->getPosition();
+		CIwFVec2 pursuitVector = pursuingPos - unit.getPosition();
+		CIwFVec2 tempPos; 
 		if (pursuitVector.GetLength()<range) {Attack(unit);}
 		tempPos = (pursuitVector/speed)+unit.getPosition();
 		//Check for collision on tempPos and then attack if true else update.

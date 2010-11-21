@@ -118,7 +118,7 @@ void Game::renderWorld() {
     static int rot = 0;
     rot++;
 	
-    renderImageWorldSpace(CIwSVec2(60, 0), rot, .7, 960);
+    renderImageWorldSpace(CIwFVec2(60, 0), rot, .7, 960);
 	
 	delete mat;
 }
