@@ -2,7 +2,7 @@
 #include "unit.h"
   
 Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0) {
-	//ai = AI();
+	//ai = new AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
