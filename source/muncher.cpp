@@ -10,9 +10,7 @@ Muncher::Muncher(Player* owner, Game* game, CIwVec2 position)
 }
 
 bool Muncher::update() {
-	//a silly "pathing" calculation for testing purposes only
-	curFrame = (curFrame < numFrames-1) ? curFrame+1 : 0;
-	circleOffset += .3;
+	//game->getAI().updateAI(this);
 	return true;
 }
 

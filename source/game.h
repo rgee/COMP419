@@ -5,19 +5,19 @@
 
 class Game;
 class Unit;
-
+class AI;
 
 #include <map>
 #include <set>
 #include <list>
 #include <deque>
+#include "AI.h"
 #include "string.h"
 #include "IwResManager.h"
 #include "IwResGroup.h"
 #include "IwManagedList.h"
 #include "IwGx.h"
 #include "player.h"
-#include "AI.h"
 
 
 typedef std::map<char*, std::set<Unit*>* > UnitBucket;
@@ -28,7 +28,10 @@ class Game {
 	
         CIwArray<Player*> players;
         int numPlayers;
-		//AI ai; 
+		
+        //Must solve AI type error on line bellow.  Think it is an include/preconstruction issue.  Until this is solved
+        //I see no way to run AI any suggestions would be appreciated.
+        //AI ai; 
         
         //CIwArray<Unit*> units;
 
@@ -77,6 +80,8 @@ class Game {
 		void tick();
 			
 		long getTimesteps();
+    
+        //AI getAI();
 
 };
 

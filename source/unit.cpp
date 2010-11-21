@@ -114,6 +114,7 @@ float Unit::getY(){return 0.0f;}
 
 
 float Unit::getSpeed(){return speed;}
+float Unit::getSize(){return spriteSize/2;}
 
 void Unit::Attack(){};
 void Unit::RecieveDamage(){};
@@ -125,3 +126,17 @@ void Unit::setVelocity(const CIwSVec2& vel)
 
     velocity = vel;
 }
+
+CIwSVec2 Unit::getVelocity(){return velocity;}
+
+CIwSVec2 Unit::ConvertToRTheta(CIwSVec2 pos){
+    float x = pos.x;
+	float y = pos.y;
+	float r = sqrt(x*x + y*y);
+	float theta = asin(y/x);
+    pos.x = r;
+    pos.y = theta;
+    return pos;
+}
+
+float Unit::getSight(){return sight;}
