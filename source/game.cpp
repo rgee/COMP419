@@ -25,7 +25,7 @@ void Game::initRenderState() {
 	IwGxSetPerspMul(0x9);
 	IwGxSetFarZNearZ(0xa, 0x8);
 	CIwMat view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3(230, 0, -0x9));
+	view.SetTrans(CIwVec3(220, 0, -9));
 	IwGxSetViewMatrix(&view);
 }
 
@@ -63,8 +63,11 @@ void Game::render() {
 	IwGxSetColClear(255, 255, 255, 255);
 	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	
-	renderWorld(0.0);
-	renderSprites(0.0);
+	static int r;
+	r--;
+	
+	renderWorld(r);
+	renderSprites(r);
 	
 	IwGxSwapBuffers();
 }
@@ -102,7 +105,7 @@ void Game::renderWorld(float worldRot) {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 	
-	renderImageWorldSpace(CIwSVec2(0, 0), 0.0, .7, 960, 0.0);
+	renderImageWorldSpace(CIwSVec2(0, 0), 0.0, 0.6, 960, worldRot);
 	
 	delete mat;
 }
