@@ -1,7 +1,7 @@
 #include "game.h"
 #include "unit.h"
  
-Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), innerRadius(140), outerRadius(300) {
+Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
 	ai = new AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
@@ -22,11 +22,12 @@ Game::~Game(){
 
 void Game::initRenderState() {
 	//set up the camera position and view transform
+    int w = IwGxGetScreenWidth();
 
 	IwGxSetPerspMul(9);
 	IwGxSetFarZNearZ(10, 8);
 	view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3((innerRadius + outerRadius)/2.0f, 0, -9));
+	view.SetTrans(CIwVec3(w/2 + innerRadius - 20, 0, -9));
 	IwGxSetViewMatrix(&view);
 }
 
@@ -71,7 +72,7 @@ void Game::render() {
 	IwGxSetColClear(255, 255, 255, 255);
 	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	
-    rotation = 0;
+    rotation -= 0.2;
 	renderWorld(rotation);
 	renderSprites(rotation);
 	

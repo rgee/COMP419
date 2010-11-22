@@ -63,7 +63,7 @@ bool renderTouch(CTouch* touch) {
     
     CIwFVec2 radii = game->getWorldRadius();
     
-    int32 world_x = x - (radii.y + radii.x - 2*w)/2;
+    int32 world_x = x + (radii.x - 20);
     int32 world_y = y - h/2;
     
     
@@ -92,7 +92,7 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 		touch->active = event->m_Pressed != 0;
 		touch->x = event->m_x;
 		touch->y = event->m_y;
-        if(touch->active && touch->x > IwGxGetScreenWidth() - 40){
+        if(touch->active && touch->x > IwGxGetScreenWidth() - 60){
             touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
         } else {
             renderTouch(touch); 
@@ -127,15 +127,15 @@ void doMain() {
     mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
         
-	static CIwSVec2 xy(280, 0);
-	static CIwSVec2 wh(40, 480);
+	static CIwSVec2 xy(260, 0);
+	static CIwSVec2 wh(60, 480);
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(1 << 11, 1 << 11);
 
     
 	game = new Game(2);
 
-CTouch t;
+    CTouch t;
     t.x = 40;
     t.y = 480 / 2;
     t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
