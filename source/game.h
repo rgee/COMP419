@@ -1,22 +1,23 @@
 #ifndef _GAME_H
 #define _GAME_H
 
-#include "IwArray.h"
-
-class Game;
-class Unit;
-
-
 #include <map>
 #include <set>
 #include <list>
 #include <deque>
+
 #include "string.h"
 #include "IwResManager.h"
 #include "IwResGroup.h"
 #include "IwManagedList.h"
 #include "IwGx.h"
+#include "IwArray.h"
+
+class Game;
+
 #include "player.h"
+#include "unit.h"
+
 #include "AI.h"
 
 
@@ -28,10 +29,8 @@ class Game {
 	
         CIwArray<Player*> players;
         int numPlayers;
-		//AI ai; 
+		AI *ai;
         
-        //CIwArray<Unit*> units;
-
         std::list<Unit*> units;
         int numUnits;
 
@@ -42,11 +41,12 @@ class Game {
 		CIwResGroup* game;
 		
 		UnitBucket unitBucket;
+    
+        CIwMat view;
 	
 		long timesteps;
 
-		float innerRadius;
-		float outerRadius;
+		float innerRadius, outerRadius, rotation;
 	
 		void initRenderState();
 	
@@ -77,6 +77,11 @@ class Game {
 		void tick();
 			
 		long getTimesteps();
+    
+        AI *getAI();
+    
+        CIwMat* getViewMatrix();
+        float getRotation();
 
 };
 

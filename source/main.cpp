@@ -2,8 +2,11 @@
 #include "IwUtil.h"
 #include "IwGx.h"
 #include "IwGeomMat.h"
-#include "unit.h"
+
+#include "game.h"
+
 #include "muncher.h"
+#include "shooter.h"
 
 #define	MS_PER_FRAME (1000 / 10)
 
@@ -13,6 +16,7 @@ struct CTouch {
 	int32 y;		// position
 	bool active;	// whether touch is currently active
 	int32 id;		// touch's unique identifier
+    Unit* unit;
 };
 
 Game* game = NULL;
@@ -47,9 +51,36 @@ bool update() {
 	return true;
 }
 
-void renderTouch(int32 x, int32 y) {
-	Muncher* munch = new Muncher(NULL, game, CIwVec2(x,y));
-	game->addUnit(munch);
+#define SQ(x) (x*x)
+bool renderTouch(CTouch* touch) {
+    if(!touch->unit)
+        return false;
+    
+    int w = IwGxGetScreenWidth();
+    int h = IwGxGetScreenHeight();
+    
+    int32 x = touch->x, y = h - touch->y;
+    
+    CIwFVec2 radii = game->getWorldRadius();
+    
+    int32 world_x = x - (radii.y + radii.x - 2*w)/2;
+    int32 world_y = y - h/2;
+    
+    
+    float theta = TO_RADIANS(game->getRotation());
+    
+    int32 model_x = world_x * cos(theta) - world_y * sin(theta);
+    int32 model_y = world_x * sin(theta) + world_y * cos(theta);
+    
+    float dist_sq = SQ(model_x) + SQ(model_y);
+
+    if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x))
+        return false;
+
+    touch->unit->setPosition(model_x, model_y);
+	game->addUnit(touch->unit);
+        
+    return true;
 }
 
 
@@ -61,7 +92,12 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 		touch->active = event->m_Pressed != 0;
 		touch->x = event->m_x;
 		touch->y = event->m_y;
-        renderTouch(touch->x, touch->y);
+        if(touch->active && touch->x > IwGxGetScreenWidth() - 40){
+            touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
+        } else {
+            renderTouch(touch); 
+            touch->unit = NULL;
+        }
 	}
 }
 
@@ -98,12 +134,19 @@ void doMain() {
 
     
 	game = new Game(2);
-	Muncher *munch = new Muncher(NULL, game, CIwVec2(300, 0));
-	Muncher *munch2 = new Muncher(NULL, game, CIwVec2(350, 100));
 
-	
-	game->addUnit(munch);
-	game->addUnit(munch2);
+CTouch t;
+    t.x = 40;
+    t.y = 480 / 2;
+    t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
+    renderTouch(&t);
+    
+//    CTouch t2;
+//    t2.x = 150;
+//    t2.y = 480 / 2 + 50;
+//    t2.unit = new Muncher(NULL, game, CIwFVec2(0,0));
+//    renderTouch(&t2);
+
 	
 	while (1) {
 	
@@ -150,8 +193,6 @@ void doMain() {
 	s3ePointerUnRegister(S3E_POINTER_MOTION_EVENT, (s3eCallback)MultiTouchMotionCB);
     
 	delete game;
-	delete munch;
-	delete munch2;
 }
 
 int main() {

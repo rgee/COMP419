@@ -4,6 +4,9 @@
 #include "IwGx.h"
 #include "IwGeom.h"
 #include "IwGeomCore.h"
+
+class Unit;
+
 #include "game.h"
 #include "player.h"
 #include "util.h"
@@ -26,8 +29,7 @@ class Unit {
 
 		Player *owner;
 		Game* game;
-		CIwSVec2 position;
-        CIwSVec2 velocity;
+		CIwFVec2 position, velocity;
 		int uid;
 	
 		//info for sprite animation
@@ -54,7 +56,7 @@ class Unit {
 		Unit(float hp, float cost, float attack, float speed, 
 				float munch_speed, float range, float sight,
 				float spread_speed, float spread_radius, Player* owner,
-				Game* game, CIwVec2 position);
+				Game* game, CIwFVec2 position);
 
 		Unit(const Unit& newUnit);
 
@@ -68,14 +70,17 @@ class Unit {
 		void setPosition(const CIwVec2& position);
 
 		
-		CIwSVec2 getPosition();
+		CIwFVec2 getPosition();
 
 
-        void setVelocity(const CIwSVec2& velocity);
+        void setVelocity(const CIwFVec2& velocity);
+    
+        CIwFVec2 getVelocity();
 
     
 		float getSpeed(); 
 		float getRange();
+        float getSize();
 		int getId();
 		void setId(int uuid);
         
@@ -123,11 +128,16 @@ class Unit {
 	
 		virtual char* getTextureName() = 0;
 		virtual bool update() = 0;
+
+        virtual void display(float worldRot) = 0;
+
 		
 		void Attack();
 		void RecieveDamage(); 
-	
-		virtual void display(float worldRot) = 0;
+        CIwFVec2 ConvertToRTheta(CIwFVec2 pos);
+    
+        float getSight();
+
 };
 
 #endif
