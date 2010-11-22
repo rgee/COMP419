@@ -10,6 +10,7 @@ Muncher::Muncher(Player* owner, Game* game, CIwFVec2 position)
 }
 
 bool Muncher::update() {
+
 	game->getAI()->updateAI(this);
 	return true;
 }

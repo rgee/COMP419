@@ -128,14 +128,17 @@ class Unit {
 	
 		virtual char* getTextureName() = 0;
 		virtual bool update() = 0;
+
         virtual void display(float worldRot) = 0;
+
 		
 		void Attack();
 		void RecieveDamage(); 
         CIwFVec2 ConvertToRTheta(CIwFVec2 pos);
     
         float getSight();
-	
+
+
 };
 
 #endif

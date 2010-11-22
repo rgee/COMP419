@@ -29,7 +29,9 @@ class Game {
 	
         CIwArray<Player*> players;
         int numPlayers;
+
 		AI *ai;
+
         
         std::list<Unit*> units;
         int numUnits;
@@ -78,10 +80,13 @@ class Game {
 			
 		long getTimesteps();
     
+
+
         AI *getAI();
     
         CIwMat* getViewMatrix();
         float getRotation();
+
 
 };
 

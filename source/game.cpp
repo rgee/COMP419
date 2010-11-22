@@ -1,4 +1,5 @@
 #include "game.h"
+#include "unit.h"
  
 Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), innerRadius(140), outerRadius(300) {
 	ai = new AI();
@@ -7,7 +8,7 @@ Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), i
 	game = IwGetResManager()->GetGroupNamed("Game");
     
 	initRenderState();
-} 
+}  
 
 Game::~Game(){
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
@@ -116,6 +117,7 @@ void Game::renderWorld(float worldRot) {
 CIwFVec2 Game::getWorldRadius() {
 	return CIwFVec2(innerRadius, outerRadius);
 }
+
 
 AI *Game::getAI(){ return ai; }
 
