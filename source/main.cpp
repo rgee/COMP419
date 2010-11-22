@@ -134,8 +134,8 @@ void doMain() {
 
     
 	game = new Game(2);
-    
-    CTouch t;
+
+CTouch t;
     t.x = 40;
     t.y = 480 / 2;
     t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
@@ -146,6 +146,7 @@ void doMain() {
 //    t2.y = 480 / 2 + 50;
 //    t2.unit = new Muncher(NULL, game, CIwFVec2(0,0));
 //    renderTouch(&t2);
+
 	
 	while (1) {
 	

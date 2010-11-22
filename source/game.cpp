@@ -22,6 +22,7 @@ Game::~Game(){
 
 void Game::initRenderState() {
 	//set up the camera position and view transform
+
 	IwGxSetPerspMul(9);
 	IwGxSetFarZNearZ(10, 8);
 	view = CIwMat::g_Identity;
@@ -110,6 +111,7 @@ void Game::renderWorld(float worldRot) {
 	IwGxSetMaterial(mat);
 
 	renderImageWorldSpace(CIwFVec2(0, 0), 0.0, 0.6, 960, worldRot);
+
 	
 	delete mat;
 }
