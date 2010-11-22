@@ -101,7 +101,7 @@ void doMain() {
 
     
 	game = new Game(2);
-	Muncher *munch = new Muncher(NULL, game, CIwVec2(300, 0));
+	Muncher *munch = new Muncher(NULL, game, CIwVec2(250, 0));
 
 	game->addUnit(munch);
 	
