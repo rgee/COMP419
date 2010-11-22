@@ -51,30 +51,36 @@ bool update() {
 	return true;
 }
 
-void renderTouch(CTouch* touch) {
-    int32 x = touch->x, y = touch->y;
+#define SQ(x) (x*x)
+bool renderTouch(CTouch* touch) {
     if(!touch->unit)
-        return;
+        return false;
     
-    float r = 225; //game->getWorldRadius().y;
-    float theta = 0.0;
     int w = IwGxGetScreenWidth();
     int h = IwGxGetScreenHeight();
     
-    CIwFVec2 *screen_pos = new CIwFVec2(x, h - y - 10);
-
-        
-    const CIwFMat2D world_to_screen_matrix = worldToScreenMatrix(r, theta, w, h);
-    const CIwFMat2D screen_to_world_matrix = world_to_screen_matrix.GetInverse();
+    int32 x = touch->x, y = h - touch->y;
     
-    CIwFVec2 world_pos = screen_to_world_matrix.TransformVec(*screen_pos);
+    CIwFVec2 radii = game->getWorldRadius();
+    
+    int32 world_x = x - (radii.y + radii.x - 2*w)/2;
+    int32 world_y = y - h/2;
+    
+    
+    float theta = TO_RADIANS(game->getRotation());
+    
+    int32 model_x = world_x * cos(theta) - world_y * sin(theta);
+    int32 model_y = world_x * sin(theta) + world_y * cos(theta);
+    
+    float dist_sq = SQ(model_x) + SQ(model_y);
 
-    touch->unit->setPosition((int32) world_pos.x, (int32) world_pos.y);
+    if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x))
+        return false;
+
+    touch->unit->setPosition(model_x, model_y);
 	game->addUnit(touch->unit);
-    
-    touch->unit = NULL;
-    
-    delete screen_pos;
+        
+    return true;
 }
 
 
@@ -89,7 +95,8 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
         if(touch->active && touch->x > IwGxGetScreenWidth() - 40){
             touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
         } else {
-            renderTouch(touch);   
+            renderTouch(touch); 
+            touch->unit = NULL;
         }
 	}
 }
@@ -127,6 +134,18 @@ void doMain() {
 
     
 	game = new Game(2);
+    
+    CTouch t;
+    t.x = 40;
+    t.y = 480 / 2;
+    t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
+    renderTouch(&t);
+    
+//    CTouch t2;
+//    t2.x = 150;
+//    t2.y = 480 / 2 + 50;
+//    t2.unit = new Muncher(NULL, game, CIwFVec2(0,0));
+//    renderTouch(&t2);
 	
 	while (1) {
 	

@@ -41,11 +41,12 @@ class Game {
 		CIwResGroup* game;
 		
 		UnitBucket unitBucket;
+    
+        CIwMat view;
 	
 		long timesteps;
 
-		float innerRadius;
-		float outerRadius;
+		float innerRadius, outerRadius, rotation;
 	
 		void initRenderState();
 	
@@ -78,6 +79,9 @@ class Game {
 		long getTimesteps();
     
         AI *getAI();
+    
+        CIwMat* getViewMatrix();
+        float getRotation();
 
 };
 
