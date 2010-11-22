@@ -16,6 +16,7 @@ struct CTouch {
 	int32 y;		// position
 	bool active;	// whether touch is currently active
 	int32 id;		// touch's unique identifier
+    Unit* unit;
 };
 
 Game* game = NULL;
@@ -50,9 +51,30 @@ bool update() {
 	return true;
 }
 
-void renderTouch(int32 x, int32 y) {
-	Muncher* munch = new Muncher(NULL, game, CIwVec2(x,y));
-	game->addUnit(munch);
+void renderTouch(CTouch* touch) {
+    int32 x = touch->x, y = touch->y;
+    if(!touch->unit)
+        return;
+    
+    float r = 225; //game->getWorldRadius().y;
+    float theta = 0.0;
+    int w = IwGxGetScreenWidth();
+    int h = IwGxGetScreenHeight();
+    
+    CIwFVec2 *screen_pos = new CIwFVec2(x, h - y - 10);
+
+        
+    const CIwFMat2D world_to_screen_matrix = worldToScreenMatrix(r, theta, w, h);
+    const CIwFMat2D screen_to_world_matrix = world_to_screen_matrix.GetInverse();
+    
+    CIwFVec2 world_pos = screen_to_world_matrix.TransformVec(*screen_pos);
+
+    touch->unit->setPosition((int32) world_pos.x, (int32) world_pos.y);
+	game->addUnit(touch->unit);
+    
+    touch->unit = NULL;
+    
+    delete screen_pos;
 }
 
 
@@ -64,7 +86,11 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 		touch->active = event->m_Pressed != 0;
 		touch->x = event->m_x;
 		touch->y = event->m_y;
-        renderTouch(touch->x, touch->y);
+        if(touch->active && touch->x > IwGxGetScreenWidth() - 40){
+            touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
+        } else {
+            renderTouch(touch);   
+        }
 	}
 }
 
@@ -101,9 +127,6 @@ void doMain() {
 
     
 	game = new Game(2);
-	Muncher *munch = new Muncher(NULL, game, CIwVec2(300, 0));
-
-	game->addUnit(munch);
 	
 	while (1) {
 	
@@ -150,7 +173,6 @@ void doMain() {
 	s3ePointerUnRegister(S3E_POINTER_MOTION_EVENT, (s3eCallback)MultiTouchMotionCB);
     
 	delete game;
-	delete munch;
 }
 
 int main() {

@@ -29,8 +29,7 @@ class Unit {
 
 		Player *owner;
 		Game* game;
-		CIwSVec2 position;
-        CIwSVec2 velocity;
+		CIwFVec2 position, velocity;
 		int uid;
 	
 		//info for sprite animation
@@ -57,7 +56,7 @@ class Unit {
 		Unit(float hp, float cost, float attack, float speed, 
 				float munch_speed, float range, float sight,
 				float spread_speed, float spread_radius, Player* owner,
-				Game* game, CIwVec2 position);
+				Game* game, CIwFVec2 position);
 
 		Unit(const Unit& newUnit);
 
@@ -71,12 +70,12 @@ class Unit {
 		void setPosition(const CIwVec2& position);
 
 		
-		CIwSVec2 getPosition();
+		CIwFVec2 getPosition();
 
 
-        void setVelocity(const CIwSVec2& velocity);
+        void setVelocity(const CIwFVec2& velocity);
     
-        CIwSVec2 getVelocity();
+        CIwFVec2 getVelocity();
 
     
 		float getSpeed(); 
@@ -133,7 +132,7 @@ class Unit {
 		
 		void Attack();
 		void RecieveDamage(); 
-        CIwSVec2 ConvertToRTheta(CIwSVec2 pos);
+        CIwFVec2 ConvertToRTheta(CIwFVec2 pos);
     
         float getSight();
 	

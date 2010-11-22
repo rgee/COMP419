@@ -76,8 +76,8 @@ void Game::render() {
 	static int r;
 	r--;
 	
-	renderWorld(r);
-	renderSprites(r);
+	renderWorld(0);
+	renderSprites(0);
 	
 	IwGxSwapBuffers();
 }
@@ -114,7 +114,7 @@ void Game::renderWorld(float worldRot) {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwSVec2(0, 0), 0.0, 0.6, 960, worldRot);
+	renderImageWorldSpace(CIwFVec2(0, 0), 0.0, 0.6, 960, worldRot);
 	
 	delete mat;
 }
