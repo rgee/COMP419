@@ -126,3 +126,7 @@ CIwMat* Game::getViewMatrix(){
 float Game::getRotation(){
     return rotation;
 }
+
+float Game::rotate(float rot) {
+    return rotation += rot;
+}

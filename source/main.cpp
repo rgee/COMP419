@@ -10,11 +10,18 @@
 
 #define	MS_PER_FRAME (1000 / 10)
 
+enum gesture_t { CREATE_UNIT, DRAG_WORLD };
+
 // Structure to track touches.
 struct CTouch {
-	int32 x, y, id;
-	bool active;	// whether touch is currently active
-    Unit* unit;
+    gesture_t gesture_type; // type of gesture activated by this touch
+	int32 x;	        	// position
+	int32 y;	        	// position
+	bool active;        	// whether touch is currently active
+	int32 id;	         	// touch's unique identifier
+    Unit* unit;             // unit created by this touch if it's a create_unit gesture
+    int32 start_y;          // initial y position of a world_drag gesture
+    int32 end_y;            // end y position of a world_drag gesture
 };
 
 Game* game = NULL;
@@ -50,7 +57,7 @@ bool update() {
 }
 
 #define SQ(x) (x*x)
-bool renderTouch(CTouch* touch) {
+bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
         return false;
     
@@ -82,20 +89,41 @@ bool renderTouch(CTouch* touch) {
     return true;
 }
 
+bool renderDragWorld(CTouch* touch) {
+    // this is VERY naive at this point, doesn't actually do angles correctly.
+    game->rotate(touch->end_y - touch->end_y);
+    game->tick();
+    return true;
+}
+
 
 // assign activity and position info to the touch struct associated with an event
 // for a multitouch click.
 void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 	CTouch* touch = GetTouch(event->m_TouchID);
 	if (touch) {
-		touch->active = event->m_Pressed != 0;
+        touch->active = event->m_Pressed != 0;
 		touch->x = event->m_x;
 		touch->y = event->m_y;
-        if(touch->active && touch->x > IwGxGetScreenWidth() - 60){
-            touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
+
+        // if it's the beginning of a touch, then determine what kind of gesture it is and set initial info.
+        if (touch->active) {
+            if (touch->x > IwGxGetScreenWidth() - 60) {
+                touch->gesture_type = CREATE_UNIT;
+                touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
+            } else {
+                touch->gesture_type = DRAG_WORLD;
+                touch->start_y = touch->y;
+            }
+        // if it's the end of a touch, check what kind of gesture it and render.
         } else {
-            renderTouch(touch); 
-            touch->unit = NULL;
+            if (touch->gesture_type == CREATE_UNIT) {
+                renderUnitCreation(touch);
+                touch->unit = NULL;
+            } else if (touch->gesture_type == DRAG_WORLD) {
+                touch->end_y = touch->y;
+                renderDragWorld(touch);
+            }
         }
 	}
 }
@@ -107,6 +135,13 @@ void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
 	if (touch) {
 		touch->x = event->m_x;
 		touch->y = event->m_y;
+        
+        if (touch->gesture_type == DRAG_WORLD) {
+            // sent new start to the old end, and the new end to the new pos
+            touch->start_y = touch->end_y;
+            touch->end_y = touch->y;
+            renderDragWorld(touch);
+        }   
 	}
 }
 
@@ -138,13 +173,13 @@ void doMain() {
     t.x = 100;
     t.y = 480 / 2 + 10;
     t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
-    renderTouch(&t);
-//    
-////    CTouch t2;
-////    t2.x = 150;
-////    t2.y = 480 / 2 + 50;
-////    t2.unit = new Muncher(NULL, game, CIwFVec2(0,0));
-////    renderTouch(&t2);
+    renderUnitCreation(&t);
+    
+//    CTouch t2;
+//    t2.x = 150;
+//    t2.y = 480 / 2 + 50;
+//    t2.unit = new Muncher(NULL, game, CIwFVec2(0,0));
+//    renderTouch(&t2);
 
 	
 	while (1) {
