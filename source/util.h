@@ -1,7 +1,7 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-#define TO_RADIANS(X) X * (180.0f / PI) 
+#define TO_RADIANS(X) X * (PI / 180.0f) 
 
 #include "IwGx.h"
 #include "IwGeom.h"
