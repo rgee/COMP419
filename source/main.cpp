@@ -61,38 +61,24 @@ bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
         return false;
     
-    int w = IwGxGetScreenWidth();
-    int h = IwGxGetScreenHeight();
+    CIwFVec2 *modelCoords = worldify(touch->x, touch->y, game);
     
-    int32 x = touch->x, y = h - touch->y;
-    
+    float dist_sq = SQ(modelCoords->x) + SQ(modelCoords->y);
     CIwFVec2 radii = game->getWorldRadius();
-    
-    int32 world_x = x + (radii.x - 10);
-    int32 world_y = y - h/2;
-    
-    float theta = -game->getRotation();
-    
-    // Rotates (world_x, world_y) around world origin (w/2 + radii.x - 20, h/2) by theta
-    int32 model_x = world_x * cos(theta) - world_y * sin(theta);
-    int32 model_y = world_x * sin(theta) + world_y * cos(theta);
-    
-    float dist_sq = SQ(model_x) + SQ(model_y);
-
     if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x))
         return false;
-
-    touch->unit->setPosition(model_x, model_y);
-    //touch->unit->setVelocity(touch->unit->getPosition()*-1);
+    
+    touch->unit->setPosition(*modelCoords);
 	game->addUnit(touch->unit);
-        
+    
+    delete modelCoords;
+    
     return true;
 }
 
 bool renderDragWorld(CTouch* touch) {
     // this is VERY naive at this point, doesn't actually do angles correctly.
-    game->rotate(touch->end_y - touch->end_y);
-    game->tick();
+    game->rotate((touch->start_y - touch->end_y)/360.0f);
     return true;
 }
 

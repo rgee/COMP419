@@ -10,11 +10,10 @@ Muncher::Muncher(Player* owner, Game* game, CIwFVec2 position)
 }
 
 bool Muncher::update() {
-    
-    float oldX = position.x, oldY = position.y;
-    
     curFrame = (curFrame + 1) % numFrames;
+    
     if(curFrame % 12 == 0){
+        float oldX = position.x, oldY = position.y;
         setPolarPosition(getR(), getTheta() + PI / 20.0);
         setVelocity(position.x - oldX, position.y - oldY);   
     }

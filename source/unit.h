@@ -67,7 +67,7 @@ class Unit {
         }
 
 		void setPosition(float x, float y);
-		void setPosition(const CIwVec2& position);
+		void setPosition(const CIwFVec2& position);
 		
 		CIwFVec2 getPosition();
 

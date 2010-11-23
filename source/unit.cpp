@@ -84,7 +84,7 @@ void Unit::setPosition(float x, float y){
 	theta = asin(y/r);
 }
 
-void Unit::setPosition(const CIwVec2& newPosition){
+void Unit::setPosition(const CIwFVec2& newPosition){
     setPosition(newPosition.x, newPosition.y);
 }
 
