@@ -1,23 +1,24 @@
 #ifndef _GAME_H
 #define _GAME_H
 
-#include "IwArray.h"
-
-class Game;
-class Unit;
-class AI;
-
 #include <map>
 #include <set>
 #include <list>
 #include <deque>
-#include "AI.h"
+
 #include "string.h"
 #include "IwResManager.h"
 #include "IwResGroup.h"
 #include "IwManagedList.h"
 #include "IwGx.h"
+#include "IwArray.h"
+
+class Game;
+
 #include "player.h"
+#include "unit.h"
+
+#include "AI.h"
 
 
 typedef std::map<char*, std::set<Unit*>* > UnitBucket;
@@ -28,13 +29,9 @@ class Game {
 	
         CIwArray<Player*> players;
         int numPlayers;
-		
-        //Must solve AI type error on line bellow.  Think it is an include/preconstruction issue.  Until this is solved
-        //I see no way to run AI any suggestions would be appreciated.
-        //AI ai; 
-        
-        //CIwArray<Unit*> units;
 
+		AI *ai;
+        
         std::list<Unit*> units;
         int numUnits;
 
@@ -45,11 +42,12 @@ class Game {
 		CIwResGroup* game;
 		
 		UnitBucket unitBucket;
+    
+        CIwMat view;
 	
 		long timesteps;
 
-		float innerRadius;
-		float outerRadius;
+		float innerRadius, outerRadius, rotation;
 	
 		void initRenderState();
 	
@@ -80,9 +78,10 @@ class Game {
 		void tick();
 			
 		long getTimesteps();
+        AI *getAI();
     
-        //AI getAI();
-
+        CIwMat* getViewMatrix();
+        float getRotation();
 };
 
 #endif

@@ -1,16 +1,16 @@
 #include "game.h"
-#include "unit.h"
-  
-Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0) {
-	//ai = new AI();
+
+ 
+Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), innerRadius(140), outerRadius(300) {
+	ai = new AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
+    
 	initRenderState();
 } 
 
 Game::~Game(){
-    	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
 		(*itr).second->clear();
 		delete (*itr).second;
@@ -21,14 +21,12 @@ Game::~Game(){
 }
 
 void Game::initRenderState() {
-	
 	//set up the camera position and view transform
-	IwGxSetPerspMul(0x9);
-	IwGxSetFarZNearZ(0xa, 0x8);
-	CIwMat view = CIwMat::g_Identity;
 
-	view.SetTrans(CIwVec3(220, 0, -9));
-
+	IwGxSetPerspMul(9);
+	IwGxSetFarZNearZ(10, 8);
+	view = CIwMat::g_Identity;
+	view.SetTrans(CIwVec3((innerRadius + outerRadius)/2.0f, 0, -9));
 	IwGxSetViewMatrix(&view);
 }
 
@@ -61,16 +59,9 @@ void Game::tick(){
 	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
 		(*itr)->update();
 		curr_theta = (*itr)->getTheta();
-        
-        //while(curr_theta >= unitBuffer.front()){
-        //    units.insert((++itr), unitBuffer.pop_front());
-        //} 
 	}
     
     units.merge(unitBuffer);
-	
-    int asklfjaslfkj = units.size();
-    int alskfjsakfjal = 1;
     
     ++timesteps;
 	render();
@@ -80,11 +71,9 @@ void Game::render() {
 	IwGxSetColClear(255, 255, 255, 255);
 	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	
-	static int r;
-	r--;
-	
-	renderWorld(r);
-	renderSprites(r);
+    rotation = 0;
+	renderWorld(rotation);
+	renderSprites(rotation);
 	
 	IwGxSwapBuffers();
 }
@@ -120,8 +109,9 @@ void Game::renderWorld(float worldRot) {
 	mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
-	
-	renderImageWorldSpace(CIwSVec2(0, 0), 0.0, 0.6, 960, worldRot);
+
+	renderImageWorldSpace(CIwFVec2(0, 0), 0.0, 0.6, 960, worldRot);
+
 	
 	delete mat;
 }
@@ -130,4 +120,12 @@ CIwFVec2 Game::getWorldRadius() {
 	return CIwFVec2(innerRadius, outerRadius);
 }
 
-//AI Game::getAI(){return ai;}
+AI *Game::getAI(){ return ai; }
+
+CIwMat* Game::getViewMatrix(){
+    return &view;
+}
+
+float Game::getRotation(){
+    return rotation;
+}

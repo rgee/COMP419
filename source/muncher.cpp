@@ -1,6 +1,6 @@
 #include "muncher.h"
 
-Muncher::Muncher(Player* owner, Game* game, CIwVec2 position)
+Muncher::Muncher(Player* owner, Game* game, CIwFVec2 position)
 		 : Unit(100.0f, 50.0f, 10.0f, 15.0f, 10.0f, 5.0f, 10.0f, 0.0f, 0.0f, owner, game, position)
 {
 	spriteSize = 256;
@@ -10,12 +10,13 @@ Muncher::Muncher(Player* owner, Game* game, CIwVec2 position)
 }
 
 bool Muncher::update() {
-	//game->getAI().updateAI(this);
+
+	game->getAI()->updateAI(this);
 	return true;
 }
 
 void Muncher::display(float worldRot) {
-	renderSprite(curFrame, 90, 0.5, worldRot);
+	renderSprite(curFrame++, 90, 0.15, worldRot);
 }
 
 char* Muncher::getTextureName() {
