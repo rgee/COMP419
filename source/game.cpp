@@ -15,7 +15,8 @@ Game::~Game(){
 		delete (*itr).second;
 	}
 	
-	units.clear();
+	delete ai;
+ 	units.clear();
 	unitBuffer.clear();
 }
 
@@ -99,6 +100,7 @@ void Game::renderSprites(float worldRot) {
 			(*u_it)->display(worldRot);
 		}
 	}
+	
 	delete mat;
 }
 
