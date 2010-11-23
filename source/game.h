@@ -56,9 +56,9 @@ class Game {
 	
 		void render();
 	
-		void renderSprites(float worldRot);
+		void renderSprites();
 	
-		void renderWorld(float worldRot);
+		void renderWorld();
 	
 		void renderUI();
 	                    

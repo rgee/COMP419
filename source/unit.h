@@ -66,7 +66,7 @@ class Unit {
             return theta < u.theta;
         }
 
-		void setPosition(int32 x, int32 y);
+		void setPosition(float x, float y);
 		void setPosition(const CIwVec2& position);
 
 		
@@ -129,7 +129,7 @@ class Unit {
 		virtual char* getTextureName() = 0;
 		virtual bool update() = 0;
 
-        virtual void display(float worldRot) = 0;
+        virtual void display() = 0;
 
 		
 		void Attack();

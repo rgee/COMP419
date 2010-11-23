@@ -1,6 +1,8 @@
 #include "AI.h"
   
-AI::AI(){}
+AI::AI(Game* game):game(game){
+    worldRad = game->getWorldRadius();
+}
 
 void AI::path(Unit* unit){ 
 	float rad = unit->getR();
@@ -97,8 +99,8 @@ void AI::updateAI(Unit* unit){
 std::list<Unit*>* AI::collisionDetection(Unit* unit, std::list<Unit*>* Units){
     float lowTheta = unit->getTheta()-10;
     float upTheta  = unit->getTheta()+10;
-    float upRad  = unit->getGame()->getWorldRadius().y;
-    float lowRad = unit->getGame()->getWorldRadius().x;
+    float upRad  = worldRad.y;
+    float lowRad = worldRad.x;
  
     CIwFVec2 Pos = unit->getPosition()+unit->getVelocity();
     float rad = unit->ConvertToRTheta(Pos).x;

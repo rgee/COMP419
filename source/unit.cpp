@@ -27,10 +27,6 @@ Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
 */
 
 
-//bool Unit::operator<(const Unit& foo, const Unit& u) const{    
-//    return foo.getTheta() < u.getTheta();
-//}
-
 void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot) {
 	
 	CIwColour playerColor = owner->getColor();
@@ -96,12 +92,11 @@ void Unit::decrementHp(float f){
 	hp -= f;
 }
 
-void Unit::setPosition(int x, int y){
+void Unit::setPosition(float x, float y){
 	position.x = x;
 	position.y = y;
-	r = sqrt(x^2 + y^2);
+	r = sqrt(x*x + y*y);
 	theta = asin(y/x);
-	
 }
 
 void Unit::setPosition(const CIwVec2& newPosition){
