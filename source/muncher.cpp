@@ -16,7 +16,7 @@ bool Muncher::update() {
 }
 
 void Muncher::display() {
-	renderSprite(curFrame++, game->getRotation(), 0.15, game->getRotation());
+	renderSprite(curFrame++, game->getRotation(), 0.3, game->getRotation());
 }
 
 char* Muncher::getTextureName() {
