@@ -64,7 +64,7 @@ bool renderTouch(CTouch* touch) {
     int32 world_x = x + (radii.x - 10);
     int32 world_y = y - h/2;
     
-    float theta = -TO_RADIANS(game->getRotation());
+    float theta = -game->getRotation();
     
     // Rotates (world_x, world_y) around world origin (w/2 + radii.x - 20, h/2) by theta
     int32 model_x = world_x * cos(theta) - world_y * sin(theta);
@@ -76,6 +76,7 @@ bool renderTouch(CTouch* touch) {
         return false;
 
     touch->unit->setPosition(model_x, model_y);
+    //touch->unit->setVelocity(touch->unit->getPosition()*-1);
 	game->addUnit(touch->unit);
         
     return true;
@@ -128,7 +129,7 @@ void doMain() {
 	static CIwSVec2 xy(260, 0);
 	static CIwSVec2 wh(60, 480);
 	static CIwSVec2 uv(0, 0);
-	static CIwSVec2 duv(1 << 11, 1 << 11);
+	static CIwSVec2 duv(1 << 12, 1 << 12);
 
     
 	game = new Game(2);

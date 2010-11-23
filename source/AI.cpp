@@ -103,8 +103,9 @@ std::list<Unit*>* AI::collisionDetection(Unit* unit, std::list<Unit*>* Units){
     float lowRad = worldRad.x;
  
     CIwFVec2 Pos = unit->getPosition()+unit->getVelocity();
-    float rad = unit->ConvertToRTheta(Pos).x;
-    float theta = unit->ConvertToRTheta(Pos).y;
+    polarize(Pos);
+    float rad = Pos.x;
+    float theta = Pos.y;
     float size = unit->getSize();
 
    

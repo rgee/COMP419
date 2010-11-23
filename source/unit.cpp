@@ -58,9 +58,13 @@ void Unit::setAttacking(Unit* unit){Attacking = unit;}
 Unit* Unit::getPursuing(){return Pursuing;}
 void Unit::setPursuing(Unit* unit){Pursuing=unit;}
 
-bool Unit::attacking(){if(Attacking!=NULL){return true;}else{return false;}}
-bool Unit::pursuing(){if(Pursuing!=NULL){return true;}else{return false;}}
+bool Unit::attacking(){
+    return Attacking != NULL;
+}
 
+bool Unit::pursuing(){
+    return Pursuing != NULL;
+}
 
 
 void Unit::setOwner(Player& p){
@@ -83,28 +87,26 @@ void Unit::decrementHp(float f){
 void Unit::setPosition(float x, float y){
 	position.x = x;
 	position.y = y;
-	r = sqrt(x*x + y*y);
-	theta = asin(y/x);
+    
+	r = position.GetLength();
+	theta = asin(y/r);
 }
 
 void Unit::setPosition(const CIwVec2& newPosition){
-	position = newPosition;
-	float x = newPosition.x;
-	float y = newPosition.y;
-	r = sqrt(x*x + y*y);
-	theta = asin(y/x);
+    setPosition(newPosition.x, newPosition.y);
 }
 
 
-CIwFVec2 Unit::getPosition(){return position;}
+CIwFVec2 Unit::getPosition(){ return position; }
 
 float Unit::getR(){ return r; }
 float Unit::getTheta(){ return theta; }
 
 void Unit::increaseX(float x){}
 void Unit::increaseY(float y){}
-float Unit::getX(){return 0.0f;}
-float Unit::getY(){return 0.0f;}
+
+float Unit::getX(){return position.x;}
+float Unit::getY(){return position.y;}
 
 
 float Unit::getSpeed(){return speed;}
@@ -114,23 +116,15 @@ void Unit::Attack(){};
 void Unit::RecieveDamage(){};
 
 
-void Unit::setVelocity(const CIwFVec2& vel)
-{
-    float angle = acos(vel.Dot(velocity));
-
+void Unit::setVelocity(const CIwFVec2& vel){
     velocity = vel;
 }
 
 CIwFVec2 Unit::getVelocity(){return velocity;}
 
-CIwFVec2 Unit::ConvertToRTheta(CIwFVec2 pos){
-    float x = pos.x;
-	float y = pos.y;
-	float r = sqrt(x*x + y*y);
-	float theta = asin(y/x);
-    pos.x = r;
-    pos.y = theta;
-    return pos;
-}
 
-float Unit::getSight(){return sight;}
+float Unit::getSight(){ return sight; }
+
+float Unit::getAngle(){
+    return asin(-velocity.y/r);
+}

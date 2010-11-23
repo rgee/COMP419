@@ -15,11 +15,11 @@ void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, in
 	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist,    0);
 	
 	CIwMat modelTransform = CIwMat::g_Identity;
-	modelTransform.SetRotZ(IW_ANGLE_FROM_DEGREES(angle));
+	modelTransform.SetRotZ(IW_ANGLE_FROM_RADIANS(angle));
 	modelTransform.SetTrans(CIwVec3(position.x, -position.y, 0));
 	    
 	CIwMat rot = CIwMat::g_Identity;
- 	rot.SetRotZ(IW_ANGLE_FROM_DEGREES(worldRot));
+ 	rot.SetRotZ(IW_ANGLE_FROM_RADIANS(worldRot));
 	modelTransform = modelTransform*rot;
 	
 	IwGxSetModelMatrix(&modelTransform, false);
@@ -42,4 +42,9 @@ void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, in
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
 	IwGxFlush();
+}
+
+void polarize(CIwFVec2 v){
+    v.x = v.GetLength();
+    v.y = asin(v.y/v.GetLength());
 }

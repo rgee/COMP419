@@ -12,7 +12,7 @@ class Unit;
 #include "util.h"
 
 class Unit {
-    protected:
+    protected:    
 		/* Preliminary stats. Subject to change. */
 	    float hp;
 		float cost;
@@ -134,9 +134,9 @@ class Unit {
 		
 		void Attack();
 		void RecieveDamage(); 
-        CIwFVec2 ConvertToRTheta(CIwFVec2 pos);
     
         float getSight();
+        float getAngle();
 };
 
 #endif
