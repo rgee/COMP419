@@ -10,12 +10,22 @@ Muncher::Muncher(Player* owner, Game* game, CIwFVec2 position)
 }
 
 bool Muncher::update() {
+    
+    float oldX = position.x, oldY = position.y;
+    
+    curFrame = (curFrame + 1) % numFrames;
+    if(curFrame % 12 == 0){
+        setPolarPosition(getR(), getTheta() + PI / 20.0);
+        setVelocity(position.x - oldX, position.y - oldY);   
+    }
+    
 	game->getAI()->updateAI(this);
+    
 	return true;
 }
 
 void Muncher::display() {
-	renderSprite(curFrame++, getAngle(), 0.2, game->getRotation());
+	renderSprite(curFrame, getAngle(), 0.2, game->getRotation());
 }
 
 char* Muncher::getTextureName() {

@@ -66,7 +66,7 @@ void Game::tick(){
 }
 
 void Game::render() {		
-    rotation += 0.01;
+    //rotation -= PI / 200.0;
     
 	renderWorld();
 	renderSprites();

@@ -36,14 +36,6 @@ int Unit::getId(){ return uid; }
 void Unit::setId(int uid){ this->uid = uid; }
 
 
-
-void Unit::setRTheta(float rad, float ang){ 
-	r = rad;
-	theta = ang;
-	position.x = (r/sin(theta))-1;
-	position.y = position.x*sin(theta);
-}
-
 Player& Unit::getOwner(){
 	return *owner;
 }
@@ -99,8 +91,15 @@ void Unit::setPosition(const CIwVec2& newPosition){
 
 CIwFVec2 Unit::getPosition(){ return position; }
 
-float Unit::getR(){ return r; }
+float Unit::getR(){     return r; }
 float Unit::getTheta(){ return theta; }
+
+void Unit::setPolarPosition(float _r, float _theta){
+    r = _r;
+    theta = _theta;
+    position.x = r * cos(theta);
+    position.y = r * sin(theta);
+}
 
 void Unit::increaseX(float x){}
 void Unit::increaseY(float y){}
@@ -120,11 +119,22 @@ void Unit::setVelocity(const CIwFVec2& vel){
     velocity = vel;
 }
 
+void Unit::setVelocity(float xv, float yv){
+    velocity.x = xv;
+    velocity.y = yv;
+}
+
 CIwFVec2 Unit::getVelocity(){return velocity;}
 
 
 float Unit::getSight(){ return sight; }
 
 float Unit::getAngle(){
-    return asin(-velocity.y/r);
+    // Facing towards position.x + velocity.x, position.y + velocity.y
+    // 0 is facing LEFT
+    // PI is facing RIGHT
+    // Let phi be angle from X axis to (velocity.x, velocity.y)
+    // So we want atan2(velocity.x, velocity.y)
+    
+    return 3*PI/2 - atan2(velocity.x, velocity.y);
 }

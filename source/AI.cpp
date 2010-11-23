@@ -41,9 +41,9 @@ void AI::path(Unit* unit){
 		float thetaChange = speed/rad;
 		float tempTheta = thetaChange + theta;
 
-        unit->setRTheta(rad, tempTheta);
+        unit->setPolarPosition(rad, tempTheta);
         CIwFVec2 tempPos = unit->getPosition();
-        unit->setRTheta(rad, theta);
+        unit->setPolarPosition(rad, theta);
         unit->setVelocity(tempPos-unit->getPosition());
 
         

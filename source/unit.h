@@ -68,12 +68,12 @@ class Unit {
 
 		void setPosition(float x, float y);
 		void setPosition(const CIwVec2& position);
-
 		
 		CIwFVec2 getPosition();
 
 
         void setVelocity(const CIwFVec2& velocity);
+        void setVelocity(float xv, float yv);
     
         CIwFVec2 getVelocity();
 
@@ -105,11 +105,7 @@ class Unit {
 		float getR();
 		float getTheta();
 	
-	
-		//To deal with simultaneous altering of R Theta and X,Y Pos setR and setTheta must be combined
-		//Please Refractor accordingly.
-	
-		void setRTheta(float x, float y);
+		void setPolarPosition(float _r, float _theta);
 	
 		/* IGNORE THE FOLLOWING.  I already updated set position to change theta and r
 		 and vice versa so use which ever coordinate system works best for you cause
