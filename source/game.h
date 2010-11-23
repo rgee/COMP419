@@ -27,7 +27,9 @@ class Game {
 	
     private:
 	
-        CIwArray<Player*> players;
+		Player* localPlayer;
+		Player* opponentPlayer;
+	
         int numPlayers;
 
 		AI *ai;
@@ -62,7 +64,7 @@ class Game {
 	                    
     public:
 	
-        Game(int numPlayers);
+        Game(Player* p);
 		~Game();
         
         void addUnit(Unit *u);
@@ -86,6 +88,8 @@ class Game {
     
         CIwMat* getViewMatrix();
         float getRotation();
+	
+		Player* getLocalPlayer();
 
 
 };
