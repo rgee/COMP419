@@ -34,7 +34,7 @@ void Game::initRenderState() {
 std::list<Unit*>* Game::getUnits(){
 	return &units;
 }
-
+ 
 void Game::addUnit(Unit *u){
 	
     u->setId(numUnits++);
