@@ -4,10 +4,10 @@
  * around the donut. theta is the angle from the positive x-axis on r that
  * the screen is centered on.
  */
-CIwFMat2D& worldToScreenMatrix(float r, float theta, int screen_width, int screen_height) {
+CIwFMat2D worldToScreenMatrix(float r, float theta, int screen_width, int screen_height) {
     theta = TO_RADIANS(theta);
 
-    CIwFMat2D *matrix = new CIwFMat2D();
+    CIwFMat2D matrix;
     
     
 
@@ -16,10 +16,10 @@ CIwFMat2D& worldToScreenMatrix(float r, float theta, int screen_width, int scree
     
     CIwFVec2 translation_vect = CIwFVec2(trans_x, trans_y);
 
-    matrix->SetRot(theta);
-    matrix->SetTrans(translation_vect);
+    matrix.SetRot(theta);
+    matrix.SetTrans(translation_vect);
     
-    return *matrix;
+    return matrix;
 }
 
 void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
