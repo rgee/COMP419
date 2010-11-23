@@ -2,4 +2,5 @@ CIwResGroup
 {
 	name "Sprites"
 	"../images/muncher_sprite_sheet.png"
+	"../images/shooter_sprite_sheet.png"
 }

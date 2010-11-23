@@ -1,14 +1,14 @@
 #include "game.h"
+#include "unit.h"
 
  
-Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), innerRadius(140), outerRadius(300) {
+Game::Game(Player* p) : localPlayer(p), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
 	ai = new AI();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
-    
 	initRenderState();
-} 
+}  
 
 Game::~Game(){
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
@@ -22,11 +22,12 @@ Game::~Game(){
 
 void Game::initRenderState() {
 	//set up the camera position and view transform
+    int w = IwGxGetScreenWidth();
 
 	IwGxSetPerspMul(9);
 	IwGxSetFarZNearZ(10, 8);
 	view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3((innerRadius + outerRadius)/2.0f, 0, -9));
+	view.SetTrans(CIwVec3(w/2 + innerRadius - 20, 0, -9));
 	IwGxSetViewMatrix(&view);
 }
 
@@ -71,7 +72,7 @@ void Game::render() {
 	IwGxSetColClear(255, 255, 255, 255);
 	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	
-    rotation = 0;
+    //rotation -= 0.2;
 	renderWorld(rotation);
 	renderSprites(rotation);
 	
@@ -88,7 +89,7 @@ void Game::renderSprites(float worldRot) {
 		if (strcmp((*itr).first, curTexture) != 0) {
 			curTexture = (*itr).first;
 			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
-			mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
+			mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
 			mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 			IwGxSetMaterial(mat);
 		}

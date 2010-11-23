@@ -137,7 +137,6 @@ class Unit {
         CIwFVec2 ConvertToRTheta(CIwFVec2 pos);
     
         float getSight();
-
 };
 
 #endif

@@ -27,11 +27,12 @@ class Game {
 	
     private:
 	
-        CIwArray<Player*> players;
+		Player* localPlayer;
+		Player* opponentPlayer;
+	
         int numPlayers;
 
 		AI *ai;
-        
         std::list<Unit*> units;
         int numUnits;
 
@@ -61,7 +62,7 @@ class Game {
 	                    
     public:
 	
-        Game(int numPlayers);
+        Game(Player* p);
 		~Game();
         
         void addUnit(Unit *u);
@@ -78,10 +79,13 @@ class Game {
 		void tick();
 			
 		long getTimesteps();
+
         AI *getAI();
     
         CIwMat* getViewMatrix();
         float getRotation();
+	
+		Player* getLocalPlayer();
 };
 
 #endif

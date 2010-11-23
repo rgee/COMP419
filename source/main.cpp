@@ -20,6 +20,8 @@ struct CTouch {
 };
 
 Game* game = NULL;
+Player* localPlayer = NULL;
+
 
 #define MAX_TOUCHES 10
 CTouch touches[MAX_TOUCHES];
@@ -63,7 +65,7 @@ bool renderTouch(CTouch* touch) {
     
     CIwFVec2 radii = game->getWorldRadius();
     
-    int32 world_x = x - (radii.y + radii.x - 2*w)/2;
+    int32 world_x = x + (radii.x - 20);
     int32 world_y = y - h/2;
     
     
@@ -92,8 +94,8 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 		touch->active = event->m_Pressed != 0;
 		touch->x = event->m_x;
 		touch->y = event->m_y;
-        if(touch->active && touch->x > IwGxGetScreenWidth() - 40){
-            touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
+        if(touch->active && touch->x > IwGxGetScreenWidth() - 60){
+            touch->unit = new Muncher(localPlayer, game, CIwFVec2(0,0));
         } else {
             renderTouch(touch); 
             touch->unit = NULL;
@@ -127,18 +129,21 @@ void doMain() {
     mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
         
-	static CIwSVec2 xy(280, 0);
-	static CIwSVec2 wh(40, 480);
+	static CIwSVec2 xy(260, 0);
+	static CIwSVec2 wh(60, 480);
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(1 << 11, 1 << 11);
 
-    
-	game = new Game(2);
+	IwGxLightingOff();
+	
+	CIwColour col = {180, 255, 220, 255};
+	localPlayer = new Player(col);
+	game = new Game(localPlayer);
 
-CTouch t;
+    CTouch t;
     t.x = 40;
     t.y = 480 / 2;
-    t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
+    t.unit = new Muncher(localPlayer, game, CIwFVec2(0,0));
     renderTouch(&t);
     
 //    CTouch t2;
@@ -193,6 +198,7 @@ CTouch t;
 	s3ePointerUnRegister(S3E_POINTER_MOTION_EVENT, (s3eCallback)MultiTouchMotionCB);
     
 	delete game;
+	delete localPlayer;
 }
 
 int main() {

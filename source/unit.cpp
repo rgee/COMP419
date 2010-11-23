@@ -32,6 +32,18 @@ Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
 //}
 
 void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot) {
+	
+	CIwColour playerColor = owner->getColor();
+	
+	static CIwColour colors[4] = {
+		playerColor,
+		playerColor,
+		playerColor,
+		playerColor
+	};
+	
+	IwGxSetColStream(colors, 4);
+	
 	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, worldRot, frameNumber, numFrames);
 }
 
