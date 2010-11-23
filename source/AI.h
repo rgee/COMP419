@@ -6,19 +6,22 @@ class AI;
 #include "unit.h"
 
 class AI{
+    private:
+        CIwFVec2 worldRad;
+        Game* game;
 
     public: 
     
-        AI();
+        AI(Game* game);
     
         void updateAI(Unit* unit);
         
-        void path(Unit& unit);
+        void path(Unit* unit);
         
-        bool attack(Unit& unit);
-        Unit* detectEnemy(Unit& unit, std::list<Unit*>* Units);
+        bool attack(Unit* unit);
+        Unit* detectEnemy(Unit* unit, std::list<Unit*>* Units);
         
-        std::list<Unit*>* collisionDetection(Unit& unit, std::list<Unit*>* Units);
+        std::list<Unit*>* collisionDetection(Unit* unit, std::list<Unit*>* Units);
             
 };
 
