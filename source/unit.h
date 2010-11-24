@@ -37,7 +37,10 @@ class Unit {
 		int numFrames;
 		int curFrame;
 	
+		// The unit this unit is attacking.
 		Unit *Attacking;
+
+		// The unit this unit is pursuing.
 		Unit *Pursuing;
 	
 		/**

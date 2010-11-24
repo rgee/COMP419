@@ -44,7 +44,7 @@ void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, in
 	IwGxFlush();
 }
 
-void polarize(CIwFVec2 v){
+void polarize(CIwFVec2& v){
     v.x = v.GetLength();
     v.y = asin(v.y/v.GetLength());
 }
