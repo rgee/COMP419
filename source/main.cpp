@@ -10,13 +10,18 @@
 
 #define	MS_PER_FRAME (1000 / 10)
 
+enum gesture_t { CREATE_UNIT, DRAG_WORLD };
+
 // Structure to track touches.
 struct CTouch {
-	int32 x;		// position
-	int32 y;		// position
-	bool active;	// whether touch is currently active
-	int32 id;		// touch's unique identifier
-    Unit* unit;
+    gesture_t gesture_type; // type of gesture activated by this touch
+	int32 x;	        	// position
+	int32 y;	        	// position
+	bool active;        	// whether touch is currently active
+	int32 id;	         	// touch's unique identifier
+    Unit* unit;             // unit created by this touch if it's a create_unit gesture
+    int32 start_y;          // initial y position of a world_drag gesture
+    int32 end_y;            // end y position of a world_drag gesture
 };
 
 Game* game = NULL;
@@ -54,34 +59,28 @@ bool update() {
 }
 
 #define SQ(x) (x*x)
-bool renderTouch(CTouch* touch) {
+bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
         return false;
     
-    int w = IwGxGetScreenWidth();
-    int h = IwGxGetScreenHeight();
+    CIwFVec2 *modelCoords = worldify(touch->x, touch->y, game);
     
-    int32 x = touch->x, y = h - touch->y;
-    
+    float dist_sq = SQ(modelCoords->x) + SQ(modelCoords->y);
     CIwFVec2 radii = game->getWorldRadius();
-    
-    int32 world_x = x + (radii.x - 20);
-    int32 world_y = y - h/2;
-    
-    
-    float theta = TO_RADIANS(game->getRotation());
-    
-    int32 model_x = world_x * cos(theta) - world_y * sin(theta);
-    int32 model_y = world_x * sin(theta) + world_y * cos(theta);
-    
-    float dist_sq = SQ(model_x) + SQ(model_y);
-
     if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x))
         return false;
-
-    touch->unit->setPosition(model_x, model_y);
+    
+    touch->unit->setPosition(*modelCoords);
 	game->addUnit(touch->unit);
-        
+    
+    delete modelCoords;
+    
+    return true;
+}
+
+bool renderDragWorld(CTouch* touch) {
+    // this is VERY naive at this point, doesn't actually do angles correctly.
+    game->rotate((touch->start_y - touch->end_y)/360.0f);
     return true;
 }
 
@@ -91,14 +90,28 @@ bool renderTouch(CTouch* touch) {
 void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 	CTouch* touch = GetTouch(event->m_TouchID);
 	if (touch) {
-		touch->active = event->m_Pressed != 0;
+        touch->active = event->m_Pressed != 0;
 		touch->x = event->m_x;
 		touch->y = event->m_y;
-        if(touch->active && touch->x > IwGxGetScreenWidth() - 60){
-            touch->unit = new Muncher(localPlayer, game, CIwFVec2(0,0));
+
+        // if it's the beginning of a touch, then determine what kind of gesture it is and set initial info.
+        if (touch->active) {
+            if (touch->x > IwGxGetScreenWidth() - 60) {
+                touch->gesture_type = CREATE_UNIT;
+                touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
+            } else {
+                touch->gesture_type = DRAG_WORLD;
+                touch->start_y = touch->y;
+            }
+        // if it's the end of a touch, check what kind of gesture it and render.
         } else {
-            renderTouch(touch); 
-            touch->unit = NULL;
+            if (touch->gesture_type == CREATE_UNIT) {
+                renderUnitCreation(touch);
+                touch->unit = NULL;
+            } else if (touch->gesture_type == DRAG_WORLD) {
+                touch->end_y = touch->y;
+                renderDragWorld(touch);
+            }
         }
 	}
 }
@@ -110,6 +123,13 @@ void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
 	if (touch) {
 		touch->x = event->m_x;
 		touch->y = event->m_y;
+        
+        if (touch->gesture_type == DRAG_WORLD) {
+            // sent new start to the old end, and the new end to the new pos
+            touch->start_y = touch->end_y;
+            touch->end_y = touch->y;
+            renderDragWorld(touch);
+        }   
 	}
 }
 
@@ -132,19 +152,15 @@ void doMain() {
 	static CIwSVec2 xy(260, 0);
 	static CIwSVec2 wh(60, 480);
 	static CIwSVec2 uv(0, 0);
-	static CIwSVec2 duv(1 << 11, 1 << 11);
+	static CIwSVec2 duv(1 << 12, 1 << 12);
 
-	IwGxLightingOff();
-	
-	CIwColour col = {180, 255, 220, 255};
-	localPlayer = new Player(col);
-	game = new Game(localPlayer);
+	game = new Game(2);
 
     CTouch t;
-    t.x = 40;
-    t.y = 480 / 2;
-    t.unit = new Muncher(localPlayer, game, CIwFVec2(0,0));
-    renderTouch(&t);
+    t.x = 100;
+    t.y = 480 / 2 + 10;
+    t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
+    renderUnitCreation(&t);
     
 //    CTouch t2;
 //    t2.x = 150;

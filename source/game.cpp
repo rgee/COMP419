@@ -2,8 +2,9 @@
 #include "unit.h"
 
  
-Game::Game(Player* p) : localPlayer(p), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
-	ai = new AI();
+
+Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
+	ai = new AI(this);
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
@@ -27,14 +28,14 @@ void Game::initRenderState() {
 	IwGxSetPerspMul(9);
 	IwGxSetFarZNearZ(10, 8);
 	view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3(w/2 + innerRadius - 20, 0, -9));
+	view.SetTrans(CIwVec3(w/2 + innerRadius - 10, 0, -9));
 	IwGxSetViewMatrix(&view);
 }
 
 std::list<Unit*>* Game::getUnits(){
 	return &units;
 }
-
+ 
 void Game::addUnit(Unit *u){
 	
     u->setId(numUnits++);
@@ -55,11 +56,8 @@ void Game::addUnit(Unit *u){
 
 void Game::tick(){
 
-	float curr_theta, new_theta;
-
 	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
 		(*itr)->update();
-		curr_theta = (*itr)->getTheta();
 	}
     
     units.merge(unitBuffer);
@@ -68,18 +66,16 @@ void Game::tick(){
 	render();
 }
 
-void Game::render() {	
-	IwGxSetColClear(255, 255, 255, 255);
-	IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
-	
-    //rotation -= 0.2;
-	renderWorld(rotation);
-	renderSprites(rotation);
+void Game::render() {		
+    //rotation -= PI / 200.0;
+    
+	renderWorld();
+	renderSprites();
 	
 	IwGxSwapBuffers();
 }
 
-void Game::renderSprites(float worldRot) {
+void Game::renderSprites() {
 	
 	char* curTexture = "";
 	CIwMaterial* mat = new CIwMaterial();
@@ -97,13 +93,13 @@ void Game::renderSprites(float worldRot) {
 		std::set<Unit*>* renderUnits = (*itr).second;
 		
 		for (std::set<Unit*>::iterator u_it = renderUnits->begin(); u_it != renderUnits->end(); ++u_it) {
-			(*u_it)->display(worldRot);
+			(*u_it)->display();
 		}
 	}
 	delete mat;
 }
 
-void Game::renderWorld(float worldRot) {
+void Game::renderWorld() {
 
 	CIwMaterial* mat = new CIwMaterial();
 	mat->SetTexture((CIwTexture*)game->GetResNamed("paper-world", IW_GX_RESTYPE_TEXTURE));
@@ -111,7 +107,7 @@ void Game::renderWorld(float worldRot) {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwFVec2(0, 0), 0.0, 0.6, 960, worldRot);
+	renderImageWorldSpace(CIwFVec2(0, 0), 0.0, 0.6, 960, rotation);
 
 	
 	delete mat;
@@ -129,4 +125,8 @@ CIwMat* Game::getViewMatrix(){
 
 float Game::getRotation(){
     return rotation;
+}
+
+float Game::rotate(float rot) {
+    return rotation += rot;
 }

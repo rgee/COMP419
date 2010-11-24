@@ -12,7 +12,7 @@ class Unit;
 #include "util.h"
 
 class Unit {
-    protected:
+    protected:    
 		/* Preliminary stats. Subject to change. */
 	    float hp;
 		float cost;
@@ -66,14 +66,14 @@ class Unit {
             return theta < u.theta;
         }
 
-		void setPosition(int32 x, int32 y);
-		void setPosition(const CIwVec2& position);
-
+		void setPosition(float x, float y);
+		void setPosition(const CIwFVec2& position);
 		
 		CIwFVec2 getPosition();
 
 
         void setVelocity(const CIwFVec2& velocity);
+        void setVelocity(float xv, float yv);
     
         CIwFVec2 getVelocity();
 
@@ -105,11 +105,7 @@ class Unit {
 		float getR();
 		float getTheta();
 	
-	
-		//To deal with simultaneous altering of R Theta and X,Y Pos setR and setTheta must be combined
-		//Please Refractor accordingly.
-	
-		void setRTheta(float x, float y);
+		void setPolarPosition(float _r, float _theta);
 	
 		/* IGNORE THE FOLLOWING.  I already updated set position to change theta and r
 		 and vice versa so use which ever coordinate system works best for you cause
@@ -129,14 +125,14 @@ class Unit {
 		virtual char* getTextureName() = 0;
 		virtual bool update() = 0;
 
-        virtual void display(float worldRot) = 0;
+        virtual void display() = 0;
 
 		
 		void Attack();
 		void RecieveDamage(); 
-        CIwFVec2 ConvertToRTheta(CIwFVec2 pos);
     
         float getSight();
+        float getAngle();
 };
 
 #endif

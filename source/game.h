@@ -54,15 +54,15 @@ class Game {
 	
 		void render();
 	
-		void renderSprites(float worldRot);
+		void renderSprites();
 	
-		void renderWorld(float worldRot);
+		void renderWorld();
 	
 		void renderUI();
 	                    
     public:
 	
-        Game(Player* p);
+        Game(int numPlayers);
 		~Game();
         
         void addUnit(Unit *u);
@@ -84,8 +84,8 @@ class Game {
     
         CIwMat* getViewMatrix();
         float getRotation();
-	
-		Player* getLocalPlayer();
+        float rotate(float increment);
+
 };
 
 #endif
