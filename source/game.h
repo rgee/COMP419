@@ -42,6 +42,9 @@ class Game {
 		CIwResGroup* sprites;
 		CIwResGroup* game;
 		
+		// Map from texture name to sets of unit pointers.
+		// Used to optimize rendering by grouping units with the same textures
+		// into adjacent draw calls.
 		UnitBucket unitBucket;
     
         CIwMat view;

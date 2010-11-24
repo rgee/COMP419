@@ -12,8 +12,8 @@ void AI::path(Unit* unit){
 
 	// If we are neither attacking nor pursuing, find a unit to pursue
     if(!unit->attacking() && !unit->pursuing()){
-        Unit *Enemy = detectEnemy(unit);
-        if(Enemy != NULL){
+        Unit *Enemy;
+        if((Enemy = detectEnemy(unit)) != NULL){
             unit->setPursuing(Enemy);
         }
     }
@@ -47,17 +47,21 @@ void AI::path(Unit* unit){
 		float thetaChange = speed/rad;
 		float tempTheta = thetaChange + theta;
 
-        unit->setPolarPosition(rad, tempTheta);
+        //unit->setPolarPosition(rad, tempTheta);
+
+		// Look ahead to the unit's next position.
         CIwFVec2 tempPos = unit->getPosition();
+		tempPos.x = rad * cos(theta + PI / 20.0f);
+		tempPos.y = rad * sin(theta + PI / 20.0f);
 
-
-        unit->setPolarPosition(rad, theta + PI / speed);
+        unit->setPolarPosition(rad, theta + PI / 20.0f);
         unit->setVelocity(unit->getPosition() - tempPos);
 
         
         std::list<Unit*> tempArray; 
 		collide(std::back_inserter(tempArray), unit);
         if (!tempArray.empty()) {
+			unit->setPolarPosition(rad, theta);
             unit->setVelocity(CIwFVec2::g_Zero);
         }
 	}
@@ -90,16 +94,18 @@ Unit* AI::detectEnemy(Unit* unit){
 
     Unit *Enemy;
     for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
-        Unit *temp = *itr;
-		current_unit_theta = temp->getTheta();
-		if( (lowTheta <= current_unit_theta) && (current_unit_theta <= upTheta)){
-            CIwFVec2 tempPos = temp->getPosition();
-            sq_dist = (tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y);
-            if (sq_dist <=minDist) {
-                minDist = sq_dist;
-                Enemy = temp;
-            }
-        }
+		if(!(&(*itr)->getOwner() == &unit->getOwner())) {
+			Unit *temp = *itr;
+			current_unit_theta = temp->getTheta();
+			if( (lowTheta <= current_unit_theta) && (current_unit_theta <= upTheta)){
+				CIwFVec2 tempPos = temp->getPosition();
+				sq_dist = (tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y);
+				if (sq_dist <=minDist) {
+					minDist = sq_dist;
+					Enemy = temp;
+				}
+			}
+		}
     }
     return Enemy;
 
