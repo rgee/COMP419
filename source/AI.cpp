@@ -9,15 +9,21 @@ void AI::path(Unit* unit){
 	float theta = unit->getTheta();
 	float speed = unit->getSpeed();
 	float range = unit->getRange();
+
+	// If we are neither attacking nor pursuing, find a unit to pursue
     if(!unit->attacking() && !unit->pursuing()){
-        Unit *Enemy = detectEnemy(unit, unit->getGame()->getUnits());
+        Unit *Enemy = detectEnemy(unit);
         if(Enemy != NULL){
             unit->setPursuing(Enemy);
         }
     }
-	if(unit->attacking())
+
+	// If we are attacking, continue attacking.
+	if(unit->attacking()){
         attack(unit); 
-    
+	}
+
+	// If we are pursuing, set our velocity to move toward our target.
 	if(unit->pursuing()){ 
 		Unit *pursuing = unit->getPursuing();
 		CIwFVec2 pursuingPos = pursuing->getPosition();
@@ -35,14 +41,18 @@ void AI::path(Unit* unit){
         if (!tempArray.empty()){
             unit->setVelocity(CIwFVec2::g_Zero);}
 	}
+	// If we are neither attacking, nor pursuing and there is no one to pursue,
+	// head in the direction of the enemy base.
 	else {
 		float thetaChange = speed/rad;
 		float tempTheta = thetaChange + theta;
 
         unit->setPolarPosition(rad, tempTheta);
         CIwFVec2 tempPos = unit->getPosition();
-        unit->setPolarPosition(rad, theta);
-        unit->setVelocity(tempPos-unit->getPosition());
+
+
+        unit->setPolarPosition(rad, theta + PI / speed);
+        unit->setVelocity(unit->getPosition() - tempPos);
 
         
         std::list<Unit*> tempArray; 
@@ -66,22 +76,27 @@ bool AI::attack(Unit* unit){
 } 
 
 
-Unit* AI::detectEnemy(Unit* unit, std::list<Unit*>* Units){
+Unit* AI::detectEnemy(Unit* unit){
+	std::list<Unit*>* Units = game->getUnits();
 	float sight = unit->getSight();
     float lowTheta = unit->getTheta()-sight;
     float upTheta = unit->getTheta()+sight;
     CIwFVec2 Pos = unit->getPosition()+unit->getVelocity();
 	float current_unit_theta;
-    float minDist=1000;
+
+	// Remember, this is squared distace.
+    float minDist=pow(1000, 2);
+	float sq_dist = 0.0f;
+
     Unit *Enemy;
     for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
         Unit *temp = *itr;
 		current_unit_theta = temp->getTheta();
 		if( (lowTheta <= current_unit_theta) && (current_unit_theta <= upTheta)){
             CIwFVec2 tempPos = temp->getPosition();
-            float dist = sqrt((tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y));
-            if (dist<=minDist) {
-                minDist = dist;
+            sq_dist = (tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y);
+            if (sq_dist <=minDist) {
+                minDist = sq_dist;
                 Enemy = temp;
             }
         }
@@ -91,7 +106,7 @@ Unit* AI::detectEnemy(Unit* unit, std::list<Unit*>* Units){
 }
  
 void AI::updateAI(Unit* unit){
-     //path(unit);
+     path(unit);
 }
 
 std::list<Unit*>* AI::collisionDetection(Unit* unit){
@@ -139,27 +154,31 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 	std::list<Unit*>* Units = game->getUnits();
 
 
-	    float lowTheta = unit->getTheta()-10;
+	float lowTheta = unit->getTheta()-10;
     float upTheta  = unit->getTheta()+10;
     float upRad  = worldRad.y;
     float lowRad = worldRad.x;
  
     CIwFVec2 Pos = unit->getPosition()+unit->getVelocity();
     polarize(Pos);
+
     float rad = Pos.x;
     float theta = Pos.y;
     float size = unit->getSize();
 	float sq_dist = 0.0f;
 	float radii = 0.0f;
-   
+	float current_unit_theta = 0.0f;
+	CIwFVec2 tempPos = CIwFVec2::g_Zero;
+	Unit* temp;
     
-    if(lowRad <= rad <= upRad){
+    if((lowRad <= rad) && (lowRad <= upRad)){
         return;
     }
     for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
-        Unit *temp = *itr;
-        if(lowTheta <= temp->getTheta() <= upTheta){
-            CIwFVec2 tempPos = temp->getPosition();
+        temp = *itr;
+		current_unit_theta = temp->getTheta();
+        if((lowTheta <= current_unit_theta) && (current_unit_theta <= upTheta)){
+            tempPos = temp->getPosition();
 
 			// We can just use the squared distance here since we only care about relative
 			// positioning.
