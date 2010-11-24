@@ -4,13 +4,16 @@
 #include "unit.h"
 
 class Spreader : public Unit {
+    private:
+        int framesUntilUpdate;
+    
 	public:
 		Spreader(Player* owner, Game* game, CIwFVec2 position);
 		~Spreader(){};
 
 		virtual bool update();
-		virtual void display();
-
+        virtual const char* getTextureName();
+    
 };
 
 #endif

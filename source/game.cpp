@@ -1,12 +1,12 @@
 #include "game.h"
 #include "unit.h"
+
  
-Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
+Game::Game(Player* p) : localPlayer(p), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
 	ai = new AI(this);
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
-    
 	initRenderState();
 }  
 
@@ -16,7 +16,8 @@ Game::~Game(){
 		delete (*itr).second;
 	}
 	
-	units.clear();
+	delete ai;
+ 	units.clear();
 	unitBuffer.clear();
 }
 
@@ -51,6 +52,13 @@ void Game::addUnit(Unit *u){
 		unitBucket[u->getTextureName()] = new std::set<Unit*>();
 	
 	(unitBucket[u->getTextureName()])->insert(u);
+
+	int32 whichPlayer = IwRandMinMax(-1, 1);
+	if(whichPlayer >= 0) {
+		u->setOwner(opponentPlayer);
+	} else {
+		u->setOwner(localPlayer);
+	}
 }
 
 void Game::tick(){
@@ -65,18 +73,14 @@ void Game::tick(){
 	render();
 }
 
-void Game::render() {		
-    rotation += 0.5;
-    
+void Game::render() {		    
 	renderWorld();
 	renderSprites();
-	
-	IwGxSwapBuffers();
 }
 
 void Game::renderSprites() {
 	
-	char* curTexture = "";
+	const char* curTexture = "";
 	CIwMaterial* mat = new CIwMaterial();
 	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
@@ -84,7 +88,7 @@ void Game::renderSprites() {
 		if (strcmp((*itr).first, curTexture) != 0) {
 			curTexture = (*itr).first;
 			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
-			mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
+			mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
 			mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 			IwGxSetMaterial(mat);
 		}
@@ -95,6 +99,7 @@ void Game::renderSprites() {
 			(*u_it)->display();
 		}
 	}
+	
 	delete mat;
 }
 
@@ -116,7 +121,6 @@ CIwFVec2 Game::getWorldRadius() {
 	return CIwFVec2(innerRadius, outerRadius);
 }
 
-
 AI *Game::getAI(){ return ai; }
 
 CIwMat* Game::getViewMatrix(){
@@ -125,4 +129,12 @@ CIwMat* Game::getViewMatrix(){
 
 float Game::getRotation(){
     return rotation;
+}
+
+float Game::rotate(float rot) {
+    return rotation += rot;
+}
+
+CIwResGroup* Game::getSprites(){
+    return sprites;
 }

@@ -9,7 +9,7 @@ class Wrecker : public Unit {
 		~Wrecker(){};
 
 		virtual bool update();
-		virtual void display();
+        virtual const char* getTextureName();
 
 };
 
