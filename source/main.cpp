@@ -8,7 +8,7 @@
 #include "muncher.h"
 #include "shooter.h"
 
-#define	MS_PER_FRAME (1000 / 10)
+#define	MS_PER_FRAME (1000 / 15)
 
 enum gesture_t { CREATE_UNIT, DRAG_WORLD };
 
@@ -94,7 +94,7 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 
         // if it's the beginning of a touch, then determine what kind of gesture it is and set initial info.
         if (touch->active) {
-            if (touch->x > IwGxGetScreenWidth() - 60) {
+            if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
                 touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
             } else {
