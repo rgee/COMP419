@@ -16,6 +16,7 @@
 class Game;
 
 #include "player.h"
+#include "IwRandom.h"
 #include "unit.h"
 
 #include "AI.h"
@@ -27,12 +28,12 @@ class Game {
 	
     private:
 	
-        CIwArray<Player*> players;
+		Player* localPlayer;
+		Player* opponentPlayer;
+	
         int numPlayers;
 
 		AI *ai;
-
-        
         std::list<Unit*> units;
         int numUnits;
 
@@ -42,6 +43,9 @@ class Game {
 		CIwResGroup* sprites;
 		CIwResGroup* game;
 		
+		// Map from texture name to sets of unit pointers.
+		// Used to optimize rendering by grouping units with the same textures
+		// into adjacent draw calls.
 		UnitBucket unitBucket;
     
         CIwMat view;
@@ -79,8 +83,6 @@ class Game {
 		void tick();
 			
 		long getTimesteps();
-    
-
 
         AI *getAI();
     

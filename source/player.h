@@ -2,8 +2,10 @@
 #define _PLAYER_H
 
 class Player {
-private:
-public:
+	private:
+	public:
+		Player() {}
+		~Player() {}	
 };
 
 #endif

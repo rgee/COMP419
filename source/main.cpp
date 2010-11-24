@@ -25,6 +25,8 @@ struct CTouch {
 };
 
 Game* game = NULL;
+Player* localPlayer = NULL;
+
 
 #define MAX_TOUCHES 10
 CTouch touches[MAX_TOUCHES];
@@ -152,7 +154,6 @@ void doMain() {
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(1 << 12, 1 << 12);
 
-    
 	game = new Game(2);
 
     CTouch t;
@@ -213,6 +214,7 @@ void doMain() {
 	s3ePointerUnRegister(S3E_POINTER_MOTION_EVENT, (s3eCallback)MultiTouchMotionCB);
     
 	delete game;
+	delete localPlayer;
 }
 
 int main() {

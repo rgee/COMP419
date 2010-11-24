@@ -1,12 +1,15 @@
 #include "game.h"
 #include "unit.h"
+
  
+
 Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
 	ai = new AI(this);
+	localPlayer = new Player();
+	opponentPlayer = new Player();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
-    
 	initRenderState();
 }  
 
@@ -51,6 +54,13 @@ void Game::addUnit(Unit *u){
 		unitBucket[u->getTextureName()] = new std::set<Unit*>();
 	
 	(unitBucket[u->getTextureName()])->insert(u);
+
+	int32 whichPlayer = IwRandMinMax(-1, 1);
+	if(whichPlayer >= 0) {
+		u->setOwner(opponentPlayer);
+	} else {
+		u->setOwner(localPlayer);
+	}
 }
 
 void Game::tick(){
@@ -84,7 +94,7 @@ void Game::renderSprites() {
 		if (strcmp((*itr).first, curTexture) != 0) {
 			curTexture = (*itr).first;
 			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
-			mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
+			mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
 			mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 			IwGxSetMaterial(mat);
 		}
@@ -115,7 +125,6 @@ void Game::renderWorld() {
 CIwFVec2 Game::getWorldRadius() {
 	return CIwFVec2(innerRadius, outerRadius);
 }
-
 
 AI *Game::getAI(){ return ai; }
 

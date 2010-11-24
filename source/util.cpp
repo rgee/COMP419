@@ -1,5 +1,6 @@
 #include "util.h"
 
+
 void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
 	
 	static CIwSVec3 vertices[4];
@@ -24,7 +25,7 @@ void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, in
 	
 	IwGxSetModelMatrix(&modelTransform, false);
 	
-	float frameRatio = (float)1/numFrames;
+	float frameRatio = 1.0/numFrames;
 	
 	//set up sprite UV's
 	UVs[0] = CIwSVec2(0, 0);
@@ -38,13 +39,12 @@ void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, in
 	IwGxSetUVStream(UVs);
 	IwGxSetUVOfs(&ofs);
 	
-	IwGxSetColStream(NULL);
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
 	IwGxFlush();
 }
 
-void polarize(CIwFVec2 v){
+void polarize(CIwFVec2& v){
     v.x = v.GetLength();
     v.y = asin(v.y/v.GetLength());
 }

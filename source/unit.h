@@ -37,7 +37,10 @@ class Unit {
 		int numFrames;
 		int curFrame;
 	
+		// The unit this unit is attacking.
 		Unit *Attacking;
+
+		// The unit this unit is pursuing.
 		Unit *Pursuing;
 	
 		/**
@@ -85,7 +88,7 @@ class Unit {
 		void setId(int uuid);
         
 		Player& getOwner();
-		void setOwner(Player& p);
+		void setOwner(Player* p);
 		
 		Game* getGame();
 	
