@@ -192,22 +192,19 @@ void doMain() {
 	static CIwSVec2 wh(60, 480);
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
-
-	game = new Game(2);
+    
+    CIwColour col = {180, 255, 220, 255};
+	localPlayer = new Player(col);
+    game = new Game(localPlayer);
 
     CTouch t;
     t.x = 100;
     t.y = 480 / 2 + 10;
     t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
     renderUnitCreation(&t);
-    
-//    CTouch t2;
-//    t2.x = 150;
-//    t2.y = 480 / 2 + 50;
-//    t2.unit = new Muncher(NULL, game, CIwFVec2(0,0));
-//    renderTouch(&t2);
 
-	
+	IwGxLightingOff();
+
 	while (1) {
         int64 start = s3eTimerGetMs();
 	
@@ -263,6 +260,7 @@ void doMain() {
     
 	delete game;
 	delete localPlayer;
+	delete mat;
 }
 
 int main() {

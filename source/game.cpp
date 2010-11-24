@@ -2,11 +2,8 @@
 #include "unit.h"
 
  
-
-Game::Game(int numPlayers) : numPlayers(numPlayers), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
+Game::Game(Player* p) : localPlayer(p), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
 	ai = new AI(this);
-	localPlayer = new Player();
-	opponentPlayer = new Player();
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
@@ -19,7 +16,8 @@ Game::~Game(){
 		delete (*itr).second;
 	}
 	
-	units.clear();
+	delete ai;
+ 	units.clear();
 	unitBuffer.clear();
 }
 
@@ -101,6 +99,7 @@ void Game::renderSprites() {
 			(*u_it)->display();
 		}
 	}
+	
 	delete mat;
 }
 

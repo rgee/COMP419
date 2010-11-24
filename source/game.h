@@ -66,7 +66,7 @@ class Game {
 	                    
     public:
 	
-        Game(int numPlayers);
+        Game(Player* _p);
 		~Game();
         
         void addUnit(Unit *u);
