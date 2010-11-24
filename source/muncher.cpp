@@ -22,6 +22,6 @@ void Muncher::display() {
 	renderSprite(curFrame, getAngle(), 0.2, game->getRotation());
 }
 
-char* Muncher::getTextureName() {
+const char* Muncher::getTextureName() {
 	return "muncher_sprite_sheet";
 }

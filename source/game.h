@@ -22,7 +22,7 @@ class Game;
 #include "AI.h"
 
 
-typedef std::map<char*, std::set<Unit*>* > UnitBucket;
+typedef std::map<const char*, std::set<Unit*>* > UnitBucket;
 
 class Game {
 	

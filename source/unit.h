@@ -125,7 +125,7 @@ class Unit {
 		float getY();
 	
 	
-		virtual char* getTextureName() = 0;
+		virtual const char* getTextureName() = 0;
 		virtual bool update() = 0;
 
         virtual void display() = 0;

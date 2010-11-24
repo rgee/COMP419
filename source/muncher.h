@@ -12,7 +12,7 @@ class Muncher : public Unit {
 
 		~Muncher() {};
 
-		virtual char* getTextureName();
+		virtual const char* getTextureName();
 		virtual bool update();
 		virtual void display();
 

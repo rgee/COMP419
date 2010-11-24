@@ -10,7 +10,7 @@ class Shooter : public Unit {
 
 		virtual bool update();
 		virtual void display();
-		virtual char* getTextureName();
+		virtual const char* getTextureName();
 
 };
 

@@ -14,6 +14,6 @@ bool Wrecker::update(){
 	return true;
 }
 
-char* Wrecker::getTextureName(){
+const char* Wrecker::getTextureName(){
     return "muncher_sprite_sheet";
 }

@@ -80,7 +80,7 @@ void Game::render() {
 
 void Game::renderSprites() {
 	
-	char* curTexture = "";
+	const char* curTexture = "";
 	CIwMaterial* mat = new CIwMaterial();
 	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {

@@ -14,6 +14,6 @@ bool Spreader::update(){
 	return true;
 }
 
-char* Spreader::getTextureName(){
+const char* Spreader::getTextureName(){
     return "muncher_sprite_sheet";
 }

@@ -19,6 +19,6 @@ bool Shooter::update(){
 	return true;
 }
 
-char* Shooter::getTextureName() {
+const char* Shooter::getTextureName() {
 	return "shooter_sprite_sheet";
 }
