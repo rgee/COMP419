@@ -47,16 +47,11 @@ void AI::path(Unit* unit){
 	else {
 		float thetaChange = speed/rad;
 		float tempTheta = thetaChange + theta;
+        
+        CIwFVec2 tmpPos(unit->getX(), unit->getY());
 
-        //unit->setPolarPosition(rad, tempTheta);
-
-		// Look ahead to the unit's next position.
-        CIwFVec2 tempPos = unit->getPosition();
-		tempPos.x = rad * cos(theta + PI / 20.0f);
-		tempPos.y = rad * sin(theta + PI / 20.0f);
-
-        unit->setPolarPosition(rad, theta + PI / 20.0f);
-        unit->setVelocity(unit->getPosition() - tempPos);
+        unit->setPolarPosition(rad, tempTheta);
+        unit->setVelocity(unit->getPosition() - tmpPos);
 
         // Check if we would hit any other unit.
         std::list<Unit*> tempArray; 

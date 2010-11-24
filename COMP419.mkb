@@ -41,3 +41,7 @@ assets
 	images/muncher_sprite_sheet.png
 	images/palate.png
 }
+deployments
+{
+	iphone-nosign='1'
+}

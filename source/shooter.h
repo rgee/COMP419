@@ -9,7 +9,7 @@ class Shooter : public Unit {
 		~Shooter(){};
 
 		virtual bool update();
-		virtual void display(float worldRot);
+		virtual void display();
 		virtual char* getTextureName();
 
 };

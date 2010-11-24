@@ -1,7 +1,7 @@
 #include "muncher.h"
 
 Muncher::Muncher(Player* owner, Game* game, CIwFVec2 position)
-		 : Unit(100.0f, 50.0f, 10.0f, 15.0f, 10.0f, 5.0f, 10.0f, 0.0f, 0.0f, owner, game, position)
+		 : Unit(100.0f, 50.0f, 10.0f, 25.0f, 10.0f, 5.0f, 10.0f, 0.0f, 0.0f, owner, game, position)
 {
 	spriteSize = 256;
 	numFrames = 12;
@@ -12,7 +12,8 @@ Muncher::Muncher(Player* owner, Game* game, CIwFVec2 position)
 bool Muncher::update() {
     curFrame = (curFrame + 1) % numFrames;
    
-	game->getAI()->updateAI(this);
+    if(curFrame == 0)
+        game->getAI()->updateAI(this);
     
 	return true;
 }

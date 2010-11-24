@@ -7,6 +7,8 @@
 
 #include "muncher.h"
 #include "shooter.h"
+#include "wrecker.h"
+#include "spreader.h"
 
 #define	MS_PER_FRAME (1000 / 15)
 
@@ -98,7 +100,20 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
         if (touch->active) {
             if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
-                touch->unit = new Muncher(NULL, game, CIwFVec2(0,0));
+                
+                int y = touch->y - 110;
+                if(y < 0) return;
+                
+                switch (y / 60) {
+                    //case 0: touch->unit = new Thrower(NULL, game, CIwFVec2(0,0)); break;
+                    case 1: touch->unit = new Wrecker(NULL, game, CIwFVec2(0,0)); break;
+                    case 2: touch->unit = new Muncher(NULL, game, CIwFVec2(0,0)); break;
+                    case 3: touch->unit = new Shooter(NULL, game, CIwFVec2(0,0)); break;
+                    case 4: touch->unit = new Spreader(NULL, game, CIwFVec2(0,0)); break;
+                    //case 5: touch->unit = new Invader(NULL, game, CIwFVec2(0,0)); break;
+                    default: break;
+                }
+                   
             } else {
                 touch->gesture_type = DRAG_WORLD;
                 touch->start_y = touch->y;

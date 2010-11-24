@@ -8,8 +8,8 @@ Shooter::Shooter(Player* owner, Game* game, CIwFVec2 position)
 	curFrame = 0;	
 }
 
-void Shooter::display(float worldRot) {
-	renderSprite(curFrame+=2, 90, 0.7, worldRot);
+void Shooter::display() {
+	renderSprite(curFrame+=2, 90, 0.7, game->getRotation());
 }
 
 bool Shooter::update(){

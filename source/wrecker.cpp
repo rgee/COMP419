@@ -13,3 +13,7 @@ void Wrecker::display(){
 bool Wrecker::update(){
 	return true;
 }
+
+char* Wrecker::getTextureName(){
+    return "muncher_sprite_sheet";
+}

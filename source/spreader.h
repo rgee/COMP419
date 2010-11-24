@@ -10,7 +10,8 @@ class Spreader : public Unit {
 
 		virtual bool update();
 		virtual void display();
-
+        virtual char* getTextureName();
+    
 };
 
 #endif
