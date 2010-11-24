@@ -59,8 +59,8 @@ bool Unit::pursuing(){
 }
 
 
-void Unit::setOwner(Player& p){
-	owner = &p;
+void Unit::setOwner(Player* p){
+	owner = p;
 }
 
 float Unit::getHp(){

@@ -3,7 +3,9 @@
 
 class Player {
 	private:
-	public:	
+	public:
+		Player() {}
+		~Player() {}	
 };
 
 #endif

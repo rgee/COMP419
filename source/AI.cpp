@@ -39,7 +39,8 @@ void AI::path(Unit* unit){
 		collide(std::back_inserter(tempArray), unit);
         
         if (!tempArray.empty()){
-            unit->setVelocity(CIwFVec2::g_Zero);}
+            unit->setVelocity(CIwFVec2::g_Zero);
+		}
 	}
 	// If we are neither attacking, nor pursuing and there is no one to pursue,
 	// head in the direction of the enemy base.
@@ -57,9 +58,11 @@ void AI::path(Unit* unit){
         unit->setPolarPosition(rad, theta + PI / 20.0f);
         unit->setVelocity(unit->getPosition() - tempPos);
 
-        
+        // Check if we would hit any other unit.
         std::list<Unit*> tempArray; 
 		collide(std::back_inserter(tempArray), unit);
+
+		// If we hit something, reset the movement.
         if (!tempArray.empty()) {
 			unit->setPolarPosition(rad, theta);
             unit->setVelocity(CIwFVec2::g_Zero);

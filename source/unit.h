@@ -88,7 +88,7 @@ class Unit {
 		void setId(int uuid);
         
 		Player& getOwner();
-		void setOwner(Player& p);
+		void setOwner(Player* p);
 		
 		Game* getGame();
 	

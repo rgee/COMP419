@@ -16,6 +16,7 @@
 class Game;
 
 #include "player.h"
+#include "IwRandom.h"
 #include "unit.h"
 
 #include "AI.h"
