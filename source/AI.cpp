@@ -29,13 +29,11 @@ void AI::path(Unit* unit){
         unit->setVelocity(tempPos-unit->getPosition());
 
 		
-        std::list<Unit*> *tempArray = collisionDetection(unit, unit->getGame()->getUnits());
+        std::list<Unit*> tempArray;
+		collide(std::back_inserter(tempArray), unit);
         
-        if (tempArray == NULL || !tempArray->empty()){
+        if (!tempArray.empty()){
             unit->setVelocity(CIwFVec2::g_Zero);}
-
-        
-        delete tempArray;
 	}
 	else {
 		float thetaChange = speed/rad;
@@ -47,13 +45,11 @@ void AI::path(Unit* unit){
         unit->setVelocity(tempPos-unit->getPosition());
 
         
-        std::list<Unit*> *tempArray = collisionDetection(unit, unit->getGame()->getUnits());
-        if (tempArray == NULL || !tempArray->empty()) {
-
+        std::list<Unit*> tempArray; 
+		collide(std::back_inserter(tempArray), unit);
+        if (!tempArray.empty()) {
             unit->setVelocity(CIwFVec2::g_Zero);
-
         }
-        delete tempArray;
 	}
 		
 }
@@ -75,11 +71,13 @@ Unit* AI::detectEnemy(Unit* unit, std::list<Unit*>* Units){
     float lowTheta = unit->getTheta()-sight;
     float upTheta = unit->getTheta()+sight;
     CIwFVec2 Pos = unit->getPosition()+unit->getVelocity();
+	float current_unit_theta;
     float minDist=1000;
     Unit *Enemy;
     for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
         Unit *temp = *itr;
-        if(lowTheta <= temp->getTheta() <= upTheta){
+		current_unit_theta = temp->getTheta();
+		if( (lowTheta <= current_unit_theta) && (current_unit_theta <= upTheta)){
             CIwFVec2 tempPos = temp->getPosition();
             float dist = sqrt((tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y));
             if (dist<=minDist) {
@@ -96,8 +94,52 @@ void AI::updateAI(Unit* unit){
      //path(unit);
 }
 
-std::list<Unit*>* AI::collisionDetection(Unit* unit, std::list<Unit*>* Units){
+std::list<Unit*>* AI::collisionDetection(Unit* unit){
     float lowTheta = unit->getTheta()-10;
+    float upTheta  = unit->getTheta()+10;
+    float upRad  = worldRad.y;
+    float lowRad = worldRad.x;
+
+	std::list<Unit*>* Units = game->getUnits();
+ 
+    CIwFVec2 Pos = unit->getPosition()+unit->getVelocity();
+    polarize(Pos);
+    float rad = Pos.x;
+    float theta = Pos.y;
+    float size = unit->getSize();
+	float current_unit_theta = 0.0f;
+	float sq_dist = 0.0f;
+	float radii = 0.0f;
+   
+    
+    std::list<Unit*>* collide_array = new std::list<Unit*>();
+    if((lowRad <= rad) && (lowRad <= upRad)){
+        return NULL;
+    }
+    for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
+        Unit *temp = *itr;
+		current_unit_theta = temp->getTheta();
+        if((lowTheta <= current_unit_theta) && (current_unit_theta <= upTheta)){
+            CIwFVec2 tempPos = temp->getPosition();
+
+			// We can just use the squared distance here since we only care about relative
+			// positioning.
+            sq_dist = (tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y);
+			radii = pow(size + temp->getSize(), 2);
+            if (sq_dist <= radii) {
+                collide_array->push_back(temp);
+            }
+        }
+    }
+    return collide_array;
+}
+
+template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* unit)
+{
+	std::list<Unit*>* Units = game->getUnits();
+
+
+	    float lowTheta = unit->getTheta()-10;
     float upTheta  = unit->getTheta()+10;
     float upRad  = worldRad.y;
     float lowRad = worldRad.x;
@@ -107,23 +149,27 @@ std::list<Unit*>* AI::collisionDetection(Unit* unit, std::list<Unit*>* Units){
     float rad = Pos.x;
     float theta = Pos.y;
     float size = unit->getSize();
-
+	float sq_dist = 0.0f;
+	float radii = 0.0f;
    
     
-    std::list<Unit*>* collide_array = new std::list<Unit*>();
     if(lowRad <= rad <= upRad){
-        return NULL;
+        return;
     }
     for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
         Unit *temp = *itr;
         if(lowTheta <= temp->getTheta() <= upTheta){
             CIwFVec2 tempPos = temp->getPosition();
-            float dist = sqrt((tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y));
-            if (dist<=(size+temp->getSize())) {
-                collide_array->push_back(temp);
+
+			// We can just use the squared distance here since we only care about relative
+			// positioning.
+            sq_dist = (tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y);
+			radii = pow(size + temp->getSize(), 2);
+            if (sq_dist <= radii) {
+				*(out++) = temp;
             }
         }
     }
-    return collide_array;
+
 }
  
