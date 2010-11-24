@@ -60,7 +60,6 @@ bool update() {
 	return true;
 }
 
-#define SQ(x) (x*x)
 bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
         return false;
@@ -80,9 +79,14 @@ bool renderUnitCreation(CTouch* touch) {
     return true;
 }
 
+void renderDragUnit(CTouch* touch){
+    if(touch->unit)
+        touch->unit->displayOnScreen(touch->x, touch->y);
+}
+
 bool renderDragWorld(CTouch* touch) {
     // this is VERY naive at this point, doesn't actually do angles correctly.
-    game->rotate((touch->start_y - touch->end_y)/360.0f);
+    game->rotate((touch->start_y - touch->end_y)/120.0f);
     return true;
 }
 
@@ -101,16 +105,16 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
             if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
                 
-                int y = touch->y - 110;
+                int y = touch->y - 110; // Palate offset
                 if(y < 0) return;
                 
-                switch (y / 60) {
-                    //case 0: touch->unit = new Thrower(NULL, game, CIwFVec2(0,0)); break;
-                    case 1: touch->unit = new Wrecker(NULL, game, CIwFVec2(0,0)); break;
-                    case 2: touch->unit = new Muncher(NULL, game, CIwFVec2(0,0)); break;
-                    case 3: touch->unit = new Shooter(NULL, game, CIwFVec2(0,0)); break;
+                switch (y / 60) { // 60px is size of icons
+                    //case 0: touch->unit = new Thrower(NULL,  game, CIwFVec2(0,0)); break;
+                    case 1: touch->unit = new Wrecker(NULL,  game, CIwFVec2(0,0)); break;
+                    case 2: touch->unit = new Muncher(NULL,  game, CIwFVec2(0,0)); break;
+                    case 3: touch->unit = new Shooter(NULL,  game, CIwFVec2(0,0)); break;
                     case 4: touch->unit = new Spreader(NULL, game, CIwFVec2(0,0)); break;
-                    //case 5: touch->unit = new Invader(NULL, game, CIwFVec2(0,0)); break;
+                    //case 5: touch->unit = new Invader(NULL,  game, CIwFVec2(0,0)); break;
                     default: break;
                 }
                    
@@ -134,6 +138,8 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 // assign position info to the touch struct associated with an event for
 // multitouch motion.
 void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
+    if(event->m_x < 0) return;
+    
 	CTouch* touch = GetTouch(event->m_TouchID);
 	if (touch) {
 		touch->x = event->m_x;
@@ -143,18 +149,36 @@ void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
             // sent new start to the old end, and the new end to the new pos
             touch->start_y = touch->end_y;
             touch->end_y = touch->y;
-            renderDragWorld(touch);
         }   
 	}
+}
+
+void SingleTouchButtonCB(s3ePointerEvent* event){
+    s3ePointerTouchEvent *e2 = (s3ePointerTouchEvent*) malloc(sizeof(s3ePointerTouchEvent));
+    e2->m_x = event->m_x;
+    e2->m_y = event->m_y;
+    e2->m_Pressed = event->m_Pressed;
+    e2->m_TouchID = 0;
+    MultiTouchButtonCB(e2);
+    free(e2);   
+}
+
+void SingleTouchMotionCB(s3ePointerMotionEvent* event){
+    s3ePointerTouchMotionEvent *e2 = (s3ePointerTouchMotionEvent*) malloc(sizeof(s3ePointerTouchMotionEvent));
+    e2->m_x = event->m_x;
+    e2->m_y = event->m_y;
+    e2->m_TouchID = 0;
+    MultiTouchMotionCB(e2);
+    free(e2);
 }
 
 void doMain() {
     
     s3ePointerRegister(S3E_POINTER_TOUCH_EVENT, (s3eCallback)MultiTouchButtonCB, NULL);
-    s3ePointerRegister(S3E_POINTER_BUTTON_EVENT, (s3eCallback)MultiTouchButtonCB, NULL);
+    s3ePointerRegister(S3E_POINTER_BUTTON_EVENT, (s3eCallback)SingleTouchButtonCB, NULL);
 
 	s3ePointerRegister(S3E_POINTER_TOUCH_MOTION_EVENT, (s3eCallback)MultiTouchMotionCB, NULL);
-    s3ePointerRegister(S3E_POINTER_MOTION_EVENT, (s3eCallback)MultiTouchMotionCB, NULL);
+    s3ePointerRegister(S3E_POINTER_MOTION_EVENT, (s3eCallback)SingleTouchMotionCB, NULL);
 
     
     IwGetResManager()->LoadGroup("resource_groups/palate.group");
@@ -167,7 +191,7 @@ void doMain() {
 	static CIwSVec2 xy(260, 0);
 	static CIwSVec2 wh(60, 480);
 	static CIwSVec2 uv(0, 0);
-	static CIwSVec2 duv(1 << 12, 1 << 12);
+	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
 
 	game = new Game(2);
 
@@ -185,6 +209,7 @@ void doMain() {
 
 	
 	while (1) {
+        int64 start = s3eTimerGetMs();
 	
 		s3eDeviceYield(0);
 		s3eKeyboardUpdate();
@@ -197,16 +222,24 @@ void doMain() {
 		    break;
 		}
         
-        IwGxSetMaterial(mat);
-        IwGxSetScreenSpaceSlot(-1);
-        IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
-		
         IwGxSetColClear(255, 255, 255, 255);
         IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
         
+        IwGxSetMaterial(mat);
+        IwGxSetScreenSpaceSlot(-1);
+        IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
+        
         game->tick();
+        
+        for(int i = 0; i < MAX_TOUCHES; ++i)
+            if(touches[i].active)
+                if(touches[i].gesture_type == CREATE_UNIT)
+                    renderDragUnit(&touches[i]);
+                else
+                    renderDragWorld(&touches[i]);
+        
 		
-		int64 start = s3eTimerGetMs();
+        IwGxFlush();
         
         IwGxSwapBuffers();
 		

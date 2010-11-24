@@ -89,6 +89,8 @@ class Game {
         CIwMat* getViewMatrix();
         float getRotation();
         float rotate(float increment);
+    
+        CIwResGroup* getSprites();
 
 };
 

@@ -78,8 +78,6 @@ void Game::tick(){
 void Game::render() {		    
 	renderWorld();
 	renderSprites();
-	
-	IwGxSwapBuffers();
 }
 
 void Game::renderSprites() {
@@ -136,4 +134,8 @@ float Game::getRotation(){
 
 float Game::rotate(float rot) {
     return rotation += rot;
+}
+
+CIwResGroup* Game::getSprites(){
+    return sprites;
 }

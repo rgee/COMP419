@@ -31,6 +31,26 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float w
 	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, worldRot, frameNumber, numFrames);
 }
 
+void Unit::displayOnScreen(int x, int y){    
+    CIwMaterial *mat = new CIwMaterial();
+    mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
+    mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
+    mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+    IwGxSetMaterial(mat);
+
+    
+	CIwSVec2 xy(x-30, y-30);
+        
+	static CIwSVec2 wh(60, 60);
+	static CIwSVec2 uv(0, 0);
+	static CIwSVec2 duv(IW_FIXED(1.0/numFrames), IW_GEOM_ONE);
+    
+    IwGxSetScreenSpaceSlot(1);
+    IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
+    
+    free(mat);
+}
+
 
 int Unit::getId(){ return uid; }
 void Unit::setId(int uid){ this->uid = uid; }

@@ -15,6 +15,7 @@ class Muncher : public Unit {
 		virtual char* getTextureName();
 		virtual bool update();
 		virtual void display();
+
 	private:
 
 		float circleOffset;

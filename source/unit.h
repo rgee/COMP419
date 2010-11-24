@@ -129,6 +129,7 @@ class Unit {
 		virtual bool update() = 0;
 
         virtual void display() = 0;
+        void displayOnScreen(int x, int y);
 
 		
 		void Attack();
