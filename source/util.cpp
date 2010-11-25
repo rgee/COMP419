@@ -1,7 +1,7 @@
 #include "util.h"
 
 
-void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
+void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
 	
 	static CIwSVec3 vertices[4];
 	static CIwSVec2 UVs[4];

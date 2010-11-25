@@ -117,10 +117,10 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
                 
                 switch (y / 60) { // 60px is size of icons
                     //case 0: touch->unit = new Thrower(NULL,  game, CIwFVec2(0,0)); break;
-                    case 1: touch->unit = new Wrecker(localPlayer,  game, CIwFVec2(0,0)); break;
-                    case 2: touch->unit = new Muncher(localPlayer,  game, CIwFVec2(0,0)); break;
-                    case 3: touch->unit = new Shooter(localPlayer,  game, CIwFVec2(0,0)); break;
-                    case 4: touch->unit = new Spreader(localPlayer, game, CIwFVec2(0,0)); break;
+                    case 1: touch->unit = new Wrecker(localPlayer,  game, 0, 0); break;
+                    case 2: touch->unit = new Muncher(localPlayer,  game, 0, 0); break;
+                    case 3: touch->unit = new Shooter(localPlayer,  game, 0, 0); break;
+                    case 4: touch->unit = new Spreader(localPlayer, game, 0, 0); break;
                     //case 5: touch->unit = new Invader(NULL,  game, CIwFVec2(0,0)); break;
                     default: break;
                 }
@@ -256,6 +256,11 @@ void doMain() {
 	delete game;
 	delete localPlayer;
 	delete mat;
+    palateGroup->Finalise();
+    
+    for(int i = 0; i < MAX_TOUCHES; ++i)
+        if(touches[i].unit)
+            delete touches[i].unit;
 }
 
 int main() {

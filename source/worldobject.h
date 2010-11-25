@@ -18,7 +18,7 @@ and (r, theta)), the name of its texture, and how to render itself in world spac
 class WorldObject {
 	
 	public:
-	
+        WorldObject(Game *game);
 		WorldObject(CIwFVec2 position, Game* game);
 		
 		WorldObject(const WorldObject& newObj);

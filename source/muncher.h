@@ -8,7 +8,7 @@ class Muncher : public Unit {
 
 	public:
 
-		Muncher(Player* owner, Game* game, CIwFVec2 position);
+		Muncher(Player* owner, Game* game, float x, float y);
 
 		~Muncher() {};
 

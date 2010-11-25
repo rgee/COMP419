@@ -1,5 +1,7 @@
 #include "worldobject.h"
 
+WorldObject::WorldObject(Game* game) : game(game){}
+
 WorldObject::WorldObject(CIwFVec2 position, Game* game) : position(position), game(game) { 
     setPosition(position);
 }

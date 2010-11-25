@@ -40,8 +40,7 @@ std::list<Unit*>* Game::getUnits(){
 	return &units;
 }
  
-void Game::addUnit(Unit *u){
-	
+void Game::addUnit(Unit *u){    
     u->setId(numUnits++);
 
 	if(units.empty()) {
@@ -57,7 +56,7 @@ void Game::addUnit(Unit *u){
 	
 	(unitBucket[u->getTextureName()])->insert(u);
 
-	int32 whichPlayer = IwRandMinMax(-1, 1);
+	int32 whichPlayer = -1;//IwRandMinMax(-1, 1);
 	if(whichPlayer >= 0) {
 		u->setOwner(opponentPlayer);
 	} else {
@@ -83,7 +82,6 @@ void Game::render() {
 }
 
 void Game::renderSprites() {
-	
 	const char* curTexture;
 	CIwMaterial* mat = new CIwMaterial();
 	
@@ -114,7 +112,7 @@ void Game::renderWorld() {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwFVec2(0, 0), 0.0, 0.6, 960, rotation);
+	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation);
 	
 	delete mat;
 }
