@@ -162,3 +162,5 @@ float Unit::getAngle(){
     
     return 3*PI/2 - atan2(velocity.x, velocity.y);
 }
+string Unit::getType(){return UnitType;}
+

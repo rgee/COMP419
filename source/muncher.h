@@ -14,10 +14,16 @@ class Muncher : public Unit {
 
 		virtual const char* getTextureName();
 		virtual bool update();
+    
+        virtual void Attack();
+        virtual void RecieveDamage(int dammage, Unit* attacker); 
+        virtual int GetDammage(); 
+    
 
 	private:
 
 		float circleOffset;
+        CIwArray<CIwArray> statAttacks;
 };
 
 #endif

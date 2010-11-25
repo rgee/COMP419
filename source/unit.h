@@ -43,6 +43,9 @@ class Unit {
 
 		// The unit this unit is pursuing.
 		Unit *Pursuing;
+    
+        //This is the unit's type. (I.E. muncher, wrecker...)
+        string UnitType;
 	
 		/**
 		Utility method that subclasses will use to render their sprites. Assumes that 
@@ -133,11 +136,14 @@ class Unit {
         void displayOnScreen(int x, int y);
 
 		
-		void Attack();
-		void RecieveDamage(); 
+		virtual void Attack();
+		virtual void RecieveDamage(int dammage, Unit* attacker);
+        virtual int GetDammage();
     
         float getSight();
         float getAngle();
+        
+        string getType();
 };
 
 #endif
