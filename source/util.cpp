@@ -28,16 +28,20 @@ void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, in
 	float frameRatio = 1.0/numFrames;
 	
 	//set up sprite UV's
-	UVs[0] = CIwSVec2(0, 0);
-	UVs[2] = CIwSVec2(IW_FIXED(frameRatio), 0);
-	UVs[3] = CIwSVec2(IW_FIXED(frameRatio), IW_GEOM_ONE);
-	UVs[1] = CIwSVec2(0, IW_GEOM_ONE);
+    
+    iwfixed cf = IW_FIXED((float)frameNumber  / numFrames);
+    iwfixed nf = IW_FIXED((frameNumber + 1.0) / numFrames);
+    
+	UVs[0] = CIwSVec2(cf, 0);
+	UVs[2] = CIwSVec2(nf, 0);
+	UVs[3] = CIwSVec2(nf, IW_GEOM_ONE);
+	UVs[1] = CIwSVec2(cf, IW_GEOM_ONE);
 	
 	CIwSVec2 ofs = CIwSVec2(textureSize*frameNumber, 0);
 	
 	//render the unit in model space
 	IwGxSetUVStream(UVs);
-	IwGxSetUVOfs(&ofs);
+	//IwGxSetUVOfs(&ofs);
 	
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);

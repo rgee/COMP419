@@ -23,6 +23,7 @@ class Unit {
 		float sight;
 		float spread_speed;
 		float spread_radius;
+        float scale;
 
 		float r;
 		float theta;

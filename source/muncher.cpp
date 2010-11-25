@@ -6,6 +6,7 @@ Muncher::Muncher(Player* owner, Game* game, CIwFVec2 position)
 	spriteSize = 256;
 	numFrames = 12;
 	curFrame = 0;
+    scale = 0.2f;
 	circleOffset = 0.0;
 }
 
@@ -16,10 +17,6 @@ bool Muncher::update() {
         game->getAI()->updateAI(this);
     
 	return true;
-}
-
-void Muncher::display() {
-	renderSprite(curFrame, getAngle(), 0.2, game->getRotation());
 }
 
 const char* Muncher::getTextureName() {

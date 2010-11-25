@@ -10,7 +10,7 @@
 #include "wrecker.h"
 #include "spreader.h"
 
-#define	MS_PER_FRAME (1000 / 15)
+#define	MS_PER_FRAME (1000 / 12)
 
 enum gesture_t { CREATE_UNIT, DRAG_WORLD };
 
@@ -127,9 +127,6 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
             if (touch->gesture_type == CREATE_UNIT) {
                 renderUnitCreation(touch);
                 touch->unit = NULL;
-            } else if (touch->gesture_type == DRAG_WORLD) {
-                touch->end_y = touch->y;
-                renderDragWorld(touch);
             }
         }
 	}
@@ -193,15 +190,9 @@ void doMain() {
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
     
-    CIwColour col = {180, 255, 220, 255};
+    CIwColour col = {255, 0, 0, 255};
 	localPlayer = new Player(col);
     game = new Game(localPlayer);
-
-    CTouch t;
-    t.x = 100;
-    t.y = 480 / 2 + 10;
-    t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
-    renderUnitCreation(&t);
 
 	IwGxLightingOff();
 

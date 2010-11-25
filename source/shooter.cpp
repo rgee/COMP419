@@ -5,16 +5,12 @@ Shooter::Shooter(Player* owner, Game* game, CIwFVec2 position)
 {
 	spriteSize = 256;
 	numFrames = 7;
-	curFrame = 0;	
-}
-
-void Shooter::display() {
-	renderSprite(curFrame, getAngle(), 0.5, game->getRotation());
+	curFrame = 0;
+    scale = 0.5;
 }
 
 bool Shooter::update(){
-    curFrame = (curFrame + 2);// % numFrames;
-	game->getAI()->updateAI(this);
+    curFrame = (curFrame + 1) % numFrames;
 	return true;
 }
 

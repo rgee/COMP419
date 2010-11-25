@@ -32,7 +32,7 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float w
 }
 
 void Unit::display(){
-    renderSprite(curFrame, getAngle(), 0.2, game->getRotation());
+    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames);
 }
 
 void Unit::displayOnScreen(int x, int y){    
@@ -44,10 +44,10 @@ void Unit::displayOnScreen(int x, int y){
 
     
 	CIwSVec2 xy(x-30, y-30);
-        
+    CIwSVec2 duv(IW_FIXED(1.0/numFrames), IW_GEOM_ONE);
+    
 	static CIwSVec2 wh(60, 60);
-	static CIwSVec2 uv(0, 0);
-	static CIwSVec2 duv(IW_FIXED(1.0/numFrames), IW_GEOM_ONE);
+	static CIwSVec2 uv(IW_FIXED(0), IW_FIXED(0));	
     
     IwGxSetScreenSpaceSlot(1);
     IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
