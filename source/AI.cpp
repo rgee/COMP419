@@ -12,9 +12,9 @@ void AI::path(Unit* unit){
 
 	// If we are neither attacking nor pursuing, find a unit to pursue
     if(!unit->attacking() && !unit->pursuing()){
-        Unit *Enemy;
-        if((Enemy = detectEnemy(unit)) != NULL){
-            unit->setPursuing(Enemy);
+        Unit *enemy;
+        if((enemy = detectEnemy(unit)) != NULL){
+            unit->setPursuing(enemy);
         }
     }
 
@@ -110,7 +110,7 @@ Unit* AI::detectEnemy(Unit* unit){
 }
  
 void AI::updateAI(Unit* unit){
-     //path(unit);
+     path(unit);
 }
 
 std::list<Unit*>* AI::collisionDetection(Unit* unit){

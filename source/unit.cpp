@@ -2,7 +2,7 @@
 
 Unit::Unit(const Unit& newUnit)
 	: WorldObject(newUnit.position, newUnit.game), 
-	hp(newUnit.hp), cost(newUnit.cost), attack(newUnit.attack), speed(newUnit.speed),
+	hp(newUnit.hp), cost(newUnit.cost), attackDamage(newUnit.attackDamage), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
 	owner(newUnit.owner)
@@ -15,7 +15,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		float spread_speed, float spread_radius, Player* owner,
 		Game* game, CIwFVec2 position)
 		: WorldObject(position, game),
-		  hp(hp), cost(cost), attack(attack), speed(speed),
+		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
 		  owner(owner)
@@ -77,18 +77,18 @@ Player& Unit::getOwner(){
 	return *owner;
 }
 
-Unit* Unit::getAttacking(){return Attacking;}
-void Unit::setAttacking(Unit* unit){Attacking = unit;}
+Unit* Unit::getAttacking(){ return attackTarget; }
+void Unit::setAttacking(Unit* unit){ attackTarget = unit; }
 
-Unit* Unit::getPursuing(){return Pursuing;}
-void Unit::setPursuing(Unit* unit){Pursuing=unit;}
+Unit* Unit::getPursuing(){ return pursueTarget; }
+void Unit::setPursuing(Unit* unit){ pursueTarget = unit; }
 
 bool Unit::attacking(){
-    return Attacking != NULL;
+    return attackTarget != NULL;
 }
 
 bool Unit::pursuing(){
-    return Pursuing != NULL;
+    return pursueTarget != NULL;
 }
 
 
@@ -116,8 +116,8 @@ void Unit::increaseY(float y){}
 float Unit::getSpeed(){return speed;}
 float Unit::getSize(){return spriteSize/2;}
 
-void Unit::Attack(){};
-void Unit::RecieveDamage(){};
+void Unit::attack(){};
+void Unit::receiveDamage(){};
 
 
 void Unit::setVelocity(const CIwFVec2& vel){
@@ -134,11 +134,6 @@ CIwFVec2 Unit::getVelocity(){return velocity;}
 float Unit::getSight(){ return sight; }
 
 float Unit::getAngle(){
-    // Facing towards position.x + velocity.x, position.y + velocity.y
-    // 0 is facing LEFT
-    // PI is facing RIGHT
-    // Let phi be angle from X axis to (velocity.x, velocity.y)
-    // So we want atan2(velocity.x, velocity.y)
-    
-    return 3*PI/2 - atan2(velocity.x, velocity.y);
+    CIwFVec2 norm = velocity.GetNormalised();
+    return 3*PI/2 - atan2(norm.x, norm.y);
 }

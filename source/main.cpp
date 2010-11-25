@@ -68,8 +68,11 @@ bool renderUnitCreation(CTouch* touch) {
     CIwFVec2 *modelCoords = worldify(touch->x, touch->y, radii.x, game->getRotation());
     
     float dist_sq = SQ(modelCoords->x) + SQ(modelCoords->y);
-    if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x))
+    if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x)){
+        free(touch->unit);
+        delete modelCoords;
         return false;
+    }
     
     touch->unit->setPosition(*modelCoords);
 	game->addUnit(touch->unit);

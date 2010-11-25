@@ -1,17 +1,18 @@
 #include "worldobject.h"
 
 WorldObject::WorldObject(CIwFVec2 position, Game* game) : position(position), game(game) { 
-
-	CIwFVec2 polar = position;
-	polarize(polar);
-	r = polar.x;
-	theta = polar.y;
+    setPosition(position);
 }
 
 WorldObject::WorldObject(const WorldObject& newObj) : position(newObj.position), game(newObj.game), theta(0.0f), r(0.0f) { }
 
 void WorldObject::setPosition(float x, float y) {
-	position = CIwFVec2(x, y);
+    position = CIwFVec2(x, y);
+    
+    CIwFVec2 polar(position);
+	polarize(polar);
+	r = polar.x;
+	theta = polar.y;
 }
 
 void WorldObject::setPosition(const CIwFVec2& newPosition) {

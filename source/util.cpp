@@ -50,7 +50,10 @@ void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, in
 
 void polarize(CIwFVec2& v){
     v.x = v.GetLength();
-    v.y = asin(v.y/v.GetLength());
+    if(v.GetLength() > 0.0001)
+        v.y = asin(v.y/v.GetLength());
+    else
+        v.y = 0;
 }
 
 CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){

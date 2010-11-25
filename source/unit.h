@@ -14,7 +14,7 @@ class Unit : public WorldObject {
 		/* Preliminary stats. Subject to change. */
 	    float hp;
 		float cost;
-		float attack;
+		float attackDamage;
 		float speed;
 		float munch_speed;
 		float range;
@@ -33,10 +33,10 @@ class Unit : public WorldObject {
 		int curFrame;
 	
 		// The unit this unit is attacking.
-		Unit *Attacking;
+		Unit *attackTarget;
 
 		// The unit this unit is pursuing.
-		Unit *Pursuing;
+		Unit *pursueTarget;
 	
 		/**
 		Utility method that subclasses will use to render their sprites. Assumes that 
@@ -110,8 +110,8 @@ class Unit : public WorldObject {
         virtual void display();
         void displayOnScreen(int x, int y);
 		
-		void Attack();
-		void RecieveDamage(); 
+		void attack();
+		void receiveDamage(); 
     
         float getSight();
         float getAngle();

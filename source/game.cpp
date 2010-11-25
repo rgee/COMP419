@@ -84,7 +84,6 @@ void Game::renderSprites() {
 	CIwMaterial* mat = new CIwMaterial();
 	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
-		
 		if (strcmp((*itr).first, curTexture) != 0) {
 			curTexture = (*itr).first;
 			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
