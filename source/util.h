@@ -7,10 +7,6 @@
 #include "IwGx.h"
 #include "IwGeom.h"
 
-#include "game.h"
-
-
-
 void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, int textureSize, float worldRot = 0.0, int frameNumber = 0, int numFrames = 1);
 
 /**
@@ -19,6 +15,6 @@ void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, in
  * The y component represents the theta.
  */
 void polarize(CIwFVec2& v);
-CIwFVec2 *worldify(int32 x, int32 y, Game *game);
+CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation);
 
 #endif

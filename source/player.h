@@ -8,7 +8,8 @@ class Player {
         CIwColour color; 
 	public:
         Player(CIwColour& col) { color = col; }
-        ~Player() {}	
+        ~Player() {}
+		CIwColour& getColor();
 };
 
 #endif

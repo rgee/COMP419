@@ -24,7 +24,9 @@ files
     thrower.h
     thrower.cpp
     wrecker.h
-    wrecker.cpp    
+    wrecker.cpp   
+	worldobject.h
+	worldobject.cpp
 }
 
 subprojects

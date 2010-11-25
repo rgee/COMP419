@@ -110,7 +110,7 @@ Unit* AI::detectEnemy(Unit* unit){
 }
  
 void AI::updateAI(Unit* unit){
-     path(unit);
+     //path(unit);
 }
 
 std::list<Unit*>* AI::collisionDetection(Unit* unit){

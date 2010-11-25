@@ -16,8 +16,6 @@ class Muncher : public Unit {
 		virtual bool update();
 
 	private:
-
-		float circleOffset;
 };
 
 #endif

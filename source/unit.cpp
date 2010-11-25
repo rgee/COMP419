@@ -1,33 +1,42 @@
 #include "unit.h"
 
 Unit::Unit(const Unit& newUnit)
-	: hp(newUnit.hp), cost(newUnit.cost), attack(newUnit.attack), speed(newUnit.speed),
+	: WorldObject(newUnit.position, newUnit.game), 
+	hp(newUnit.hp), cost(newUnit.cost), attack(newUnit.attack), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
-	owner(newUnit.owner), game(newUnit.game), position(newUnit.position)
+	owner(newUnit.owner)
 {
 
 }
-
-
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
 		float munch_speed, float range, float sight,
 		float spread_speed, float spread_radius, Player* owner,
 		Game* game, CIwFVec2 position)
-		: hp(hp), cost(cost), attack(attack), speed(speed),
+		: WorldObject(position, game),
+		  hp(hp), cost(cost), attack(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), game(game), position(position),
-		  theta(0.0f)
+		  owner(owner)
 {
+	
 }
-/*
-Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
-*/
 
 
 void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot) {
+	
+	CIwColour ownerColor = owner->getColor();
+	
+	static CIwColour colors[4] = {
+		ownerColor,
+		ownerColor,
+		ownerColor,
+		ownerColor
+	};
+	
+	IwGxSetColStream(colors, 4);
+	
 	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, worldRot, frameNumber, numFrames);
 }
 
@@ -36,12 +45,12 @@ void Unit::display(){
 }
 
 void Unit::displayOnScreen(int x, int y){    
-    CIwMaterial *mat = new CIwMaterial();
+    
+	CIwMaterial *mat = new CIwMaterial();
     mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
     mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     IwGxSetMaterial(mat);
-
     
 	CIwSVec2 xy(x-30, y-30);
     CIwSVec2 duv(IW_FIXED(1.0/numFrames), IW_GEOM_ONE);
@@ -59,13 +68,13 @@ void Unit::displayOnScreen(int x, int y){
 int Unit::getId(){ return uid; }
 void Unit::setId(int uid){ this->uid = uid; }
 
+bool Unit::operator<(const Unit& u) const{
+	return theta < u.theta;
+}
+
 
 Player& Unit::getOwner(){
 	return *owner;
-}
-
-Game* Unit::getGame(){
-	return game;
 }
 
 Unit* Unit::getAttacking(){return Attacking;}
@@ -100,36 +109,8 @@ void Unit::decrementHp(float f){
 	hp -= f;
 }
 
-void Unit::setPosition(float x, float y){
-	position.x = x;
-	position.y = y;
-    
-	r = position.GetLength();
-	theta = asin(y/r);
-}
-
-void Unit::setPosition(const CIwFVec2& newPosition){
-    setPosition(newPosition.x, newPosition.y);
-}
-
-
-CIwFVec2 Unit::getPosition(){ return position; }
-
-float Unit::getR(){     return r; }
-float Unit::getTheta(){ return theta; }
-
-void Unit::setPolarPosition(float _r, float _theta){
-    r = _r;
-    theta = _theta;
-    position.x = r * cos(theta);
-    position.y = r * sin(theta);
-}
-
 void Unit::increaseX(float x){}
 void Unit::increaseY(float y){}
-
-float Unit::getX(){return position.x;}
-float Unit::getY(){return position.y;}
 
 
 float Unit::getSpeed(){return speed;}
@@ -149,7 +130,6 @@ void Unit::setVelocity(float xv, float yv){
 }
 
 CIwFVec2 Unit::getVelocity(){return velocity;}
-
 
 float Unit::getSight(){ return sight; }
 

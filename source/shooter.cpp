@@ -11,7 +11,9 @@ Shooter::Shooter(Player* owner, Game* game, CIwFVec2 position)
 
 bool Shooter::update(){
     curFrame = (curFrame + 1) % numFrames;
-	return true;
+    if(curFrame == 0)
+        game->getAI()->updateAI(this);
+    return true;
 }
 
 const char* Shooter::getTextureName() {

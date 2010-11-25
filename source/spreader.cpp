@@ -16,8 +16,7 @@ bool Spreader::update(){
     }else{
         --framesUntilUpdate;
     }
-
-	return true;
+    return true;
 }
 
 const char* Spreader::getTextureName(){

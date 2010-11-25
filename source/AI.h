@@ -1,13 +1,17 @@
 #ifndef _AI_H 
 #define _AI_H
- 
-class AI;
 
-#include "unit.h"
 #include <math.h>
 #include <list>
 #include <vector>
 #include <iterator>
+
+
+class AI;
+
+#include "util.h"
+#include "unit.h"
+
 
 class AI{
     private:

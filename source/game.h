@@ -12,15 +12,14 @@
 #include "IwManagedList.h"
 #include "IwGx.h"
 #include "IwArray.h"
+#include "IwRandom.h"
 
 class Game;
 
 #include "player.h"
-#include "IwRandom.h"
 #include "unit.h"
 
 #include "AI.h"
-
 
 typedef std::map<const char*, std::set<Unit*>* > UnitBucket;
 

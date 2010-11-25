@@ -53,18 +53,18 @@ void polarize(CIwFVec2& v){
     v.y = asin(v.y/v.GetLength());
 }
 
-CIwFVec2 *worldify(int32 x, int32 y, Game *game){
+CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){
     int w = IwGxGetScreenWidth();
     int h = IwGxGetScreenHeight();
             
-    int32 world_x = x + (game->getWorldRadius().x - 10);
+    int32 world_x = x + (innerRadius - 10);
     int32 world_y = h/2 - y;
     
-    float theta = -game->getRotation();
+    rotation = -rotation;
     
     // Rotates (world_x, world_y) around world origin (w/2 + radii.x - 20, h/2) by theta
     
-    return new CIwFVec2(world_x * cos(theta) - world_y * sin(theta),
-                        world_x * sin(theta) + world_y * cos(theta));
+    return new CIwFVec2(world_x * cos(rotation) - world_y * sin(rotation),
+                        world_x * sin(rotation) + world_y * cos(rotation));
     
 }

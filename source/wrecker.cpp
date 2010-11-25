@@ -13,7 +13,8 @@ bool Wrecker::update(){
     curFrame = (curFrame + 1) % numFrames;
     
     game->getAI()->updateAI(this);
-	return true;
+    
+    return true;
 }
 
 const char* Wrecker::getTextureName(){

@@ -1,18 +1,16 @@
 #ifndef _UNIT_H
 #define _UNIT_H
 
-#include "IwGx.h"
-#include "IwGeom.h"
-#include "IwGeomCore.h"
-
 class Unit;
 
+#include "worldobject.h"
 #include "game.h"
 #include "player.h"
-#include "util.h"
+#include "player.h"
 
-class Unit {
-    protected:    
+class Unit : public WorldObject {
+    
+	protected:    
 		/* Preliminary stats. Subject to change. */
 	    float hp;
 		float cost;
@@ -25,12 +23,8 @@ class Unit {
 		float spread_radius;
         float scale;
 
-		float r;
-		float theta;
-
 		Player *owner;
-		Game* game;
-		CIwFVec2 position, velocity;
+		CIwFVec2 velocity;
 		int uid;
 	
 		//info for sprite animation
@@ -66,15 +60,8 @@ class Unit {
 
 		virtual ~Unit() {};
     
-        bool operator<(const Unit& u) const{
-            return theta < u.theta;
-        }
-
-		void setPosition(float x, float y);
-		void setPosition(const CIwFVec2& position);
-		
-		CIwFVec2 getPosition();
-
+		bool operator<(const Unit& u) const;
+	
 
         void setVelocity(const CIwFVec2& velocity);
         void setVelocity(float xv, float yv);
@@ -90,9 +77,7 @@ class Unit {
         
 		Player& getOwner();
 		void setOwner(Player* p);
-		
-		Game* getGame();
-	
+			
 		Unit* getAttacking();
 		void setAttacking(Unit* unit);
 		
@@ -105,12 +90,7 @@ class Unit {
 		float getHp();
 		void setHp(float f);
 		void decrementHp(float f);
-		
-		float getR();
-		float getTheta();
-	
-		void setPolarPosition(float _r, float _theta);
-	
+
 		/* IGNORE THE FOLLOWING.  I already updated set position to change theta and r
 		 and vice versa so use which ever coordinate system works best for you cause
 		 their are times where either works.
@@ -122,16 +102,13 @@ class Unit {
 		 */
 		void increaseX(float x);
 		void increaseY(float y);
-		float getX();
-		float getY();
 	
 	
 		virtual const char* getTextureName() = 0;
 		virtual bool update() = 0;
 
-        void display();
+        virtual void display();
         void displayOnScreen(int x, int y);
-
 		
 		void Attack();
 		void RecieveDamage(); 

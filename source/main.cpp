@@ -64,10 +64,10 @@ bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
         return false;
     
-    CIwFVec2 *modelCoords = worldify(touch->x, touch->y, game);
+    CIwFVec2 radii = game->getWorldRadius();
+    CIwFVec2 *modelCoords = worldify(touch->x, touch->y, radii.x, game->getRotation());
     
     float dist_sq = SQ(modelCoords->x) + SQ(modelCoords->y);
-    CIwFVec2 radii = game->getWorldRadius();
     if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x))
         return false;
     
@@ -110,10 +110,10 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
                 
                 switch (y / 60) { // 60px is size of icons
                     //case 0: touch->unit = new Thrower(NULL,  game, CIwFVec2(0,0)); break;
-                    case 1: touch->unit = new Wrecker(NULL,  game, CIwFVec2(0,0)); break;
-                    case 2: touch->unit = new Muncher(NULL,  game, CIwFVec2(0,0)); break;
-                    case 3: touch->unit = new Shooter(NULL,  game, CIwFVec2(0,0)); break;
-                    case 4: touch->unit = new Spreader(NULL, game, CIwFVec2(0,0)); break;
+                    case 1: touch->unit = new Wrecker(localPlayer,  game, CIwFVec2(0,0)); break;
+                    case 2: touch->unit = new Muncher(localPlayer,  game, CIwFVec2(0,0)); break;
+                    case 3: touch->unit = new Shooter(localPlayer,  game, CIwFVec2(0,0)); break;
+                    case 4: touch->unit = new Spreader(localPlayer, game, CIwFVec2(0,0)); break;
                     //case 5: touch->unit = new Invader(NULL,  game, CIwFVec2(0,0)); break;
                     default: break;
                 }
