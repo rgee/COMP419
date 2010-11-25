@@ -39,6 +39,10 @@ assets
 	images/pacman.png
 	images/world.png
 	images/muncher_sprite_sheet.png
+	images/spreader_sprite_sheet.png
+	images/wrecker_walk_sprite_sheet.png
+	images/wrecker_attack_sprite_sheet.png
+	images/shooter_sprite_sheet.png
 	images/palate.png
 }
 deployments

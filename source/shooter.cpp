@@ -9,12 +9,11 @@ Shooter::Shooter(Player* owner, Game* game, CIwFVec2 position)
 }
 
 void Shooter::display() {
-    curFrame = (curFrame + 2);// % numFrames;
-	renderSprite(curFrame, 90, 0.5, game->getRotation());
+	renderSprite(curFrame, getAngle(), 0.5, game->getRotation());
 }
 
 bool Shooter::update(){
-	
+    curFrame = (curFrame + 2);// % numFrames;
 	game->getAI()->updateAI(this);
 	return true;
 }

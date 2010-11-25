@@ -128,7 +128,7 @@ class Unit {
 		virtual const char* getTextureName() = 0;
 		virtual bool update() = 0;
 
-        virtual void display() = 0;
+        void display();
         void displayOnScreen(int x, int y);
 
 		

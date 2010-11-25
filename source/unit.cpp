@@ -31,6 +31,10 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float w
 	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, worldRot, frameNumber, numFrames);
 }
 
+void Unit::display(){
+    renderSprite(curFrame, getAngle(), 0.2, game->getRotation());
+}
+
 void Unit::displayOnScreen(int x, int y){    
     CIwMaterial *mat = new CIwMaterial();
     mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
