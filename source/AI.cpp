@@ -68,7 +68,7 @@ void AI::path(Unit* unit){
 			
 bool AI::attack(Unit* unit){
 	if(!unit->attacking()){
-	unit->setAttacking(unit->getPursuing());
+        unit->setAttacking(unit->getPursuing());
 	}
 	if(unit->attacking() && unit->pursuing()){
 		unit->setPursuing(NULL);
@@ -121,20 +121,25 @@ std::list<Unit*>* AI::collisionDetection(Unit* unit){
 
 	std::list<Unit*>* Units = game->getUnits();
  
-    CIwFVec2 Pos = unit->getPosition()+unit->getVelocity();
-    polarize(Pos);
-    float rad = Pos.x;
-    float theta = Pos.y;
+    CIwFVec2 pos = unit->getPosition()+unit->getVelocity();
+    polarize(pos);
+    
+    float rad   = pos.x;
+    float theta = pos.y;
+    
     float size = unit->getSize();
 	float current_unit_theta = 0.0f;
+    
 	float sq_dist = 0.0f;
 	float radii = 0.0f;
    
     
     std::list<Unit*>* collide_array = new std::list<Unit*>();
-    if((lowRad <= rad) && (lowRad <= upRad)){
+    
+    if((lowRad <= rad) && (lowRad <= upRad)){ // I am pretty sure this makes no sense
         return NULL;
     }
+    
     for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
         Unit *temp = *itr;
 		current_unit_theta = temp->getTheta();
@@ -143,7 +148,7 @@ std::list<Unit*>* AI::collisionDetection(Unit* unit){
 
 			// We can just use the squared distance here since we only care about relative
 			// positioning.
-            sq_dist = (tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y);
+            sq_dist = SQ(tempPos.x - pos.x) + SQ(tempPos.y+pos.y);
 			radii = pow(size + temp->getSize(), 2);
             if (sq_dist <= radii) {
                 collide_array->push_back(temp);
@@ -175,7 +180,7 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 	CIwFVec2 tempPos = CIwFVec2::g_Zero;
 	Unit* temp;
     
-    if((lowRad <= rad) && (lowRad <= upRad)){
+    if((lowRad <= rad) && (lowRad <= upRad)){ // THIS MAKES NO SENSE; it will always be true.
         return;
     }
     
@@ -187,7 +192,7 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 
 			// We can just use the squared distance here since we only care about relative
 			// positioning.
-            sq_dist = SQ(tempPos.x+pos.x)+SQ(tempPos.y+pos.y);
+            sq_dist = SQ(tempPos.x - pos.x)+SQ(tempPos.y - pos.y);
 			radii = SQ(size + temp->getSize());
             if (sq_dist <= radii) {
 				*(out++) = temp;
