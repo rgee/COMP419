@@ -56,10 +56,6 @@ CTouch* GetTouch(int32 id) {
 }
 
 
-bool update() {    
-	return true;
-}
-
 bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
         return false;
