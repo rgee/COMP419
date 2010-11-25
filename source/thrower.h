@@ -5,7 +5,7 @@
 
 class Thrower : public Unit {
 	public:
-		Thrower(Player* owner, Game* game, CIwFVec2 position);
+		Thrower(Player* owner, Game* game, float x, float y);
 		~Thrower(){};
 
 		virtual bool update();

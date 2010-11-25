@@ -5,7 +5,7 @@
 
 class Shooter : public Unit {
 	public:
-		Shooter(Player* owner, Game* game, CIwFVec2 position);
+		Shooter(Player* owner, Game* game, float x, float y);
 		~Shooter(){};
 
 		virtual bool update();

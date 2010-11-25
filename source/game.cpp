@@ -19,6 +19,10 @@ Game::~Game(){
 	delete ai;
  	units.clear();
 	unitBuffer.clear();
+    unitBucket.clear();
+    
+    sprites->Finalise();
+    game->Finalise();
 }
 
 void Game::initRenderState() {
@@ -36,8 +40,7 @@ std::list<Unit*>* Game::getUnits(){
 	return &units;
 }
  
-void Game::addUnit(Unit *u){
-	
+void Game::addUnit(Unit *u){    
     u->setId(numUnits++);
 
 	if(units.empty()) {
@@ -53,7 +56,7 @@ void Game::addUnit(Unit *u){
 	
 	(unitBucket[u->getTextureName()])->insert(u);
 
-	int32 whichPlayer = IwRandMinMax(-1, 1);
+	int32 whichPlayer = -1;//IwRandMinMax(-1, 1);
 	if(whichPlayer >= 0) {
 		u->setOwner(opponentPlayer);
 	} else {
@@ -79,12 +82,11 @@ void Game::render() {
 }
 
 void Game::renderSprites() {
-	
-	const char* curTexture = "";
+	const char* curTexture;
 	CIwMaterial* mat = new CIwMaterial();
 	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
-		if (strcmp((*itr).first, curTexture) != 0) {
+		if (!curTexture || strcmp((*itr).first, curTexture) != 0) {
 			curTexture = (*itr).first;
 			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
 			mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
@@ -110,8 +112,7 @@ void Game::renderWorld() {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwFVec2(0, 0), 0.0, 0.6, 960, rotation);
-
+	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation);
 	
 	delete mat;
 }

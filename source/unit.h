@@ -54,7 +54,7 @@ class Unit : public WorldObject {
 		Unit(float hp, float cost, float attack, float speed, 
 				float munch_speed, float range, float sight,
 				float spread_speed, float spread_radius, Player* owner,
-				Game* game, CIwFVec2 position);
+				Game* game);
 
 		Unit(const Unit& newUnit);
 

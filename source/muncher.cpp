@@ -1,12 +1,13 @@
 #include "muncher.h"
 
-Muncher::Muncher(Player* owner, Game* game, CIwFVec2 position)
-		 : Unit(100.0f, 50.0f, 10.0f, 25.0f, 10.0f, 5.0f, 10.0f, 0.0f, 0.0f, owner, game, position)
+Muncher::Muncher(Player* owner, Game* game, float x, float y)
+		 : Unit(100.0f, 50.0f, 10.0f, 25.0f, 10.0f, 5.0f, 10.0f, 0.0f, 0.0f, owner, game)
 {
 	spriteSize = 256;
 	numFrames = 12;
 	curFrame = 0;
     scale = 0.2f;
+    setPosition(x, y);
 }
 
 bool Muncher::update() {

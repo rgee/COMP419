@@ -1,7 +1,7 @@
 #include "util.h"
 
 
-void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
+void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
 	
 	static CIwSVec3 vertices[4];
 	static CIwSVec2 UVs[4];
@@ -36,12 +36,9 @@ void renderImageWorldSpace(CIwFVec2 position, float angle, float scaleFactor, in
 	UVs[2] = CIwSVec2(nf, 0);
 	UVs[3] = CIwSVec2(nf, IW_GEOM_ONE);
 	UVs[1] = CIwSVec2(cf, IW_GEOM_ONE);
-	
-	CIwSVec2 ofs = CIwSVec2(textureSize*frameNumber, 0);
-	
+		
 	//render the unit in model space
 	IwGxSetUVStream(UVs);
-	//IwGxSetUVOfs(&ofs);
 	
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
@@ -57,7 +54,6 @@ void polarize(CIwFVec2& v){
 }
 
 CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){
-    int w = IwGxGetScreenWidth();
     int h = IwGxGetScreenHeight();
             
     int32 world_x = x + (innerRadius - 10);

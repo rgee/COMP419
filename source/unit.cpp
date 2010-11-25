@@ -13,8 +13,8 @@ Unit::Unit(const Unit& newUnit)
 Unit::Unit(float hp, float cost, float attack, float speed, 
 		float munch_speed, float range, float sight,
 		float spread_speed, float spread_radius, Player* owner,
-		Game* game, CIwFVec2 position)
-		: WorldObject(position, game),
+		Game* game)
+		: WorldObject(game),
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),

@@ -8,7 +8,7 @@ class Spreader : public Unit {
         int framesUntilUpdate;
     
 	public:
-		Spreader(Player* owner, Game* game, CIwFVec2 position);
+		Spreader(Player* owner, Game* game, float x, float y);
 		~Spreader(){};
 
 		virtual bool update();

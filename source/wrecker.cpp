@@ -1,12 +1,13 @@
 #include "wrecker.h"
 
-Wrecker::Wrecker(Player* owner, Game* game, CIwFVec2 position)
-	: Unit(350.0f, 100.0f, 40.0f, 5.0f, 5.0f, 5.0f, 40.0f, 0.0f, 0.0f, owner, game, position)
+Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
+	: Unit(350.0f, 100.0f, 40.0f, 5.0f, 5.0f, 5.0f, 40.0f, 0.0f, 0.0f, owner, game)
 {
 	spriteSize = 256;
 	numFrames = 5;
 	curFrame = 0;
     scale = 0.2;
+    setPosition(x, y);
 }
 
 bool Wrecker::update(){

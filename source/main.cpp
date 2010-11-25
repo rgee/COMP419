@@ -35,30 +35,27 @@ CTouch touches[MAX_TOUCHES];
 
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id) {
-	CTouch* pInActive = NULL;
+	CTouch* inactive = NULL;
     
 	for(uint32 i=0; i < MAX_TOUCHES; i++) {
 		// if we've found a touch with the specified id, return its memory address.
 		if(id == touches[i].id) return &touches[i];
 		// if no touches are found with the id, pInActive will end up being set to
 		// last touch in g_Touches.
-		if(!touches[i].active) pInActive = &touches[i];
+		if(!touches[i].active)
+            inactive = &touches[i];
 	}
     
 	// return last inactive touch and assign its id to the specified id.
-	if (pInActive) {
-		pInActive->id = id;
-		return pInActive;
+	if (inactive) {
+		inactive->id = id;
+		return inactive;
 	}
     
 	// no more touches; give up.
 	return NULL;
 }
 
-
-bool update() {    
-	return true;
-}
 
 bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
@@ -77,6 +74,9 @@ bool renderUnitCreation(CTouch* touch) {
     touch->unit->setPosition(*modelCoords);
 	game->addUnit(touch->unit);
     
+    touch->unit = NULL;
+    touch->active = false;
+    
     delete modelCoords;
     
     return true;
@@ -89,7 +89,10 @@ void renderDragUnit(CTouch* touch){
 
 bool renderDragWorld(CTouch* touch) {
     // this is VERY naive at this point, doesn't actually do angles correctly.
-    game->rotate((touch->start_y - touch->end_y)/120.0f);
+    if(touch->start_y != touch->end_y){
+        game->rotate((touch->start_y - touch->end_y)/120.0f);
+        touch->start_y = touch->end_y;
+    }
     return true;
 }
 
@@ -105,6 +108,7 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 
         // if it's the beginning of a touch, then determine what kind of gesture it is and set initial info.
         if (touch->active) {
+            touch->start_y = touch->end_y = touch->y;
             if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
                 
@@ -113,23 +117,21 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
                 
                 switch (y / 60) { // 60px is size of icons
                     //case 0: touch->unit = new Thrower(NULL,  game, CIwFVec2(0,0)); break;
-                    case 1: touch->unit = new Wrecker(localPlayer,  game, CIwFVec2(0,0)); break;
-                    case 2: touch->unit = new Muncher(localPlayer,  game, CIwFVec2(0,0)); break;
-                    case 3: touch->unit = new Shooter(localPlayer,  game, CIwFVec2(0,0)); break;
-                    case 4: touch->unit = new Spreader(localPlayer, game, CIwFVec2(0,0)); break;
+                    case 1: touch->unit = new Wrecker(localPlayer,  game, 0, 0); break;
+                    case 2: touch->unit = new Muncher(localPlayer,  game, 0, 0); break;
+                    case 3: touch->unit = new Shooter(localPlayer,  game, 0, 0); break;
+                    case 4: touch->unit = new Spreader(localPlayer, game, 0, 0); break;
                     //case 5: touch->unit = new Invader(NULL,  game, CIwFVec2(0,0)); break;
                     default: break;
                 }
                    
             } else {
                 touch->gesture_type = DRAG_WORLD;
-                touch->start_y = touch->y;
             }
         // if it's the end of a touch, check what kind of gesture it and render.
         } else {
             if (touch->gesture_type == CREATE_UNIT) {
                 renderUnitCreation(touch);
-                touch->unit = NULL;
             }
         }
 	}
@@ -233,7 +235,6 @@ void doMain() {
         
 		
         IwGxFlush();
-        
         IwGxSwapBuffers();
 		
 		// Attempt frame rate
@@ -257,6 +258,11 @@ void doMain() {
 	delete game;
 	delete localPlayer;
 	delete mat;
+    palateGroup->Finalise();
+    
+    for(int i = 0; i < MAX_TOUCHES; ++i)
+        if(touches[i].unit)
+            delete touches[i].unit;
 }
 
 int main() {
