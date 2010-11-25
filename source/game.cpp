@@ -1,5 +1,6 @@
 #include "game.h"
 #include "unit.h"
+
  
 Game::Game(Player* p) : localPlayer(p), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
 	ai = new AI(this);
@@ -51,6 +52,13 @@ void Game::addUnit(Unit *u){
 		unitBucket[u->getTextureName()] = new std::set<Unit*>();
 	
 	(unitBucket[u->getTextureName()])->insert(u);
+
+	int32 whichPlayer = IwRandMinMax(-1, 1);
+	if(whichPlayer >= 0) {
+		u->setOwner(opponentPlayer);
+	} else {
+		u->setOwner(localPlayer);
+	}
 }
 
 void Game::tick(){
@@ -65,17 +73,14 @@ void Game::tick(){
 	render();
 }
 
-void Game::render() {		
-    rotation += 0.5;
-    
+void Game::render() {		    
 	renderWorld();
-	renderSprites();	
-	IwGxSwapBuffers();
+	renderSprites();
 }
 
 void Game::renderSprites() {
 	
-	char* curTexture = "";
+	const char* curTexture = "";
 	CIwMaterial* mat = new CIwMaterial();
 	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
@@ -116,7 +121,6 @@ CIwFVec2 Game::getWorldRadius() {
 	return CIwFVec2(innerRadius, outerRadius);
 }
 
-
 AI *Game::getAI(){ return ai; }
 
 CIwMat* Game::getViewMatrix(){
@@ -125,4 +129,12 @@ CIwMat* Game::getViewMatrix(){
 
 float Game::getRotation(){
     return rotation;
+}
+
+float Game::rotate(float rot) {
+    return rotation += rot;
+}
+
+CIwResGroup* Game::getSprites(){
+    return sprites;
 }

@@ -1,41 +1,38 @@
 #include "unit.h"
 
 Unit::Unit(const Unit& newUnit)
-	: hp(newUnit.hp), cost(newUnit.cost), attack(newUnit.attack), speed(newUnit.speed),
+	: WorldObject(newUnit.position, newUnit.game), 
+	hp(newUnit.hp), cost(newUnit.cost), attack(newUnit.attack), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
-	owner(newUnit.owner), game(newUnit.game), position(newUnit.position)
+	owner(newUnit.owner)
 {
 
 }
-
-
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
 		float munch_speed, float range, float sight,
 		float spread_speed, float spread_radius, Player* owner,
 		Game* game, CIwFVec2 position)
-		: hp(hp), cost(cost), attack(attack), speed(speed),
+		: WorldObject(position, game),
+		  hp(hp), cost(cost), attack(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), game(game), position(position),
-		  theta(0.0f)
+		  owner(owner)
 {
+	
 }
-/*
-Unit::Unit(float _r, float _theta) : r(r), theta(theta) {}
-*/
 
 
 void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot) {
 	
-	CIwColour playerColor = owner->getColor();
+	CIwColour ownerColor = owner->getColor();
 	
 	static CIwColour colors[4] = {
-		playerColor,
-		playerColor,
-		playerColor,
-		playerColor
+		ownerColor,
+		ownerColor,
+		ownerColor,
+		ownerColor
 	};
 	
 	IwGxSetColStream(colors, 4);
@@ -43,25 +40,41 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float w
 	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, worldRot, frameNumber, numFrames);
 }
 
+void Unit::display(){
+    renderSprite(curFrame, getAngle(), 0.2, game->getRotation());
+}
+
+void Unit::displayOnScreen(int x, int y){    
+    
+	CIwMaterial *mat = new CIwMaterial();
+    mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
+    mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
+    mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+    IwGxSetMaterial(mat);
+    
+	CIwSVec2 xy(x-30, y-30);
+        
+	static CIwSVec2 wh(60, 60);
+	static CIwSVec2 uv(0, 0);
+	static CIwSVec2 duv(IW_FIXED(1.0/numFrames), IW_GEOM_ONE);
+    
+    IwGxSetScreenSpaceSlot(1);
+    IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
+    
+    free(mat);
+}
+
 
 int Unit::getId(){ return uid; }
 void Unit::setId(int uid){ this->uid = uid; }
 
-
-
-void Unit::setRTheta(float rad, float ang){ 
-	r = rad;
-	theta = ang;
-	position.x = (r/sin(theta))-1;
-	position.y = position.x*sin(theta);
+bool Unit::operator<(const Unit& u) const{
+	return theta < u.theta;
 }
+
 
 Player& Unit::getOwner(){
 	return *owner;
-}
-
-Game* Unit::getGame(){
-	return game;
 }
 
 Unit* Unit::getAttacking(){return Attacking;}
@@ -70,13 +83,17 @@ void Unit::setAttacking(Unit* unit){Attacking = unit;}
 Unit* Unit::getPursuing(){return Pursuing;}
 void Unit::setPursuing(Unit* unit){Pursuing=unit;}
 
-bool Unit::attacking(){if(Attacking!=NULL){return true;}else{return false;}}
-bool Unit::pursuing(){if(Pursuing!=NULL){return true;}else{return false;}}
+bool Unit::attacking(){
+    return Attacking != NULL;
+}
+
+bool Unit::pursuing(){
+    return Pursuing != NULL;
+}
 
 
-
-void Unit::setOwner(Player& p){
-	owner = &p;
+void Unit::setOwner(Player* p){
+	owner = p;
 }
 
 float Unit::getHp(){
@@ -92,31 +109,8 @@ void Unit::decrementHp(float f){
 	hp -= f;
 }
 
-void Unit::setPosition(float x, float y){
-	position.x = x;
-	position.y = y;
-	r = sqrt(x*x + y*y);
-	theta = asin(y/x);
-}
-
-void Unit::setPosition(const CIwVec2& newPosition){
-	position = newPosition;
-	float x = newPosition.x;
-	float y = newPosition.y;
-	r = sqrt(x*x + y*y);
-	theta = asin(y/x);
-}
-
-
-CIwFVec2 Unit::getPosition(){return position;}
-
-float Unit::getR(){ return r; }
-float Unit::getTheta(){ return theta; }
-
 void Unit::increaseX(float x){}
 void Unit::increaseY(float y){}
-float Unit::getX(){return 0.0f;}
-float Unit::getY(){return 0.0f;}
 
 
 float Unit::getSpeed(){return speed;}
@@ -126,23 +120,25 @@ void Unit::Attack(){};
 void Unit::RecieveDamage(){};
 
 
-void Unit::setVelocity(const CIwFVec2& vel)
-{
-    float angle = acos(vel.Dot(velocity));
-
+void Unit::setVelocity(const CIwFVec2& vel){
     velocity = vel;
+}
+
+void Unit::setVelocity(float xv, float yv){
+    velocity.x = xv;
+    velocity.y = yv;
 }
 
 CIwFVec2 Unit::getVelocity(){return velocity;}
 
-CIwFVec2 Unit::ConvertToRTheta(CIwFVec2 pos){
-    float x = pos.x;
-	float y = pos.y;
-	float r = sqrt(x*x + y*y);
-	float theta = asin(y/x);
-    pos.x = r;
-    pos.y = theta;
-    return pos;
-}
+float Unit::getSight(){ return sight; }
 
-float Unit::getSight(){return sight;}
+float Unit::getAngle(){
+    // Facing towards position.x + velocity.x, position.y + velocity.y
+    // 0 is facing LEFT
+    // PI is facing RIGHT
+    // Let phi be angle from X axis to (velocity.x, velocity.y)
+    // So we want atan2(velocity.x, velocity.y)
+    
+    return 3*PI/2 - atan2(velocity.x, velocity.y);
+}

@@ -4,17 +4,12 @@
 #include "IwColour.h"
 
 class Player {
-	
 	private:
-	
-		CIwColour color;
-	
+        CIwColour color; 
 	public:
-	
-		Player(CIwColour color);
-	
-		CIwColour getColor();
-	
+        Player(CIwColour& col) { color = col; }
+        ~Player() {}
+		CIwColour& getColor();
 };
 
 #endif

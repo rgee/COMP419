@@ -8,16 +8,20 @@ Shooter::Shooter(Player* owner, Game* game, CIwFVec2 position)
 	curFrame = 0;	
 }
 
-void Shooter::display(float worldRot) {
-	renderSprite(curFrame+=2, 90, 0.7, worldRot);
+void Shooter::display() {
+	renderSprite(curFrame, getAngle(), .3, game->getRotation());
 }
 
 bool Shooter::update(){
 	
-	game->getAI()->updateAI(this);
+    curFrame += 2;
+	
+	if(curFrame == 0)
+        game->getAI()->updateAI(this);
+	
 	return true;
 }
 
-char* Shooter::getTextureName() {
+const char* Shooter::getTextureName() {
 	return "shooter_sprite_sheet";
 }

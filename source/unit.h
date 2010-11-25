@@ -1,18 +1,16 @@
 #ifndef _UNIT_H
 #define _UNIT_H
 
-#include "IwGx.h"
-#include "IwGeom.h"
-#include "IwGeomCore.h"
-
 class Unit;
 
+#include "worldobject.h"
 #include "game.h"
 #include "player.h"
-#include "util.h"
+#include "player.h"
 
-class Unit {
-    protected:
+class Unit : public WorldObject {
+    
+	protected:    
 		/* Preliminary stats. Subject to change. */
 	    float hp;
 		float cost;
@@ -24,12 +22,8 @@ class Unit {
 		float spread_speed;
 		float spread_radius;
 
-		float r;
-		float theta;
-
 		Player *owner;
-		Game* game;
-		CIwFVec2 position, velocity;
+		CIwFVec2 velocity;
 		int uid;
 	
 		//info for sprite animation
@@ -37,7 +31,10 @@ class Unit {
 		int numFrames;
 		int curFrame;
 	
+		// The unit this unit is attacking.
 		Unit *Attacking;
+
+		// The unit this unit is pursuing.
 		Unit *Pursuing;
 	
 		/**
@@ -62,18 +59,11 @@ class Unit {
 
 		virtual ~Unit() {};
     
-        bool operator<(const Unit& u) const{
-            return theta < u.theta;
-        }
-
-		void setPosition(float x, float y);
-		void setPosition(const CIwVec2& position);
-
-		
-		CIwFVec2 getPosition();
-
+		bool operator<(const Unit& u) const;
+	
 
         void setVelocity(const CIwFVec2& velocity);
+        void setVelocity(float xv, float yv);
     
         CIwFVec2 getVelocity();
 
@@ -85,10 +75,8 @@ class Unit {
 		void setId(int uuid);
         
 		Player& getOwner();
-		void setOwner(Player& p);
-		
-		Game* getGame();
-	
+		void setOwner(Player* p);
+			
 		Unit* getAttacking();
 		void setAttacking(Unit* unit);
 		
@@ -101,16 +89,7 @@ class Unit {
 		float getHp();
 		void setHp(float f);
 		void decrementHp(float f);
-		
-		float getR();
-		float getTheta();
-	
-	
-		//To deal with simultaneous altering of R Theta and X,Y Pos setR and setTheta must be combined
-		//Please Refractor accordingly.
-	
-		void setRTheta(float x, float y);
-	
+
 		/* IGNORE THE FOLLOWING.  I already updated set position to change theta and r
 		 and vice versa so use which ever coordinate system works best for you cause
 		 their are times where either works.
@@ -122,21 +101,19 @@ class Unit {
 		 */
 		void increaseX(float x);
 		void increaseY(float y);
-		float getX();
-		float getY();
 	
 	
-		virtual char* getTextureName() = 0;
+		virtual const char* getTextureName() = 0;
 		virtual bool update() = 0;
 
-        virtual void display() = 0;
-
+        virtual void display();
+        void displayOnScreen(int x, int y);
 		
 		void Attack();
 		void RecieveDamage(); 
-        CIwFVec2 ConvertToRTheta(CIwFVec2 pos);
     
         float getSight();
+        float getAngle();
 };
 
 #endif
