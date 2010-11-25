@@ -61,7 +61,7 @@ void Unit::displayOnScreen(int x, int y){
     IwGxSetScreenSpaceSlot(1);
     IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
     
-    free(mat);
+    delete mat;
 }
 
 

@@ -69,7 +69,7 @@ bool renderUnitCreation(CTouch* touch) {
     
     float dist_sq = SQ(modelCoords->x) + SQ(modelCoords->y);
     if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x)){
-        free(touch->unit);
+        delete touch->unit;
         delete modelCoords;
         return false;
     }
@@ -224,10 +224,12 @@ void doMain() {
         
         for(int i = 0; i < MAX_TOUCHES; ++i)
             if(touches[i].active)
-                if(touches[i].gesture_type == CREATE_UNIT)
+                if(touches[i].gesture_type == CREATE_UNIT) {
                     renderDragUnit(&touches[i]);
-                else
+				}
+                else {
                     renderDragWorld(&touches[i]);
+				}
         
 		
         IwGxFlush();

@@ -136,7 +136,7 @@ std::list<Unit*>* AI::collisionDetection(Unit* unit){
     
     std::list<Unit*>* collide_array = new std::list<Unit*>();
     
-    if((lowRad <= rad) && (lowRad <= upRad)){ // I am pretty sure this makes no sense
+    if((lowRad <= rad) && (rad <= upRad)){
         return NULL;
     }
     
@@ -148,7 +148,7 @@ std::list<Unit*>* AI::collisionDetection(Unit* unit){
 
 			// We can just use the squared distance here since we only care about relative
 			// positioning.
-            sq_dist = SQ(tempPos.x - pos.x) + SQ(tempPos.y+pos.y);
+            sq_dist = SQ(tempPos.x - pos.x) + SQ(tempPos.y - pos.y);
 			radii = pow(size + temp->getSize(), 2);
             if (sq_dist <= radii) {
                 collide_array->push_back(temp);
@@ -180,7 +180,7 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 	CIwFVec2 tempPos = CIwFVec2::g_Zero;
 	Unit* temp;
     
-    if((lowRad <= rad) && (lowRad <= upRad)){ // THIS MAKES NO SENSE; it will always be true.
+    if((lowRad <= rad) && (rad <= upRad)){
         return;
     }
     
