@@ -24,3 +24,4 @@ MemSizeDebug = 100000000
 [gx]
 # HW mode requires slightly more datacache
 DataCacheSizeHW=3200000
+Transform=HW

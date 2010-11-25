@@ -233,7 +233,6 @@ void doMain() {
         
 		
         IwGxFlush();
-        
         IwGxSwapBuffers();
 		
 		// Attempt frame rate
