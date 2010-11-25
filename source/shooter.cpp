@@ -11,8 +11,10 @@ Shooter::Shooter(Player* owner, Game* game, CIwFVec2 position)
 
 bool Shooter::update(){
     curFrame = (curFrame + 1) % numFrames;
+    
     if(curFrame == 0)
         game->getAI()->updateAI(this);
+    
     return true;
 }
 
