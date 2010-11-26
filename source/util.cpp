@@ -50,7 +50,7 @@ void polarize(CIwFVec2& v){
     v.x = r;
 }
 
-CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){
+CIwFVec2 worldify(int32 x, int32 y, float innerRadius, float rotation){
     int h = IwGxGetScreenHeight();
             
     int32 world_x = x + (innerRadius - 10);
@@ -60,11 +60,11 @@ CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){
     
     // Rotates (world_x, world_y) around world origin (w/2 + radii.x - 20, h/2) by theta
     
-    return new CIwFVec2(world_x * cos(rotation) - world_y * sin(rotation),
+    return CIwFVec2(world_x * cos(rotation) - world_y * sin(rotation),
                         world_x * sin(rotation) + world_y * cos(rotation));
     
 }
 
-float angle_diff(CIwFVec2* pos1, CIwFVec2* pos2) {
-	return atan2(pos2->y, pos2->x) - atan2(pos1->y, pos1->x);
+float angle_diff(const CIwFVec2& pos1, const CIwFVec2&  pos2) {
+	return atan2(pos2.y, pos2.x) - atan2(pos1.y, pos1.x);
 }

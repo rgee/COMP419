@@ -57,7 +57,7 @@ void Unit::displayOnScreen(int x, int y){
     IwGxSetScreenSpaceSlot(1);
     IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
     
-    free(mat);
+    delete mat;
 }
 
 
@@ -102,7 +102,7 @@ void Unit::setHp(float f){
 }
 
 float Unit::getSpeed(){return speed;}
-float Unit::getSize(){return spriteSize/2;}
+float Unit::getSize(){return 10.0f;}
 
 void Unit::attack(){}
 

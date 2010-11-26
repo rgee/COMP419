@@ -28,10 +28,11 @@ bool renderTouches() {
 
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
-            if(touches[i].gesture_type == CREATE_UNIT)
+            if(touches[i].gesture_type == CREATE_UNIT) {
                 true_so_far &= renderDragUnit(&touches[i]);
-            else
+			}else{
                 true_so_far &= renderDragWorld(&touches[i]);
+			}
 		}
 	}
 
@@ -45,22 +46,19 @@ bool renderUnitCreation(CTouch* touch) {
         return false;
     
     CIwFVec2 radii = game->getWorldRadius();
-    CIwFVec2 *modelCoords = worldify(touch->x, touch->y, radii.x, game->getRotation());
+    CIwFVec2 modelCoords = worldify(touch->x, touch->y, radii.x, game->getRotation());
     
-    float dist_sq = SQ(modelCoords->x) + SQ(modelCoords->y);
+    float dist_sq = SQ(modelCoords.x) + SQ(modelCoords.y);
     if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x)){
-        free(touch->unit);
-        delete modelCoords;
+        delete touch->unit;
         return false;
     }
     
-    touch->unit->setPosition(*modelCoords);
+    touch->unit->setPosition(modelCoords);
 	game->addUnit(touch->unit);
     
     touch->unit = NULL;
     touch->active = false;
-    
-    delete modelCoords;
     
     return true;
 }
@@ -76,17 +74,14 @@ bool renderDragUnit(CTouch* touch){
 bool renderDragWorld(CTouch* touch) {
     if(touch->start_y != touch->end_y || touch->start_x != touch->end_x){
 		float inner_radius = game->getWorldRadius().x;
-		CIwFVec2 *start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
-		CIwFVec2 *end_pos_world = worldify(touch->end_x, touch->end_y, inner_radius, game->getRotation());
+		CIwFVec2 start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
+		CIwFVec2 end_pos_world = worldify(touch->end_x, touch->end_y, inner_radius, game->getRotation());
 
 		float angle = angle_diff(start_pos_world, end_pos_world);
 		game->rotate(angle);
 
 		touch->start_x = touch->end_x;
 		touch->start_y = touch->end_y;
-        
-        delete start_pos_world;
-        delete end_pos_world;
     }
     return true;
 }
@@ -222,7 +217,7 @@ void doMain() {
         
         game->tick();
         
-		renderTouches();   
+		renderTouches();
 		
         IwGxFlush();
         IwGxSwapBuffers();
