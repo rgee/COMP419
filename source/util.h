@@ -4,8 +4,6 @@
 #define TO_RADIANS(X) (X * (PI / 180.0f))
 #define SQ(x) (x*x)
 
-#include "math.h"
-
 #include "IwGx.h"
 #include "IwGeom.h"
 

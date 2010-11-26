@@ -1,38 +1,4 @@
-#include "s3e.h"
-#include "IwUtil.h"
-#include "IwGx.h"
-#include "IwGeomMat.h"
-
-#include "game.h"
-
-#include "muncher.h"
-#include "shooter.h"
-#include "wrecker.h"
-#include "spreader.h"
-
-#define	MS_PER_FRAME (1000 / 12)
-
-enum gesture_t { CREATE_UNIT, DRAG_WORLD };
-
-// Structure to track touches.
-struct CTouch {
-    gesture_t gesture_type; // type of gesture activated by this touch
-	int32 x;	        	// position
-	int32 y;	        	// position
-	bool active;        	// whether touch is currently active
-	int32 id;	         	// touch's unique identifier
-    Unit* unit;             // unit created by this touch if it's a create_unit gesture
-	int32 start_x;			// initial x position of a world_drag gesture
-    int32 start_y;          // initial y position of a world_drag gesture
-	int32 end_x;			// end x position of a world_drag gesture
-    int32 end_y;            // end y position of a world_drag gesture
-};
-
-Game* game = NULL;
-Player* localPlayer = NULL;
-
-#define MAX_TOUCHES 10
-CTouch touches[MAX_TOUCHES];
+#include "main.h"
 
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id) {
@@ -56,6 +22,22 @@ CTouch* GetTouch(int32 id) {
 	// no more touches; give up.
 	return NULL;
 }
+
+bool renderTouches() {
+	bool true_so_far = true;
+
+	for(int i = 0; i < MAX_TOUCHES; ++i) {
+        if(touches[i].active) {
+            if(touches[i].gesture_type == CREATE_UNIT)
+                true_so_far &= renderDragUnit(&touches[i]);
+            else
+                true_so_far &= renderDragWorld(&touches[i]);
+		}
+	}
+
+	return true_so_far;
+}
+
 
 
 bool renderUnitCreation(CTouch* touch) {
@@ -83,9 +65,12 @@ bool renderUnitCreation(CTouch* touch) {
     return true;
 }
 
-void renderDragUnit(CTouch* touch){
-    if(touch->unit)
+bool renderDragUnit(CTouch* touch){
+	if (!touch->unit) return false;
+	else {
         touch->unit->displayOnScreen(touch->x, touch->y);
+		return true;
+	}
 }
 
 bool renderDragWorld(CTouch* touch) {
@@ -99,6 +84,9 @@ bool renderDragWorld(CTouch* touch) {
 
 		touch->start_x = touch->end_x;
 		touch->start_y = touch->end_y;
+        
+        delete start_pos_world;
+        delete end_pos_world;
     }
     return true;
 }
@@ -234,13 +222,7 @@ void doMain() {
         
         game->tick();
         
-        for(int i = 0; i < MAX_TOUCHES; ++i)
-            if(touches[i].active)
-                if(touches[i].gesture_type == CREATE_UNIT)
-                    renderDragUnit(&touches[i]);
-                else
-                    renderDragWorld(&touches[i]);
-        
+		renderTouches();   
 		
         IwGxFlush();
         IwGxSwapBuffers();
