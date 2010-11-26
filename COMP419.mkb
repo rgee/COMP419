@@ -11,6 +11,7 @@ files
     muncher.cpp
     player.h
     player.cpp
+	main.h
     main.cpp
 	AI.h
 	AI.cpp
