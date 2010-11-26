@@ -18,6 +18,7 @@ class Game;
 
 #include "player.h"
 #include "unit.h"
+#include "icing.h"
 
 #include "AI.h"
 
@@ -38,6 +39,8 @@ class Game {
 
 		// Queue of units we're set to 
 		std::list<Unit*> unitBuffer;
+	
+		std::set<Icing*> icing;
 
 		CIwResGroup* sprites;
 		CIwResGroup* game;

@@ -27,6 +27,8 @@ files
     wrecker.cpp   
 	worldobject.h
 	worldobject.cpp
+	icing.h
+	icing.cpp
 	
 	(data/resource_groups)
 	game.group
