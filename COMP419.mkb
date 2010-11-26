@@ -1,4 +1,3 @@
-
 #!/usr/bin/env mkb
 
 files
@@ -27,6 +26,11 @@ files
     wrecker.cpp   
 	worldobject.h
 	worldobject.cpp
+	
+	(data/resource_groups)
+	game.group
+	sprites.group
+	palate.group
 }
 
 subprojects
@@ -37,22 +41,31 @@ subprojects
 
 assets
 {
-	(data)
-	images/pacman.png
-	images/world.png
-	images/muncher_sprite_sheet.png
-	images/spreader_sprite_sheet.png
-	images/wrecker_walk_sprite_sheet.png
-	images/wrecker_attack_sprite_sheet.png
-	images/shooter_sprite_sheet.png
-	images/palate.png
-	resource_groups/game.group
-	resource_groups/sprites.group
-	resource_groups/palate.group
+	(data/images)
+	pacman.png
+	world.png
+	muncher_sprite_sheet.png
+	spreader_sprite_sheet.png
+	wrecker_walk_sprite_sheet.png
+	wrecker_attack_sprite_sheet.png
+	shooter_sprite_sheet.png
+	palate.png
+	
+	(data/resource_groups)
+	game.group
+	sprites.group
+	palate.group
+	
+	(data-ram/data-gles1/)
+	resource_groups/game.group.bin
+	resource_groups/sprites.group.bin
+	resource_groups/palate.group.bin
 }
 deployments
 {
 	iphone-nosign='0'
 	assets='Default'
 	embed-icf='1'
+	iphone-appid='S4G7A2FU2A.edu.wesleyan.comp.419'
+	iphone-no-splash='1'
 }
