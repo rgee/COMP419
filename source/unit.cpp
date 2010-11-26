@@ -105,9 +105,6 @@ void Unit::decrementHp(float f){
 	hp -= f;
 }
 
-void Unit::increaseX(float x){}
-void Unit::increaseY(float y){}
-
 
 float Unit::getSpeed(){return speed;}
 float Unit::getSize(){return spriteSize/2;}
