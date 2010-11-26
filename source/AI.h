@@ -5,7 +5,7 @@
 #include <list>
 #include <vector>
 #include <iterator>
-
+#include <algorithm>
 
 class AI;
 
