@@ -9,7 +9,6 @@ class Game;
 
 #include "util.h"
 
-
 /**
 A WorldObject represents some object (right now, either icing or a unit) that lives in
 the game world. A WorldObject knows a minimum of three things - its coordinates ((x,y) 
