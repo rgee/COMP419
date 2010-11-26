@@ -90,7 +90,7 @@ void renderDragUnit(CTouch* touch){
 bool renderDragWorld(CTouch* touch) {
     // this is VERY naive at this point, doesn't actually do angles correctly.
     if(touch->start_y != touch->end_y){
-        game->rotate((touch->start_y - touch->end_y)/120.0f);
+        game->rotate((touch->start_y - touch->end_y)/60.0f);
         touch->start_y = touch->end_y;
     }
     return true;

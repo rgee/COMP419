@@ -46,8 +46,13 @@ assets
 	images/wrecker_attack_sprite_sheet.png
 	images/shooter_sprite_sheet.png
 	images/palate.png
+	resource_groups/game.group
+	resource_groups/sprites.group
+	resource_groups/palate.group
 }
 deployments
 {
-	iphone-nosign='1'
+	iphone-nosign='0'
+	assets='Default'
+	embed-icf='1'
 }

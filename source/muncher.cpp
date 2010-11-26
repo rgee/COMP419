@@ -8,6 +8,7 @@ Muncher::Muncher(Player* owner, Game* game, float x, float y)
 	curFrame = 0;
     scale = 0.2f;
     setPosition(x, y);
+    //statAttacks = {{"Muncher",0},{"Wrecker",10},{"Thrower",0},{"Shooter",0},{"Invader",0},{"Spreader",0},{"Leader",0}};
 }
 
 bool Muncher::update() {
