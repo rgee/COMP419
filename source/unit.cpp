@@ -56,7 +56,7 @@ void Unit::displayOnScreen(int x, int y){
     
 	CIwMaterial *mat = new CIwMaterial();
     mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
-    mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
+    mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     IwGxSetMaterial(mat);
     

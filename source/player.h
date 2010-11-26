@@ -5,7 +5,9 @@
 
 class Player {
 	private:
+	
         CIwColour color; 
+	
 	public:
         Player(CIwColour& col) { color = col; }
         ~Player() {}

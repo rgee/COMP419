@@ -17,6 +17,7 @@
 class Game;
 
 #include "unit.h"
+#include "icing.h"
 #include "player.h"
 
 #include "AI.h"
@@ -38,6 +39,8 @@ class Game {
 
 		// Queue of units we're set to 
 		std::list<Unit*> unitBuffer;
+	
+		std::set<Icing*> icing;
 
 		CIwResGroup* sprites;
 		CIwResGroup* game;
@@ -70,6 +73,8 @@ class Game {
         
         void addUnit(Unit *u);
 		std::list<Unit*>* getUnits();
+	
+		void addIcing(Icing* i);
 
 		/**
 		 * Gets the inner and outer radii of the world donut.
