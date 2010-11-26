@@ -23,8 +23,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 	
 }
 
-
-void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot) {
+void Unit::display(){
 	
 	CIwColour ownerColor = owner->getColor();
 	
@@ -37,10 +36,7 @@ void Unit::renderSprite(int frameNumber, float angle, float scaleFactor, float w
 	
 	IwGxSetColStream(colors, 4);
 	
-	renderImageWorldSpace(position, angle, scaleFactor, spriteSize, worldRot, frameNumber, numFrames);
-}
-
-void Unit::display(){
+	
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames);
 }
 
