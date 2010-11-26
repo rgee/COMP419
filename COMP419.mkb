@@ -67,6 +67,6 @@ deployments
 	iphone-nosign='0'
 	assets='Default'
 	embed-icf='1'
-	iphone-appid='S4G7A2FU2A.edu.wesleyan.comp.419'
+	iphone-appid='edu.wesleyan.comp.419'
 	iphone-no-splash='1'
 }
