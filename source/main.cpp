@@ -58,6 +58,22 @@ CTouch* GetTouch(int32 id) {
 	return NULL;
 }
 
+bool renderTouches(CTouch[] touches) {
+	bool true_so_far = true;
+
+	for(int i = 0; i < MAX_TOUCHES; ++i) {
+        if(touches[i].active) {
+            if(touches[i].gesture_type == CREATE_UNIT)
+                true_so_far &= renderDragUnit(&touches[i]);
+            else
+                true_so_far &= renderDragWorld(&touches[i]);
+		}
+	}
+
+	return true_so_far;
+}
+
+
 
 bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
@@ -84,9 +100,12 @@ bool renderUnitCreation(CTouch* touch) {
     return true;
 }
 
-void renderDragUnit(CTouch* touch){
-    if(touch->unit)
+bool renderDragUnit(CTouch* touch){
+	if (!touch->unit) return false;
+	else {
         touch->unit->displayOnScreen(touch->x, touch->y);
+		return true;
+	}
 }
 
 bool renderDragWorld(CTouch* touch) {
@@ -235,13 +254,7 @@ void doMain() {
         
         game->tick();
         
-        for(int i = 0; i < MAX_TOUCHES; ++i)
-            if(touches[i].active)
-                if(touches[i].gesture_type == CREATE_UNIT)
-                    renderDragUnit(&touches[i]);
-                else
-                    renderDragWorld(&touches[i]);
-        
+		renderTouches(touches);   
 		
         IwGxFlush();
         IwGxSwapBuffers();
