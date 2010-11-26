@@ -217,7 +217,7 @@ void doMain() {
         
         game->tick();
         
-		renderTouches();
+		if(!renderTouches()) break;
 		
         IwGxFlush();
         IwGxSwapBuffers();
