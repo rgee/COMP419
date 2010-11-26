@@ -1,6 +1,5 @@
 #include "util.h"
 
-
 void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
 	
 	static CIwSVec3 vertices[4];
@@ -46,11 +45,9 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, i
 }
 
 void polarize(CIwFVec2& v){
-    v.x = v.GetLength();
-    if(v.GetLength() > 0.0001)
-        v.y = asin(v.y/v.GetLength());
-    else
-        v.y = 0;
+    float r = v.GetLength();
+    v.y = atan2(v.y, v.x);
+    v.x = r;
 }
 
 CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){
@@ -69,5 +66,5 @@ CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){
 }
 
 float angle_diff(CIwFVec2* pos1, CIwFVec2* pos2) {
-	return atan(pos2->y / pos2->x) - atan(pos1->y / pos1->x);
+	return atan2(pos2->y, pos2->x) - atan2(pos1->y, pos1->x);
 }

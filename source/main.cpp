@@ -23,7 +23,7 @@ CTouch* GetTouch(int32 id) {
 	return NULL;
 }
 
-bool renderTouches(CTouch touches[]) {
+bool renderTouches() {
 	bool true_so_far = true;
 
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
@@ -84,6 +84,9 @@ bool renderDragWorld(CTouch* touch) {
 
 		touch->start_x = touch->end_x;
 		touch->start_y = touch->end_y;
+        
+        delete start_pos_world;
+        delete end_pos_world;
     }
     return true;
 }
@@ -219,7 +222,7 @@ void doMain() {
         
         game->tick();
         
-		renderTouches(touches);   
+		renderTouches();   
 		
         IwGxFlush();
         IwGxSwapBuffers();

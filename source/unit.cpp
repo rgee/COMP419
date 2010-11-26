@@ -123,6 +123,6 @@ float Unit::getSight(){ return sight; }
 
 float Unit::getAngle(){
     CIwFVec2 norm = velocity.GetNormalised();
-    return 3*PI/2 - atan2(norm.x, norm.y);
+    return PI + atan2(norm.y, norm.x);
 }
 
