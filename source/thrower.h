@@ -6,10 +6,14 @@
 class Thrower : public Unit {
 	public:
 		Thrower(Player* owner, Game* game, float x, float y);
+		Thrower(const Thrower& newThrower);
 		~Thrower(){};
 
 		virtual bool update();
 		virtual void display();
+		virtual unit_type getType();
+	
+		virtual Unit* spawnCopy();
 
 };
 

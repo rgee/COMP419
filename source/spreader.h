@@ -9,10 +9,14 @@ class Spreader : public Unit {
     
 	public:
 		Spreader(Player* owner, Game* game, float x, float y);
+		Spreader(const Spreader& newSpreader);
 		~Spreader(){};
 
 		virtual bool update();
         virtual const char* getTextureName();
+		virtual unit_type getType();
+	
+		virtual Unit* spawnCopy();
     
 };
 
