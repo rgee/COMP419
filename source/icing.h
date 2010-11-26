@@ -1,5 +1,7 @@
+#ifndef _ICING_H_
+#define _ICING_H_
+
 #include "worldobject.h"
-#include "game.h"
 #include "player.h"
 
 class Icing : public WorldObject {
@@ -19,3 +21,5 @@ class Icing : public WorldObject {
 		virtual const char* getTextureName();
 	
 };
+
+#endif _ICING_H_

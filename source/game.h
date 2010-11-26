@@ -73,6 +73,8 @@ class Game {
         
         void addUnit(Unit *u);
 		std::list<Unit*>* getUnits();
+	
+		void addIcing(Icing* i);
 
 		/**
 		 * Gets the inner and outer radii of the world donut.

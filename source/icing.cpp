@@ -1,4 +1,5 @@
 #include "icing.h"
+#include "game.h"
 
 Icing::Icing(CIwFVec2 position, Game* game) : WorldObject(position, game) { }
 

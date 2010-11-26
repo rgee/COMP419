@@ -46,7 +46,7 @@ std::list<Unit*>* Game::getUnits(){
 }
  
 void Game::addIcing(Icing* i) {
-	icing->
+	//icing->
 }
 
 void Game::addUnit(Unit *u){    
