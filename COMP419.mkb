@@ -53,6 +53,7 @@ assets
 	wrecker_attack_sprite_sheet.png
 	shooter_sprite_sheet.png
 	palate.png
+	icing.png
 	
 	(data/resource_groups)
 	game.group
