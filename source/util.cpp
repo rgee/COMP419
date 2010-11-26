@@ -67,3 +67,7 @@ CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){
                         world_x * sin(rotation) + world_y * cos(rotation));
     
 }
+
+float angle_diff(CIwFVec2* pos1, CIwFVec2* pos2) {
+	return atan(pos2->y / pos2->x) - atan(pos1->y / pos1->x);
+}

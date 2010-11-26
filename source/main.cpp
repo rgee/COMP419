@@ -22,7 +22,9 @@ struct CTouch {
 	bool active;        	// whether touch is currently active
 	int32 id;	         	// touch's unique identifier
     Unit* unit;             // unit created by this touch if it's a create_unit gesture
+	int32 start_x;			// initial x position of a world_drag gesture
     int32 start_y;          // initial y position of a world_drag gesture
+	int32 end_x;			// end x position of a world_drag gesture
     int32 end_y;            // end y position of a world_drag gesture
 };
 
@@ -89,9 +91,16 @@ void renderDragUnit(CTouch* touch){
 
 bool renderDragWorld(CTouch* touch) {
     // this is VERY naive at this point, doesn't actually do angles correctly.
-    if(touch->start_y != touch->end_y){
-        game->rotate((touch->start_y - touch->end_y)/120.0f);
-        touch->start_y = touch->end_y;
+    if(touch->start_y != touch->end_y || touch->start_x != touch->end_x){
+		float inner_radius = game->getWorldRadius().x;
+		CIwFVec2 *start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
+		CIwFVec2 *end_pos_world = worldify(touch->end_x, touch->end_y, inner_radius, game->getRotation());
+
+		float angle = angle_diff(start_pos_world, end_pos_world);
+		game->rotate(angle);
+
+		touch->start_x = touch->end_x;
+		touch->start_y = touch->end_y;
     }
     return true;
 }
@@ -149,7 +158,9 @@ void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
         
         if (touch->gesture_type == DRAG_WORLD) {
             // sent new start to the old end, and the new end to the new pos
+			touch->start_x = touch->end_x;
             touch->start_y = touch->end_y;
+			touch->end_x = touch->x;
             touch->end_y = touch->y;
         }   
 	}

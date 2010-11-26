@@ -55,7 +55,7 @@ void Unit::displayOnScreen(int x, int y){
 	static CIwSVec2 uv(IW_FIXED(0), IW_FIXED(0));	
     
     IwGxSetScreenSpaceSlot(1);
-    IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
+    //IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
     
     free(mat);
 }

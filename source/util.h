@@ -4,6 +4,8 @@
 #define TO_RADIANS(X) (X * (PI / 180.0f))
 #define SQ(x) (x*x)
 
+#include "math.h"
+
 #include "IwGx.h"
 #include "IwGeom.h"
 
@@ -16,5 +18,5 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, i
  */
 void polarize(CIwFVec2& v);
 CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation);
-
+float angle_diff(CIwFVec2* pos1, CIwFVec2* pos2);
 #endif
