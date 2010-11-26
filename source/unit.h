@@ -37,6 +37,16 @@ class Unit : public WorldObject {
 
 		// The unit this unit is pursuing.
 		Unit *pursueTarget;
+	
+		/**
+		Utility method that subclasses will use to render their sprites. Assumes that 
+		current material has already been set to the sprite image.
+		 
+		@param frameNumber which frame of the sprite sheet to display (indexed from 0)
+		@param angle angle to rotate the sprite by
+		@param scaleFactor factor to scale the sprite by
+		*/
+		void renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot);
         
     public:
 	
@@ -78,7 +88,6 @@ class Unit : public WorldObject {
         
 		float getHp();
 		void setHp(float f);
-		void decrementHp(float f);
 	
 		virtual const char* getTextureName() = 0;
 		virtual bool update() = 0;
@@ -87,7 +96,7 @@ class Unit : public WorldObject {
         void displayOnScreen(int x, int y);
 		
 		void attack();
-		void receiveDamage(); 
+		void receiveDamage(float amount, Unit *attacker); 
     
         float getSight();
         float getAngle();

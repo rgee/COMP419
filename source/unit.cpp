@@ -101,16 +101,12 @@ void Unit::setHp(float f){
 	hp = f;
 }
 
-void Unit::decrementHp(float f){
-	hp -= f;
-}
-
-
 float Unit::getSpeed(){return speed;}
-float Unit::getSize(){return spriteSize/6;}
+float Unit::getSize(){return 10.0f;}
 
-void Unit::attack(){};
-void Unit::receiveDamage(){};
+void Unit::attack(){}
+
+void Unit::receiveDamage(float amount, Unit *attacker){}
 
 void Unit::setVelocity(const CIwFVec2& vel){
     velocity = vel;
@@ -127,5 +123,6 @@ float Unit::getSight(){ return sight; }
 
 float Unit::getAngle(){
     CIwFVec2 norm = velocity.GetNormalised();
-    return 3*PI/2 - atan2(norm.x, norm.y);
+    return PI + atan2(norm.y, norm.x);
 }
+

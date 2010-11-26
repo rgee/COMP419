@@ -1,37 +1,4 @@
-#include "s3e.h"
-#include "IwUtil.h"
-#include "IwGx.h"
-#include "IwGeomMat.h"
-
-#include "game.h"
-
-#include "muncher.h"
-#include "shooter.h"
-#include "wrecker.h"
-#include "spreader.h"
-
-#define	MS_PER_FRAME (1000 / 12)
-
-enum gesture_t { CREATE_UNIT, DRAG_WORLD };
-
-// Structure to track touches.
-struct CTouch {
-    gesture_t gesture_type; // type of gesture activated by this touch
-	int32 x;	        	// position
-	int32 y;	        	// position
-	bool active;        	// whether touch is currently active
-	int32 id;	         	// touch's unique identifier
-    Unit* unit;             // unit created by this touch if it's a create_unit gesture
-    int32 start_y;          // initial y position of a world_drag gesture
-    int32 end_y;            // end y position of a world_drag gesture
-};
-
-Game* game = NULL;
-Player* localPlayer = NULL;
-
-
-#define MAX_TOUCHES 10
-CTouch touches[MAX_TOUCHES];
+#include "main.h"
 
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id) {
@@ -55,6 +22,23 @@ CTouch* GetTouch(int32 id) {
 	// no more touches; give up.
 	return NULL;
 }
+
+bool renderTouches() {
+	bool true_so_far = true;
+
+	for(int i = 0; i < MAX_TOUCHES; ++i) {
+        if(touches[i].active) {
+            if(touches[i].gesture_type == CREATE_UNIT) {
+                //true_so_far &= renderDragUnit(&touches[i]);
+			}else{
+                true_so_far &= renderDragWorld(&touches[i]);
+			}
+		}
+	}
+
+	return true_so_far;
+}
+
 
 
 bool renderUnitCreation(CTouch* touch) {
@@ -82,16 +66,28 @@ bool renderUnitCreation(CTouch* touch) {
     return true;
 }
 
-void renderDragUnit(CTouch* touch){
-    if(touch->unit)
+bool renderDragUnit(CTouch* touch){
+	if (!touch->unit) return false;
+	else {
         touch->unit->displayOnScreen(touch->x, touch->y);
+		return true;
+	}
 }
 
 bool renderDragWorld(CTouch* touch) {
-    // this is VERY naive at this point, doesn't actually do angles correctly.
-    if(touch->start_y != touch->end_y){
-        game->rotate((touch->start_y - touch->end_y)/120.0f);
-        touch->start_y = touch->end_y;
+    if(touch->start_y != touch->end_y || touch->start_x != touch->end_x){
+		float inner_radius = game->getWorldRadius().x;
+		CIwFVec2 *start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
+		CIwFVec2 *end_pos_world = worldify(touch->end_x, touch->end_y, inner_radius, game->getRotation());
+
+		float angle = angle_diff(start_pos_world, end_pos_world);
+		game->rotate(angle);
+
+		touch->start_x = touch->end_x;
+		touch->start_y = touch->end_y;
+        
+        delete start_pos_world;
+        delete end_pos_world;
     }
     return true;
 }
@@ -108,6 +104,7 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 
         // if it's the beginning of a touch, then determine what kind of gesture it is and set initial info.
         if (touch->active) {
+            touch->start_x = touch->end_x = touch->x;
             touch->start_y = touch->end_y = touch->y;
             if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
@@ -149,7 +146,9 @@ void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
         
         if (touch->gesture_type == DRAG_WORLD) {
             // sent new start to the old end, and the new end to the new pos
+			touch->start_x = touch->end_x;
             touch->start_y = touch->end_y;
+			touch->end_x = touch->x;
             touch->end_y = touch->y;
         }   
 	}
@@ -224,15 +223,7 @@ void doMain() {
         
         game->tick();
         
-        for(int i = 0; i < MAX_TOUCHES; ++i)
-            if(touches[i].active)
-                if(touches[i].gesture_type == CREATE_UNIT) {
-                    renderDragUnit(&touches[i]);
-				}
-                else {
-                    renderDragWorld(&touches[i]);
-				}
-        
+		renderTouches();
 		
         IwGxFlush();
         IwGxSwapBuffers();

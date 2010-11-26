@@ -14,8 +14,6 @@ class Muncher : public Unit {
 
 		virtual const char* getTextureName();
 		virtual bool update();
-
-	private:
 };
 
 #endif

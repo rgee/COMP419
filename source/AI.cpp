@@ -46,6 +46,7 @@ void AI::path(Unit* unit){
 	// head in the direction of the enemy base.
 	else {
 		float thetaChange = speed/rad;
+        
 		float tempTheta = thetaChange + theta;
         
 		float old_theta = unit->getTheta();
@@ -53,7 +54,7 @@ void AI::path(Unit* unit){
         CIwFVec2 tmpPos(unit->getX(), unit->getY());
 
         unit->setPolarPosition(rad, tempTheta);
-        //unit->setVelocity(unit->getPosition() - tmpPos);
+        unit->setVelocity(unit->getPosition() - tmpPos);
 
         // Check if we would hit any other unit.
         std::list<Unit*> tempArray; 
