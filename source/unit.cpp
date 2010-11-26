@@ -114,11 +114,10 @@ void Unit::increaseY(float y){}
 
 
 float Unit::getSpeed(){return speed;}
-float Unit::getSize(){return spriteSize/2;}
+float Unit::getSize(){return spriteSize/6;}
 
 void Unit::attack(){};
 void Unit::receiveDamage(){};
-
 
 void Unit::setVelocity(const CIwFVec2& vel){
     velocity = vel;

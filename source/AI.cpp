@@ -48,10 +48,12 @@ void AI::path(Unit* unit){
 		float thetaChange = speed/rad;
 		float tempTheta = thetaChange + theta;
         
+		float old_theta = unit->getTheta();
+		float old_r = unit->getR();
         CIwFVec2 tmpPos(unit->getX(), unit->getY());
 
         unit->setPolarPosition(rad, tempTheta);
-        unit->setVelocity(unit->getPosition() - tmpPos);
+        //unit->setVelocity(unit->getPosition() - tmpPos);
 
         // Check if we would hit any other unit.
         std::list<Unit*> tempArray; 
@@ -59,8 +61,7 @@ void AI::path(Unit* unit){
 
 		// If we hit something, reset the movement.
         if (!tempArray.empty()) {
-			unit->setPolarPosition(rad, theta);
-            unit->setVelocity(CIwFVec2::g_Zero);
+			unit->setPolarPosition(old_r, old_theta);
         }
 	}
 		
@@ -162,43 +163,22 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 {
 	std::list<Unit*>* units = game->getUnits();
 
-
-	float lowTheta = unit->getTheta()-10;
-    float upTheta  = unit->getTheta()+10;
-    float upRad  = worldRad.y;
-    float lowRad = worldRad.x;
- 
-    CIwFVec2 pos = unit->getPosition()+unit->getVelocity();
-    polarize(pos);
-
-    float rad = pos.x;
-    float theta = pos.y;
-    float size = unit->getSize();
 	float sq_dist = 0.0f;
 	float radii = 0.0f;
-	float current_unit_theta = 0.0f;
-	CIwFVec2 tempPos = CIwFVec2::g_Zero;
-	Unit* temp;
-    
-    if((lowRad <= rad) && (rad <= upRad)){
-        return;
-    }
-    
-    for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); itr++){
-        temp = *itr;
-		current_unit_theta = temp->getTheta();
-        if((lowTheta <= current_unit_theta) && (current_unit_theta <= upTheta)){
-            tempPos = temp->getPosition();
+	float bounding_radii = unit->getSize();
+	CIwFVec2 position = unit->getPosition() + unit->getVelocity();
+	CIwFVec2 temp_Pos = CIwFVec2::g_Zero;
 
-			// We can just use the squared distance here since we only care about relative
-			// positioning.
-            sq_dist = SQ(tempPos.x - pos.x)+SQ(tempPos.y - pos.y);
-			radii = SQ(size + temp->getSize());
-            if (sq_dist <= radii) {
-				*(out++) = temp;
-            }
-        }
-    }
-
+	for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
+		if(*(itr) != unit) {
+			temp_Pos = (*itr)->getPosition();
+			sq_dist = SQ(temp_Pos.x - position.x) + SQ(temp_Pos.y - position.y);
+			radii = SQ(((*itr)->getSize() + bounding_radii));
+			if(sq_dist < 0) sq_dist *= -1;
+			if(sq_dist <= radii) {
+				*(out++) = *(itr);
+			}
+		}
+	}
 }
  
