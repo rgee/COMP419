@@ -36,6 +36,8 @@ float WorldObject::getY() {
 void WorldObject::setPolarPosition(float _r, float _theta){
 	r = _r;
 	theta = _theta;
+    while(theta > 2 * PI) theta -= 2*PI;
+    
 	position.x = r * cos(theta);
 	position.y = r * sin(theta);
 }

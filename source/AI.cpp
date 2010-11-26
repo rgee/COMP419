@@ -46,6 +46,7 @@ void AI::path(Unit* unit){
 	// head in the direction of the enemy base.
 	else {
 		float thetaChange = speed/rad;
+        
 		float tempTheta = thetaChange + theta;
         
         CIwFVec2 tmpPos(unit->getX(), unit->getY());
