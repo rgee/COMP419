@@ -11,9 +11,14 @@ Game::Game(Player* p) : localPlayer(p), numUnits(0), rotation(0), innerRadius(72
 }  
 
 Game::~Game(){
+	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
 		(*itr).second->clear();
 		delete (*itr).second;
+	}
+	
+	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
+		delete *itr;
 	}
 	
 	delete ai;

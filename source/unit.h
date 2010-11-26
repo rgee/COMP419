@@ -37,17 +37,6 @@ class Unit : public WorldObject {
 
 		// The unit this unit is pursuing.
 		Unit *pursueTarget;
-	
-		/**
-		Utility method that subclasses will use to render their sprites. Assumes that 
-		current material has already been set to the sprite image.
-		 
-		@param frameNumber which frame of the sprite sheet to display (indexed from 0)
-		@param angle angle to rotate the sprite by
-		@param scaleFactor factor to scale the sprite by
-		*/
-		void renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot);
-
         
     public:
 	
@@ -90,19 +79,6 @@ class Unit : public WorldObject {
 		float getHp();
 		void setHp(float f);
 		void decrementHp(float f);
-
-		/* IGNORE THE FOLLOWING.  I already updated set position to change theta and r
-		 and vice versa so use which ever coordinate system works best for you cause
-		 their are times where either works.
-		 
-		   Units are going to keep track of their location in terms of r, theta, but
-		   the following methods preserve distance, so calling increaseX(5.0f) might
-		   change theta by more or less than 5. Additionally, it will wrap around
-		   as appropriate.
-		 */
-		void increaseX(float x);
-		void increaseY(float y);
-	
 	
 		virtual const char* getTextureName() = 0;
 		virtual bool update() = 0;

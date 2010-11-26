@@ -195,7 +195,7 @@ void doMain() {
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
     
-    CIwColour col = {255, 0, 0, 255};
+    CIwColour col = {255, 180, 180, 255};
 	localPlayer = new Player(col);
     game = new Game(localPlayer);
 
