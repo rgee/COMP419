@@ -10,6 +10,8 @@ Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
     setPosition(x, y);
 }
 
+Wrecker::Wrecker(const Wrecker& newWrecker) : Unit(newWrecker) { }
+
 bool Wrecker::update(){
     curFrame = (curFrame + 1) % numFrames;
     
@@ -20,4 +22,12 @@ bool Wrecker::update(){
 
 const char* Wrecker::getTextureName(){
     return "wrecker_walk_sprite_sheet";
+}
+
+unit_type Wrecker::getType() {
+	return WRECKER;
+}
+
+Unit* Wrecker::spawnCopy() {
+	return new Wrecker(*this);
 }

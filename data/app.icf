@@ -3,25 +3,16 @@ MemSizeDebug=42000000
 MemSize=42000000
 TraceToFile=1
 
-# These lines specify a splash screen to display while the s3e file is loaded
-SplashscreenBkR=255
-SplashscreenBkG=255
-SplashscreenBkB=255
-Splashscreen=splash.jpg
-SplashscreenWidth=160
-SplashscreenHeight=100
-
-[GX]
-DataCacheSize=64000
 [GX]
 #Uncomment this line to force SW rasterisation
 #Rasterisation=SW
+DataCacheSize=64000
 NumTPages=20
 
 # Uncomment this section to use full-screen anti-aliasing.
 [GL]
-#EGL_SAMPLE_BUFFERS=1
-#EGL_SAMPLES=4			# Use super-sampling if available. Change to 2 for cheaper multi-sampling
+EGL_SAMPLE_BUFFERS=1
+EGL_SAMPLES=4			# Use super-sampling if available. Change to 2 for cheaper multi-sampling
 
 [TRACE]
 # Uncomment this to get more GX tracing.

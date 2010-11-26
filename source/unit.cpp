@@ -1,11 +1,13 @@
 #include "unit.h"
 
 Unit::Unit(const Unit& newUnit)
-	: WorldObject(newUnit.position, newUnit.game), 
+	: WorldObject(newUnit), 
 	hp(newUnit.hp), cost(newUnit.cost), attackDamage(newUnit.attackDamage), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
-	owner(newUnit.owner)
+	owner(newUnit.owner), scale(newUnit.scale), attackTarget(newUnit.attackTarget), 
+	pursueTarget(newUnit.pursueTarget), curFrame(0), numFrames(newUnit.numFrames), 
+	spriteSize(newUnit.spriteSize)
 {
 
 }
@@ -18,7 +20,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner)
+		  owner(owner), curFrame(0)
 {
 	
 }
@@ -27,17 +29,27 @@ void Unit::display(){
 	
 	CIwColour ownerColor = owner->getColor();
 	
-	static CIwColour colors[4] = {
+	//Have to do this instead of static - otherwise, the color doesn't actually change 
+	//when it should. If there's a way around this heap allocation, I'm all ears.	
+	CIwColour* colors = (CIwColour*)malloc(sizeof(CIwColour)*4);
+	
+	colors[0] = ownerColor;
+	colors[1] = ownerColor;
+	colors[2] = ownerColor;
+	colors[3] = ownerColor;
+	
+	/*static CIwColour colors[4] = {
 		ownerColor,
 		ownerColor,
 		ownerColor,
 		ownerColor
-	};
+	};*/
 	
 	IwGxSetColStream(colors, 4);
 	
+    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.1f);
 	
-    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames);
+	free(colors);
 }
 
 void Unit::displayOnScreen(int x, int y){    

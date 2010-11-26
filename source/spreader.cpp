@@ -10,6 +10,8 @@ Spreader::Spreader(Player* owner, Game* game, float x, float y)
     setPosition(x, y);
 }
 
+Spreader::Spreader(const Spreader& newSpreader) : framesUntilUpdate(0), Unit(newSpreader) { }
+
 bool Spreader::update(){
     if(framesUntilUpdate == 0){
         curFrame = (curFrame + 1) % numFrames;   
@@ -23,3 +25,12 @@ bool Spreader::update(){
 const char* Spreader::getTextureName(){
     return "spreader_sprite_sheet";
 }
+
+unit_type Spreader::getType() {
+	return SPREADER;
+}
+
+Unit* Spreader::spawnCopy() {
+	return new Spreader(*this);
+}
+
