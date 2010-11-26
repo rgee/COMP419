@@ -62,6 +62,7 @@ assets
 	resource_groups/sprites.group.bin
 	resource_groups/palate.group.bin
 }
+
 deployments
 {
 	iphone-nosign='0'
