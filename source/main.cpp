@@ -28,6 +28,7 @@ struct CTouch {
 
 Game* game = NULL;
 Player* localPlayer = NULL;
+Player* opponentPlayer = NULL;
 
 #define MAX_TOUCHES 10
 CTouch touches[MAX_TOUCHES];
@@ -194,9 +195,11 @@ void doMain() {
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
     
-    CIwColour col = {255, 180, 180, 255};
-	localPlayer = new Player(col);
-    game = new Game(localPlayer);
+    CIwColour localCol = {255, 180, 180, 255};
+	CIwColour opponentCol = {180, 255, 160, 255};
+	localPlayer = new Player(localCol);
+	opponentPlayer = new Player(opponentCol);
+    game = new Game(localPlayer, opponentPlayer);
 
 	IwGxLightingOff();
 
@@ -254,6 +257,7 @@ void doMain() {
     
 	delete game;
 	delete localPlayer;
+	delete opponentPlayer;
 	delete mat;
     palateGroup->Finalise();
     

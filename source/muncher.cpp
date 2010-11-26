@@ -10,6 +10,8 @@ Muncher::Muncher(Player* owner, Game* game, float x, float y)
     setPosition(x, y);
 }
 
+Muncher::Muncher(const Muncher& newMuncher) : Unit(newMuncher) { }
+
 bool Muncher::update() {
     curFrame = (curFrame + 1) % numFrames;
    
@@ -21,4 +23,12 @@ bool Muncher::update() {
 
 const char* Muncher::getTextureName() {
 	return "muncher_sprite_sheet";
+}
+
+Unit* Muncher::spawnCopy() {
+	return new Muncher(*this);
+}
+
+unit_type Muncher::getType() {
+	return MUNCHER;
 }

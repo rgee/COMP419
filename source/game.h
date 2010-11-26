@@ -16,8 +16,8 @@
 
 class Game;
 
-#include "player.h"
 #include "unit.h"
+#include "player.h"
 
 #include "AI.h"
 
@@ -65,7 +65,7 @@ class Game {
 	                    
     public:
 	
-        Game(Player* _p);
+        Game(Player* _local, Player* _opponent);
 		~Game();
         
         void addUnit(Unit *u);

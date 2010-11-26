@@ -2,7 +2,7 @@
 #include "unit.h"
 
  
-Game::Game(Player* p) : localPlayer(p), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
+Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
 	ai = new AI(this);
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
@@ -45,7 +45,8 @@ std::list<Unit*>* Game::getUnits(){
 	return &units;
 }
  
-void Game::addUnit(Unit *u){    
+void Game::addUnit(Unit *u){
+	
     u->setId(numUnits++);
 
 	if(units.empty()) {
@@ -61,11 +62,12 @@ void Game::addUnit(Unit *u){
 	
 	(unitBucket[u->getTextureName()])->insert(u);
 
-	int32 whichPlayer = -1;//IwRandMinMax(-1, 1);
-	if(whichPlayer >= 0) {
-		u->setOwner(opponentPlayer);
-	} else {
-		u->setOwner(localPlayer);
+	//have the opponent mirror the local player
+	if(&(u->getOwner()) == localPlayer) {
+		Unit* newUnit = u->spawnCopy();
+		newUnit->setOwner(opponentPlayer);
+		newUnit->setPolarPosition(u->getR(), u->getTheta() + .75);
+		addUnit(newUnit);
 	}
 }
 
