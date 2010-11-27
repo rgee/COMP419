@@ -20,9 +20,7 @@ class Muncher : public Unit {
 
 		virtual unit_type getType();
 	
-		virtual Unit* spawnCopy(/*float r, float theta, Player* owner*/);
-		
-	private:
+		virtual Unit* spawnCopy();
 };
 
 #endif

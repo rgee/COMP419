@@ -21,10 +21,21 @@ Game::~Game(){
 		delete *itr;
 	}
 	
+	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
+		delete *itr;
+	}
+	
+	for(std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {
+		delete *itr;
+	}
+	
 	delete ai;
  	units.clear();
 	unitBuffer.clear();
     unitBucket.clear();
+	
+	localIcing.clear();
+	opponentIcing.clear();
     
     sprites->Finalise();
     game->Finalise();
@@ -46,7 +57,31 @@ std::list<Unit*>* Game::getUnits(){
 }
  
 void Game::addIcing(Icing* i) {
-	//icing->
+		
+	if (i->getOwner() == localPlayer) {
+		
+		if(localIcing.empty()) {
+			localIcing.push_back(i);
+		}
+		else {
+			localIcingBuffer.push_back(i);
+		}
+		
+		localIcingBuffer.sort();
+
+	}
+	else if(i->getOwner() == opponentPlayer) {
+		
+		if(opponentIcing.empty()) {
+			opponentIcing.push_back(i);
+		} 
+		else {
+			opponentIcingBuffer.push_back(i);
+		}
+		
+		opponentIcingBuffer.sort();
+	}
+	
 }
 
 
@@ -71,7 +106,7 @@ void Game::addUnit(Unit *u){
 	if(&(u->getOwner()) == localPlayer) {
 		Unit* newUnit = u->spawnCopy();
 		newUnit->setOwner(opponentPlayer);
-		newUnit->setPolarPosition(u->getR(), u->getTheta() + .75);
+		newUnit->setPolarPosition(u->getR() - 20.0, u->getTheta() + .75);
 		addUnit(newUnit);
 	}
 }
@@ -83,6 +118,8 @@ void Game::tick(){
 	}
     
     units.merge(unitBuffer);
+	localIcing.merge(localIcingBuffer);
+	opponentIcing.merge(opponentIcingBuffer);
     
     ++timesteps;
 	render();
@@ -90,6 +127,7 @@ void Game::tick(){
 
 void Game::render() {		    
 	renderWorld();
+	renderIcing();
 	renderSprites();
 }
 
@@ -116,6 +154,25 @@ void Game::renderSprites() {
 	delete mat;
 }
 
+void Game::renderIcing() {
+	
+	CIwMaterial* mat = new CIwMaterial();
+	mat->SetTexture((CIwTexture*)game->GetResNamed("icing", IW_GX_RESTYPE_TEXTURE));
+	mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
+	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+	IwGxSetMaterial(mat);
+	
+	for (std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
+		(*itr)->display();
+	}
+	
+	for (std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {
+		(*itr)->display();
+	}
+	
+	delete mat;
+}
+
 void Game::renderWorld() {
 
 	CIwMaterial* mat = new CIwMaterial();
@@ -127,6 +184,14 @@ void Game::renderWorld() {
 	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation);
 	
 	delete mat;
+}
+
+std::list<Icing*>* Game::getLocalIcing() {
+	return &localIcing;
+}
+
+std::list<Icing*>* Game::getOpponentIcing() {
+	return &opponentIcing;
 }
 
 CIwFVec2 Game::getWorldRadius() {
