@@ -40,7 +40,12 @@ class Game {
 		// Queue of units we're set to 
 		std::list<Unit*> unitBuffer;
 	
-		std::set<Icing*> icing;
+		//Queues of icing waiting to be inserted
+		std::list<Icing*> localIcingBuffer;
+		std::list<Icing*> opponentIcingBuffer;
+	
+		std::list<Icing*> localIcing;
+		std::list<Icing*> opponentIcing;
 
 		CIwResGroup* sprites;
 		CIwResGroup* game;
@@ -62,6 +67,8 @@ class Game {
 	
 		void renderSprites();
 	
+		void renderIcing();
+	
 		void renderWorld();
 	
 		void renderUI();
@@ -75,6 +82,10 @@ class Game {
 		std::list<Unit*>* getUnits();
 	
 		void addIcing(Icing* i);
+	
+		std::list<Icing*>* getLocalIcing();
+	
+		std::list<Icing*>* getOpponentIcing();
 
 		/**
 		 * Gets the inner and outer radii of the world donut.

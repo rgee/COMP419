@@ -254,6 +254,7 @@ void doMain() {
 }
 
 int main() {
+	
 	IwGxInit();
 	IwResManagerInit();
  
