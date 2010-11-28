@@ -40,6 +40,8 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor,
 	//render the unit in model space
 	IwGxSetUVStream(UVs);
 	
+	IwGxSetZDepthFixed(0x8);	
+	
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
 	IwGxFlush();
