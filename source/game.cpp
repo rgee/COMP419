@@ -159,7 +159,7 @@ void Game::renderIcing() {
 	CIwMaterial* mat = new CIwMaterial();
 	mat->SetTexture((CIwTexture*)game->GetResNamed("icing", IW_GX_RESTYPE_TEXTURE));
 	mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
-	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+	mat->SetAlphaMode(CIwMaterial::ALPHA_BLEND);
 	IwGxSetMaterial(mat);
 	
 	for (std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
