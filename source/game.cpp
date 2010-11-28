@@ -46,7 +46,7 @@ void Game::initRenderState() {
     int w = IwGxGetScreenWidth();
 
 	IwGxSetPerspMul(9);
-	IwGxSetFarZNearZ(10, 8);
+	IwGxSetFarZNearZ(12, 8);
 	view = CIwMat::g_Identity;
 	view.SetTrans(CIwVec3(w/2 + innerRadius - 10, 0, -9));
 	IwGxSetViewMatrix(&view);
@@ -159,7 +159,7 @@ void Game::renderIcing() {
 	CIwMaterial* mat = new CIwMaterial();
 	mat->SetTexture((CIwTexture*)game->GetResNamed("icing", IW_GX_RESTYPE_TEXTURE));
 	mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
-	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+	mat->SetAlphaMode(CIwMaterial::ALPHA_BLEND);
 	IwGxSetMaterial(mat);
 	
 	for (std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
@@ -181,7 +181,7 @@ void Game::renderWorld() {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation);
+	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation, 0, 1, 0.0f);
 	
 	delete mat;
 }

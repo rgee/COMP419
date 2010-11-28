@@ -5,7 +5,9 @@
 
 class Spreader : public Unit {
     private:
-        int framesUntilUpdate;
+	
+        int amountSpread;
+		int spreadDelay;
     
 	public:
 		Spreader(Player* owner, Game* game, float x, float y);
