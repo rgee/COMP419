@@ -116,13 +116,20 @@ void Game::tick(){
 	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
 		(*itr)->update();
 	}
+	
+	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
+		 (*itr)->update();
+	}
+	
+	for(std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {
+		(*itr)->update();
+	}
     
     units.merge(unitBuffer);
 	localIcing.merge(localIcingBuffer);
 	opponentIcing.merge(opponentIcingBuffer);
     
     ++timesteps;
-	render();
 }
 
 void Game::render() {		    
