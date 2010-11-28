@@ -5,13 +5,14 @@
 
 class Player {
 	private:
-	
         CIwColour color; 
+        CIwColour *colors;
 	
 	public:
-        Player(CIwColour& col) { color = col; }
-        ~Player() {}
+        Player(CIwColour& col);
+        ~Player();
 		CIwColour& getColor();
+        CIwColour* getColors();
 };
 
 #endif

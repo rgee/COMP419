@@ -26,30 +26,8 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 }
 
 void Unit::display(){
-	
-	CIwColour ownerColor = owner->getColor();
-	
-	//Have to do this instead of static - otherwise, the color doesn't actually change 
-	//when it should. If there's a way around this heap allocation, I'm all ears.	
-	CIwColour* colors = (CIwColour*)malloc(sizeof(CIwColour)*4);
-	
-	colors[0] = ownerColor;
-	colors[1] = ownerColor;
-	colors[2] = ownerColor;
-	colors[3] = ownerColor;
-	
-	/*static CIwColour colors[4] = {
-		ownerColor,
-		ownerColor,
-		ownerColor,
-		ownerColor
-	};*/
-	
-	IwGxSetColStream(colors, 4);
-	
+	IwGxSetColStream(owner->getColors(), 4);
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
-	
-	free(colors);
 }
 
 void Unit::displayOnScreen(int x, int y){    
