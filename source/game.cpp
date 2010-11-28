@@ -46,7 +46,7 @@ void Game::initRenderState() {
     int w = IwGxGetScreenWidth();
 
 	IwGxSetPerspMul(9);
-	IwGxSetFarZNearZ(10, 8);
+	IwGxSetFarZNearZ(12, 8);
 	view = CIwMat::g_Identity;
 	view.SetTrans(CIwVec3(w/2 + innerRadius - 10, 0, -9));
 	IwGxSetViewMatrix(&view);
@@ -181,7 +181,7 @@ void Game::renderWorld() {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation);
+	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation, 0, 1, 1.0f);
 	
 	delete mat;
 }

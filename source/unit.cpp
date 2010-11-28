@@ -47,7 +47,7 @@ void Unit::display(){
 	
 	IwGxSetColStream(colors, 4);
 	
-    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.1f);
+    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
 	
 	free(colors);
 }
