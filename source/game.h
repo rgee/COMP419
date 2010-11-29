@@ -62,9 +62,7 @@ class Game {
 		float innerRadius, outerRadius, rotation;
 	
 		void initRenderState();
-	
-		void render();
-	
+		
 		void renderSprites();
 	
 		void renderIcing();
@@ -106,6 +104,8 @@ class Game {
         float rotate(float increment);
     
         CIwResGroup* getSprites();
+	
+		void render();
 
 };
 
