@@ -1,6 +1,7 @@
 #include "util.h"
 
-void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
+void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor,
+                        int textureSize, float worldRot, int frameNumber, int numFrames, float z) {
 	
 	static CIwSVec3 vertices[4];
 	static CIwSVec2 UVs[4];
@@ -9,10 +10,10 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, i
 	
 	int vertexDist = scaleFactor*textureSize/2;
 	
-	vertices[0] = CIwSVec3(-1*vertexDist, -1*vertexDist, 0);
-	vertices[2] = CIwSVec3(vertexDist, -1*vertexDist,    0);
-	vertices[3] = CIwSVec3(vertexDist, vertexDist,       0);
-	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist,    0);
+	vertices[0] = CIwSVec3(-1*vertexDist, -1*vertexDist, z);
+	vertices[2] = CIwSVec3(vertexDist, -1*vertexDist,    z);
+	vertices[3] = CIwSVec3(vertexDist, vertexDist,       z);
+	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist,    z);
 	
 	CIwMat modelTransform = CIwMat::g_Identity;
 	modelTransform.SetRotZ(IW_ANGLE_FROM_RADIANS(angle));
@@ -38,6 +39,8 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, i
 		
 	//render the unit in model space
 	IwGxSetUVStream(UVs);
+	
+	IwGxSetZDepthFixed(8);	
 	
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);

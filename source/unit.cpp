@@ -1,11 +1,13 @@
 #include "unit.h"
 
 Unit::Unit(const Unit& newUnit)
-	: WorldObject(newUnit.position, newUnit.game), 
+	: WorldObject(newUnit), 
 	hp(newUnit.hp), cost(newUnit.cost), attackDamage(newUnit.attackDamage), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
-	owner(newUnit.owner)
+	owner(newUnit.owner), scale(newUnit.scale), attackTarget(newUnit.attackTarget), 
+	pursueTarget(newUnit.pursueTarget), curFrame(0), numFrames(newUnit.numFrames), 
+	spriteSize(newUnit.spriteSize)
 {
 
 }
@@ -18,33 +20,21 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner)
+		  owner(owner), curFrame(0)
 {
 	
 }
 
 void Unit::display(){
-	
-	CIwColour ownerColor = owner->getColor();
-	
-	static CIwColour colors[4] = {
-		ownerColor,
-		ownerColor,
-		ownerColor,
-		ownerColor
-	};
-	
-	IwGxSetColStream(colors, 4);
-	
-	
-    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames);
+	IwGxSetColStream(owner->getColors(), 4);
+    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
 }
 
 void Unit::displayOnScreen(int x, int y){    
     
 	CIwMaterial *mat = new CIwMaterial();
     mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
-    mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
+    mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     IwGxSetMaterial(mat);
     

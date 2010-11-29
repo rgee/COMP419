@@ -8,6 +8,13 @@ class Unit;
 #include "player.h"
 #include "player.h"
 
+/**
+This lets us quickly determine a unit's type at run time.
+*/
+enum unit_type {
+	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER
+};
+
 class Unit : public WorldObject {
     
 	protected:    
@@ -61,6 +68,7 @@ class Unit : public WorldObject {
     
 		bool operator<(const Unit& u) const;
 	
+		virtual unit_type getType() = 0;
 
         void setVelocity(const CIwFVec2& velocity);
         void setVelocity(float xv, float yv);
@@ -88,10 +96,18 @@ class Unit : public WorldObject {
         
 		float getHp();
 		void setHp(float f);
-	
-		virtual const char* getTextureName() = 0;
-		virtual bool update() = 0;
 
+		/*
+		 Create a copy of this Unit. This is here so that you can make copies of Units without including
+		 their header files - it's a workaround for doing the mirror opponent, but could be useful
+		 in the future. 
+		 */
+		virtual Unit* spawnCopy() { return NULL; };
+		
+		virtual const char* getTextureName() = 0;
+	
+		virtual bool update() = 0;
+	
         virtual void display();
         void displayOnScreen(int x, int y);
 		
