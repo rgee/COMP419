@@ -20,7 +20,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), curFrame(0)
+		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL)
 {
 	
 }
@@ -28,6 +28,17 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 void Unit::display(){
 	IwGxSetColStream(owner->getColors(), 4);
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
+    //if(pursuing()) {
+    //    IwGxDebugPrimLine(CIwVec3(position.x, position.y, 1), CIwVec3(pursueTarget->getPosition().x, pursueTarget->getPosition().y, 1));
+    //}
+
+    /* UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
+    CIwMat pMat = CIwMat::g_Identity;
+    pMat.SetTrans(CIwVec3(position.x, -position.y, 1));
+
+    IwGxDebugPrimCircle(pMat, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
+    IwGxDebugPrimCircle(pMat, getSize(), 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+    */
 }
 
 void Unit::displayOnScreen(int x, int y){    
