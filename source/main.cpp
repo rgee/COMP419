@@ -72,17 +72,21 @@ bool renderDragUnit(CTouch* touch){
 }
 
 bool renderDragWorld(CTouch* touch) {
-    if(touch->start_y != touch->end_y || touch->start_x != touch->end_x){
+    if(touch->start_y != touch->y || touch->start_x != touch->x){
+        
 		float inner_radius = game->getWorldRadius().x;
-		CIwFVec2 start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
-		CIwFVec2 end_pos_world = worldify(touch->end_x, touch->end_y, inner_radius, game->getRotation());
+        
+        CIwFVec2 start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
+        CIwFVec2 end_pos_world = worldify(touch->x, touch->y, inner_radius, game->getRotation());
 
 		float angle = angle_diff(start_pos_world, end_pos_world);
-		game->rotate(angle);
-
-		touch->start_x = touch->end_x;
-		touch->start_y = touch->end_y;
+        
+        game->rotate(4*angle);
+        
+        touch->start_x = touch->x;
+        touch->start_y = touch->y;        
     }
+    
     return true;
 }
 
@@ -98,8 +102,8 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 
         // if it's the beginning of a touch, then determine what kind of gesture it is and set initial info.
         if (touch->active) {
-            touch->start_x = touch->end_x = touch->x;
-            touch->start_y = touch->end_y = touch->y;
+            touch->start_x = touch->x;
+            touch->start_y = touch->y;
             if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
                 
@@ -135,16 +139,13 @@ void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
     
 	CTouch* touch = GetTouch(event->m_TouchID);
 	if (touch) {
+        if (touch->gesture_type == DRAG_WORLD) {
+            touch->start_x = touch->x;
+            touch->start_y = touch->y;
+        }
+        
 		touch->x = event->m_x;
 		touch->y = event->m_y;
-        
-        if (touch->gesture_type == DRAG_WORLD) {
-            // sent new start to the old end, and the new end to the new pos
-			touch->start_x = touch->end_x;
-            touch->start_y = touch->end_y;
-			touch->end_x = touch->x;
-            touch->end_y = touch->y;
-        }   
 	}
 }
 

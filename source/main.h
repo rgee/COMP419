@@ -27,8 +27,6 @@ struct CTouch {
     Unit* unit;             // unit created by this touch if it's a create_unit gesture
 	int32 start_x;			// initial x position of a world_drag gesture
     int32 start_y;          // initial y position of a world_drag gesture
-	int32 end_x;			// end x position of a world_drag gesture
-    int32 end_y;            // end y position of a world_drag gesture
 };
 
 Game* game = NULL;

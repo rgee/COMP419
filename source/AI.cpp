@@ -182,4 +182,3 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 		}
 	}
 }
- 
