@@ -28,9 +28,6 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 void Unit::display(){
 	IwGxSetColStream(owner->getColors(), 4);
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
-    //if(pursuing()) {
-    //    IwGxDebugPrimLine(CIwVec3(position.x, position.y, 1), CIwVec3(pursueTarget->getPosition().x, pursueTarget->getPosition().y, 1));
-    //}
 
     /* UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
     CIwMat pMat = CIwMat::g_Identity;
