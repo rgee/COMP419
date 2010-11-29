@@ -198,6 +198,9 @@ void doMain() {
 
 	IwGxLightingOff();
 
+	
+	int frameCount = 0;
+	
 	while (1) {
         int64 start = s3eTimerGetMs();
 	
@@ -219,8 +222,11 @@ void doMain() {
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
         
-        game->tick();
+        if(frameCount%FRAMES_PER_UPDATE == 0) {
+			game->tick();
+		}
         
+		game->render();
 		renderTouches();
 		
         IwGxFlush();
@@ -236,6 +242,8 @@ void doMain() {
 				
 			s3eDeviceYield(yield);
 		}
+		
+		frameCount++;
 	}
     
 	delete game;
