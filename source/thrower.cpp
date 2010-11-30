@@ -6,10 +6,21 @@ Thrower::Thrower(Player* owner, Game* game, float x, float y)
     setPosition(x, y);
 }
 
+Thrower::Thrower(const Thrower& newThrower) : Unit(newThrower) { }
+
 void Thrower::display(){
 
 }
 
 bool Thrower::update(){
 	return true;
+}
+
+unit_type Thrower::getType() {
+	return THROWER;
+}
+
+Unit* Thrower::spawnCopy() {
+    return NULL;
+	//return new Thrower(*this);
 }

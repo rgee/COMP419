@@ -1,6 +1,7 @@
 #include "util.h"
 
-void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, int textureSize, float worldRot, int frameNumber, int numFrames) {
+void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor,
+                        int textureSize, float worldRot, int frameNumber, int numFrames, float z) {
 	
 	static CIwSVec3 vertices[4];
 	static CIwSVec2 UVs[4];
@@ -9,10 +10,10 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, i
 	
 	int vertexDist = scaleFactor*textureSize/2;
 	
-	vertices[0] = CIwSVec3(-1*vertexDist, -1*vertexDist, 0);
-	vertices[2] = CIwSVec3(vertexDist, -1*vertexDist,    0);
-	vertices[3] = CIwSVec3(vertexDist, vertexDist,       0);
-	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist,    0);
+	vertices[0] = CIwSVec3(-1*vertexDist, -1*vertexDist, z);
+	vertices[2] = CIwSVec3(vertexDist, -1*vertexDist,    z);
+	vertices[3] = CIwSVec3(vertexDist, vertexDist,       z);
+	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist,    z);
 	
 	CIwMat modelTransform = CIwMat::g_Identity;
 	modelTransform.SetRotZ(IW_ANGLE_FROM_RADIANS(angle));
@@ -39,6 +40,8 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, i
 	//render the unit in model space
 	IwGxSetUVStream(UVs);
 	
+	IwGxSetZDepthFixed(8);	
+	
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
 	IwGxFlush();
@@ -50,7 +53,7 @@ void polarize(CIwFVec2& v){
     v.x = r;
 }
 
-CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){
+CIwFVec2 worldify(int32 x, int32 y, float innerRadius, float rotation){
     int h = IwGxGetScreenHeight();
             
     int32 world_x = x + (innerRadius - 10);
@@ -60,11 +63,11 @@ CIwFVec2 *worldify(int32 x, int32 y, float innerRadius, float rotation){
     
     // Rotates (world_x, world_y) around world origin (w/2 + radii.x - 20, h/2) by theta
     
-    return new CIwFVec2(world_x * cos(rotation) - world_y * sin(rotation),
+    return CIwFVec2(world_x * cos(rotation) - world_y * sin(rotation),
                         world_x * sin(rotation) + world_y * cos(rotation));
     
 }
 
-float angle_diff(CIwFVec2* pos1, CIwFVec2* pos2) {
-	return atan2(pos2->y, pos2->x) - atan2(pos1->y, pos1->x);
+float angle_diff(const CIwFVec2& pos1, const CIwFVec2&  pos2) {
+	return atan2(pos2.y, pos2.x) - atan2(pos1.y, pos1.x);
 }

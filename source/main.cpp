@@ -28,10 +28,11 @@ bool renderTouches() {
 
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
-            if(touches[i].gesture_type == CREATE_UNIT)
+            if(touches[i].gesture_type == CREATE_UNIT) {
                 true_so_far &= renderDragUnit(&touches[i]);
-            else
+			}else{
                 true_so_far &= renderDragWorld(&touches[i]);
+			}
 		}
 	}
 
@@ -45,22 +46,19 @@ bool renderUnitCreation(CTouch* touch) {
         return false;
     
     CIwFVec2 radii = game->getWorldRadius();
-    CIwFVec2 *modelCoords = worldify(touch->x, touch->y, radii.x, game->getRotation());
+    CIwFVec2 modelCoords = worldify(touch->x, touch->y, radii.x, game->getRotation());
     
-    float dist_sq = SQ(modelCoords->x) + SQ(modelCoords->y);
+    float dist_sq = SQ(modelCoords.x) + SQ(modelCoords.y);
     if(dist_sq > SQ(radii.y) || dist_sq < SQ(radii.x)){
-        free(touch->unit);
-        delete modelCoords;
+        delete touch->unit;
         return false;
     }
     
-    touch->unit->setPosition(*modelCoords);
+    touch->unit->setPosition(modelCoords);
 	game->addUnit(touch->unit);
     
     touch->unit = NULL;
     touch->active = false;
-    
-    delete modelCoords;
     
     return true;
 }
@@ -76,17 +74,14 @@ bool renderDragUnit(CTouch* touch){
 bool renderDragWorld(CTouch* touch) {
     if(touch->start_y != touch->end_y || touch->start_x != touch->end_x){
 		float inner_radius = game->getWorldRadius().x;
-		CIwFVec2 *start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
-		CIwFVec2 *end_pos_world = worldify(touch->end_x, touch->end_y, inner_radius, game->getRotation());
+		CIwFVec2 start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
+		CIwFVec2 end_pos_world = worldify(touch->end_x, touch->end_y, inner_radius, game->getRotation());
 
 		float angle = angle_diff(start_pos_world, end_pos_world);
 		game->rotate(angle);
 
 		touch->start_x = touch->end_x;
 		touch->start_y = touch->end_y;
-        
-        delete start_pos_world;
-        delete end_pos_world;
     }
     return true;
 }
@@ -193,12 +188,17 @@ void doMain() {
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
     
-    CIwColour col = {255, 180, 180, 255};
-	localPlayer = new Player(col);
-    game = new Game(localPlayer);
+    CIwColour localCol = {255, 180, 180, 255};
+	CIwColour opponentCol = {180, 255, 160, 255};
+	localPlayer = new Player(localCol);
+	opponentPlayer = new Player(opponentCol);
+    game = new Game(localPlayer, opponentPlayer);
 
 	IwGxLightingOff();
 
+	
+	int frameCount = 0;
+	
 	while (1) {
         int64 start = s3eTimerGetMs();
 	
@@ -220,9 +220,12 @@ void doMain() {
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
         
-        game->tick();
+        if(frameCount%FRAMES_PER_UPDATE == 0) {
+			game->tick();
+		}
         
-		renderTouches();   
+		game->render();
+		renderTouches();
 		
         IwGxFlush();
         IwGxSwapBuffers();
@@ -237,6 +240,8 @@ void doMain() {
 				
 			s3eDeviceYield(yield);
 		}
+		
+		frameCount++;
 	}
     
     s3ePointerUnRegister(S3E_POINTER_TOUCH_EVENT, (s3eCallback)MultiTouchButtonCB);
@@ -247,6 +252,7 @@ void doMain() {
     
 	delete game;
 	delete localPlayer;
+	delete opponentPlayer;
 	delete mat;
     palateGroup->Finalise();
     
@@ -256,6 +262,7 @@ void doMain() {
 }
 
 int main() {
+	
 	IwGxInit();
 	IwResManagerInit();
  

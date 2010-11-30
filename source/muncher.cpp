@@ -11,11 +11,16 @@ Muncher::Muncher(Player* owner, Game* game, float x, float y)
     statAttacks = {{"Muncher",0},{"Wrecker",10},{"Thrower",0},{"Shooter",0},{"Invader",0},{"Spreader",0},{"Leader",0}};
 }
 
+Muncher::Muncher(const Muncher& newMuncher) : Unit(newMuncher) { }
+
 bool Muncher::update() {
+	
     curFrame = (curFrame + 1) % numFrames;
    
-    if(curFrame == 0)
-        game->getAI()->updateAI(this);
+    if(curFrame == 0) {
+		game->addIcing(new Icing(position, game, owner));
+		game->getAI()->updateAI(this);
+	}
     
 	return true;
 }
@@ -46,4 +51,12 @@ int Muncher::getDammage(Unit* unit){
 
 const char* Muncher::getTextureName() {
 	return "muncher_sprite_sheet";
+}
+
+Unit* Muncher::spawnCopy() {
+	return new Muncher(*this);
+}
+
+unit_type Muncher::getType() {
+	return MUNCHER;
 }

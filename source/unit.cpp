@@ -1,11 +1,13 @@
 #include "unit.h"
 
 Unit::Unit(const Unit& newUnit)
-	: WorldObject(newUnit.position, newUnit.game), 
+	: WorldObject(newUnit), 
 	hp(newUnit.hp), cost(newUnit.cost), attackDamage(newUnit.attackDamage), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
-	owner(newUnit.owner)
+	owner(newUnit.owner), scale(newUnit.scale), attackTarget(newUnit.attackTarget), 
+	pursueTarget(newUnit.pursueTarget), curFrame(0), numFrames(newUnit.numFrames), 
+	spriteSize(newUnit.spriteSize)
 {
 
 }
@@ -18,33 +20,29 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner)
+		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL)
 {
 	
 }
 
 void Unit::display(){
-	
-	CIwColour ownerColor = owner->getColor();
-	
-	static CIwColour colors[4] = {
-		ownerColor,
-		ownerColor,
-		ownerColor,
-		ownerColor
-	};
-	
-	IwGxSetColStream(colors, 4);
-	
-	
-    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames);
+	IwGxSetColStream(owner->getColors(), 4);
+    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
+
+    /* UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
+    CIwMat pMat = CIwMat::g_Identity;
+    pMat.SetTrans(CIwVec3(position.x, -position.y, 1));
+
+    IwGxDebugPrimCircle(pMat, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
+    IwGxDebugPrimCircle(pMat, getSize(), 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+    */
 }
 
 void Unit::displayOnScreen(int x, int y){    
     
 	CIwMaterial *mat = new CIwMaterial();
     mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
-    mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
+    mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     IwGxSetMaterial(mat);
     
@@ -57,7 +55,7 @@ void Unit::displayOnScreen(int x, int y){
     IwGxSetScreenSpaceSlot(1);
     IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
     
-    free(mat);
+    delete mat;
 }
 
 
@@ -102,7 +100,7 @@ void Unit::setHp(float f){
 }
 
 float Unit::getSpeed(){return speed;}
-float Unit::getSize(){return spriteSize/2;}
+float Unit::getSize(){return 10.0f;}
 
 void Unit::attack(){}
 
@@ -126,6 +124,6 @@ float Unit::getAngle(){
     return PI + atan2(norm.y, norm.x);
 }
 
-string Unit::getType(){return unitType;}
+std::string Unit::getType(){return unitType;}
 
 

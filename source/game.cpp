@@ -2,7 +2,7 @@
 #include "unit.h"
 
  
-Game::Game(Player* p) : localPlayer(p), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
+Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
 	ai = new AI(this);
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
@@ -21,10 +21,21 @@ Game::~Game(){
 		delete *itr;
 	}
 	
+	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
+		delete *itr;
+	}
+	
+	for(std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {
+		delete *itr;
+	}
+	
 	delete ai;
  	units.clear();
 	unitBuffer.clear();
     unitBucket.clear();
+	
+	localIcing.clear();
+	opponentIcing.clear();
     
     sprites->Finalise();
     game->Finalise();
@@ -35,7 +46,7 @@ void Game::initRenderState() {
     int w = IwGxGetScreenWidth();
 
 	IwGxSetPerspMul(9);
-	IwGxSetFarZNearZ(10, 8);
+	IwGxSetFarZNearZ(12, 8);
 	view = CIwMat::g_Identity;
 	view.SetTrans(CIwVec3(w/2 + innerRadius - 10, 0, -9));
 	IwGxSetViewMatrix(&view);
@@ -45,7 +56,37 @@ std::list<Unit*>* Game::getUnits(){
 	return &units;
 }
  
-void Game::addUnit(Unit *u){    
+void Game::addIcing(Icing* i) {
+		
+	if (i->getOwner() == localPlayer) {
+		
+		if(localIcing.empty()) {
+			localIcing.push_back(i);
+		}
+		else {
+			localIcingBuffer.push_back(i);
+		}
+		
+		localIcingBuffer.sort();
+
+	}
+	else if(i->getOwner() == opponentPlayer) {
+		
+		if(opponentIcing.empty()) {
+			opponentIcing.push_back(i);
+		} 
+		else {
+			opponentIcingBuffer.push_back(i);
+		}
+		
+		opponentIcingBuffer.sort();
+	}
+	
+}
+
+
+void Game::addUnit(Unit *u){
+	
     u->setId(numUnits++);
 
 	if(units.empty()) {
@@ -61,11 +102,12 @@ void Game::addUnit(Unit *u){
 	
 	(unitBucket[u->getTextureName()])->insert(u);
 
-	int32 whichPlayer = -1;//IwRandMinMax(-1, 1);
-	if(whichPlayer >= 0) {
-		u->setOwner(opponentPlayer);
-	} else {
-		u->setOwner(localPlayer);
+	//have the opponent mirror the local player
+	if(&(u->getOwner()) == localPlayer) {
+		Unit* newUnit = u->spawnCopy();
+		newUnit->setOwner(opponentPlayer);
+		newUnit->setPolarPosition(u->getR() - 20.0, u->getTheta() + .75);
+		addUnit(newUnit);
 	}
 }
 
@@ -74,15 +116,25 @@ void Game::tick(){
 	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
 		(*itr)->update();
 	}
+	
+	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
+		 (*itr)->update();
+	}
+	
+	for(std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {
+		(*itr)->update();
+	}
     
     units.merge(unitBuffer);
+	localIcing.merge(localIcingBuffer);
+	opponentIcing.merge(opponentIcingBuffer);
     
     ++timesteps;
-	render();
 }
 
 void Game::render() {		    
 	renderWorld();
+	renderIcing();
 	renderSprites();
 }
 
@@ -109,6 +161,25 @@ void Game::renderSprites() {
 	delete mat;
 }
 
+void Game::renderIcing() {
+	
+	CIwMaterial* mat = new CIwMaterial();
+	mat->SetTexture((CIwTexture*)game->GetResNamed("icing", IW_GX_RESTYPE_TEXTURE));
+	mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
+	mat->SetAlphaMode(CIwMaterial::ALPHA_BLEND);
+	IwGxSetMaterial(mat);
+	
+	for (std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
+		(*itr)->display();
+	}
+	
+	for (std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {
+		(*itr)->display();
+	}
+	
+	delete mat;
+}
+
 void Game::renderWorld() {
 
 	CIwMaterial* mat = new CIwMaterial();
@@ -117,9 +188,17 @@ void Game::renderWorld() {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation);
+	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation, 0, 1, 0.0f);
 	
 	delete mat;
+}
+
+std::list<Icing*>* Game::getLocalIcing() {
+	return &localIcing;
+}
+
+std::list<Icing*>* Game::getOpponentIcing() {
+	return &opponentIcing;
 }
 
 CIwFVec2 Game::getWorldRadius() {

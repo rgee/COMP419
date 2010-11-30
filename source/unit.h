@@ -7,6 +7,16 @@ class Unit;
 #include "game.h"
 #include "player.h"
 #include "player.h"
+#include "IwDebugPrim.h"
+#include <string>
+
+
+/**
+This lets us quickly determine a unit's type at run time.
+*/
+enum unit_type {
+	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER
+};
 
 class Unit : public WorldObject {
     
@@ -32,7 +42,7 @@ class Unit : public WorldObject {
 		int numFrames;
 		int curFrame;
     
-        string unitType;
+        std::string unitType;
 	
 		// The unit this unit is attacking.
 		Unit *attackTarget;
@@ -63,6 +73,7 @@ class Unit : public WorldObject {
     
 		bool operator<(const Unit& u) const;
 	
+		virtual unit_type getType() = 0;
 
         void setVelocity(const CIwFVec2& velocity);
         void setVelocity(float xv, float yv);
@@ -90,10 +101,18 @@ class Unit : public WorldObject {
         
 		float getHp();
 		void setHp(float f);
-	
-		virtual const char* getTextureName() = 0;
-		virtual bool update() = 0;
 
+		/*
+		 Create a copy of this Unit. This is here so that you can make copies of Units without including
+		 their header files - it's a workaround for doing the mirror opponent, but could be useful
+		 in the future. 
+		 */
+		virtual Unit* spawnCopy() { return NULL; };
+		
+		virtual const char* getTextureName() = 0;
+	
+		virtual bool update() = 0;
+	
         virtual void display();
         void displayOnScreen(int x, int y);
 		
@@ -101,7 +120,6 @@ class Unit : public WorldObject {
 		virtual void receiveDamage(float amount, Unit* attacker); 
         virtual int getDammage(Unit* unit);
         
-        string getType();
     
         float getSight();
         float getAngle();

@@ -5,14 +5,20 @@
 
 class Spreader : public Unit {
     private:
-        int framesUntilUpdate;
+	
+        int amountSpread;
+		int spreadDelay;
     
 	public:
 		Spreader(Player* owner, Game* game, float x, float y);
+		Spreader(const Spreader& newSpreader);
 		~Spreader(){};
 
 		virtual bool update();
         virtual const char* getTextureName();
+		virtual unit_type getType();
+	
+		virtual Unit* spawnCopy();
     
 };
 

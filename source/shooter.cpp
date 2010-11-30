@@ -10,6 +10,8 @@ Shooter::Shooter(Player* owner, Game* game, float x, float y)
     setPosition(x, y);
 }
 
+Shooter::Shooter(const Shooter& newShooter) : Unit(newShooter) { }
+
 bool Shooter::update(){
     curFrame = (curFrame + 1) % numFrames;
     
@@ -21,4 +23,12 @@ bool Shooter::update(){
 
 const char* Shooter::getTextureName() {
 	return "shooter_sprite_sheet";
+}
+
+unit_type Shooter::getType() {
+	return SHOOTER;
+}
+
+Unit* Shooter::spawnCopy() {
+	return new Shooter(*this);
 }
