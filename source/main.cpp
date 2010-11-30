@@ -81,7 +81,7 @@ bool renderDragWorld(CTouch* touch) {
 
 		float angle = angle_diff(start_pos_world, end_pos_world);
         
-        game->rotate(4*angle);
+        game->rotate(angle);
         
         touch->start_x = touch->x;
         touch->start_y = touch->y;        
