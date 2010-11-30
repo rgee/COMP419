@@ -84,8 +84,7 @@ float getAngleDiff(CTouch* touch) {
 	return getAngleDiff(touch->start_x, touch->start_y, touch->end_x, touch->end_y);
 }
 
-// assign activity and position info to the touch struct associated with an event
-// for a multitouch click.
+// callback called whenever a touch is initiated or ended.
 void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 	CTouch* touch = GetTouch(event->m_TouchID);
 	if (touch) {
@@ -127,8 +126,7 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 	}
 }
 
-// assign position info to the touch struct associated with an event for
-// multitouch motion.
+// called whenever a touch is moved.
 void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
     if(event->m_x < 0) return;
     
@@ -143,6 +141,8 @@ void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
             touch->start_y = touch->end_y;
 			touch->end_x = touch->x;
             touch->end_y = touch->y;
+			
+			worldScrollSpeed = getAngleDiff(touch);
         }   
 	}
 }
@@ -219,7 +219,9 @@ void doMain() {
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
         
-		game->rotate(worldScrollSpeed--);
+		if (worldScrollSpeed > 0) {
+			game->rotate(worldScrollSpeed--);
+		}
 	
         if(frameCount%FRAMES_PER_UPDATE == 0) {
 			game->tick();
