@@ -15,6 +15,10 @@ Shooter::Shooter(const Shooter& newShooter) : Unit(newShooter) { }
 bool Shooter::update(){
     curFrame = (curFrame + 1) % numFrames;
     
+    if(attackTarget == NULL){
+        curFrame = 0;
+    }
+    
     if(curFrame == 0)
         game->getAI()->updateAI(this);
     
