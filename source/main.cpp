@@ -28,18 +28,15 @@ bool renderTouches() {
 
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
-            if(touches[i].gesture_type == CREATE_UNIT) {
-                true_so_far &= renderDragUnit(&touches[i]);
-			}else{
-                true_so_far &= renderDragWorld(&touches[i]);
+			switch(touches[i].gesture_type) {
+				case CREATE_UNIT: //true_so_far &= renderDragUnit(&touches[i]);
+				default: break;
 			}
 		}
 	}
 
 	return true_so_far;
 }
-
-
 
 bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
@@ -71,21 +68,21 @@ bool renderDragUnit(CTouch* touch){
 	}
 }
 
-bool renderDragWorld(CTouch* touch) {
-    if(touch->start_y != touch->end_y || touch->start_x != touch->end_x){
+float getAngleDiff(int32 x0, int32 y0, int32 x1, int32 y1) {
+	if (y0 != y1 || x0 != x1) {
 		float inner_radius = game->getWorldRadius().x;
-		CIwFVec2 start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
-		CIwFVec2 end_pos_world = worldify(touch->end_x, touch->end_y, inner_radius, game->getRotation());
+		CIwFVec2 start_pos_world = worldify(x0, y0, inner_radius, game->getRotation());
+		CIwFVec2 end_pos_world = worldify(x1, y1, inner_radius, game->getRotation());
 
-		float angle = angle_diff(start_pos_world, end_pos_world);
-		game->rotate(angle);
-
-		touch->start_x = touch->end_x;
-		touch->start_y = touch->end_y;
-    }
-    return true;
+		return angle_diff(start_pos_world, end_pos_world);
+	} else {
+		return 0.0;
+	}
 }
 
+float getAngleDiff(CTouch* touch) {
+	return getAngleDiff(touch->start_x, touch->start_y, touch->end_x, touch->end_y);
+}
 
 // assign activity and position info to the touch struct associated with an event
 // for a multitouch click.
@@ -121,8 +118,10 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
             }
         // if it's the end of a touch, check what kind of gesture it and render.
         } else {
-            if (touch->gesture_type == CREATE_UNIT) {
-                renderUnitCreation(touch);
+			switch(touch->gesture_type) {
+				case CREATE_UNIT: renderUnitCreation(touch); break;
+				case DRAG_WORLD: worldScrollSpeed = getAngleDiff(touch); break;
+				default: break;
             }
         }
 	}
@@ -139,7 +138,7 @@ void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
 		touch->y = event->m_y;
         
         if (touch->gesture_type == DRAG_WORLD) {
-            // sent new start to the old end, and the new end to the new pos
+            // set new start to the old end, and the new end to the new pos
 			touch->start_x = touch->end_x;
             touch->start_y = touch->end_y;
 			touch->end_x = touch->x;
@@ -220,6 +219,8 @@ void doMain() {
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
         
+		game->rotate(worldScrollSpeed--);
+	
         if(frameCount%FRAMES_PER_UPDATE == 0) {
 			game->tick();
 		}

@@ -40,6 +40,11 @@ Player* opponentPlayer = NULL;
 #define MAX_TOUCHES 10
 CTouch touches[MAX_TOUCHES];
 
+int32 worldScrollSpeed = 0;
+
+float getAngleDiff(int32 x0, int32 y0, int32 x1, int32 y1);
+float getAngleDiff(CTouch* touch);
+
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id);
 
@@ -48,11 +53,9 @@ bool renderUnitCreation(CTouch* touch);
 bool renderDragUnit(CTouch* touch);
 bool renderDragWorld(CTouch* touch);
 
-// assign activity and position info to the touch struct associated with an event
-// for a multitouch click.
+void giveWorldInitialScrollingSpeed(CTouch* touch);
+
 void MultiTouchButtonCB(s3ePointerTouchEvent* event);
-// assign position info to the touch struct associated with an event for
-// multitouch motion.
 void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event);
 
 void SingleTouchButtonCB(s3ePointerEvent* event);
