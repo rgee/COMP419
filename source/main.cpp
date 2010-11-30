@@ -233,9 +233,8 @@ void doMain() {
         IwGxSwapBuffers();
 		
 		// Attempt frame rate
-		while ((s3eTimerGetMs() - start) < MS_PER_FRAME)
-		{
-			int32 yield = (int32) (MS_PER_FRAME - (s3eTimerGetMs() - start));
+		while ((s3eTimerGetMs() - start) < MS_PER_FRAME){
+			int32 yield = (MS_PER_FRAME - (s3eTimerGetMs() - start));
 			if (yield < 0) {
 				break;
 			}

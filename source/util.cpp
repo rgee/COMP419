@@ -44,7 +44,8 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor,
 	
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
-	IwGxFlush();
+	
+    IwGxFlush();
 }
 
 void polarize(CIwFVec2& v){

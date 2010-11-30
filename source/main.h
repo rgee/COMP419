@@ -2,6 +2,7 @@
 #define _MAIN_H
 
 #include "s3e.h"
+#include "s3eDebug.h"
 #include "IwUtil.h"
 #include "IwGx.h"
 #include "IwGeomMat.h"

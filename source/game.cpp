@@ -110,7 +110,11 @@ void Game::tick(){
 	}
 	
 	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
-		 (*itr)->update();
+		(*itr)->update();
+        
+        //if(itr != localIcing.begin() &&
+         //       ((*itr)->getPosition() + (*(itr-1))->getPosition())->GetLengthSquared() < 15)
+          //  localIcing->erase(itr);
 	}
 	
 	for(std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {

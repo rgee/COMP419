@@ -46,10 +46,10 @@ void Unit::displayOnScreen(int x, int y){
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     IwGxSetMaterial(mat);
     
-	CIwSVec2 xy(x-30, y-30);
+	CIwSVec2 xy(x-45, y-45);
     CIwSVec2 duv(IW_FIXED(1.0/numFrames), IW_GEOM_ONE);
     
-	static CIwSVec2 wh(60, 60);
+	static CIwSVec2 wh(90, 90);
 	static CIwSVec2 uv(IW_FIXED(0), IW_FIXED(0));	
     
     IwGxSetScreenSpaceSlot(1);
