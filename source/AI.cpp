@@ -128,51 +128,6 @@ void AI::updateAI(Unit* unit){
      path(unit);
 }
 
-std::list<Unit*>* AI::collisionDetection(Unit* unit){
-    float lowTheta = unit->getTheta()-10;
-    float upTheta  = unit->getTheta()+10;
-    float upRad  = worldRad.y;
-    float lowRad = worldRad.x;
-
-	std::list<Unit*>* Units = game->getUnits();
- 
-    CIwFVec2 pos = unit->getPosition()+unit->getVelocity();
-    polarize(pos);
-    
-    float rad   = pos.x;
-    float theta = pos.y;
-    
-    float size = unit->getSize();
-	float current_unit_theta = 0.0f;
-    
-	float sq_dist = 0.0f;
-	float radii = 0.0f;
-   
-    
-    std::list<Unit*>* collide_array = new std::list<Unit*>();
-    
-    if((lowRad <= rad) && (rad <= upRad)){
-        return NULL;
-    }
-    
-    for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
-        Unit *temp = *itr;
-		current_unit_theta = temp->getTheta();
-        if((lowTheta <= current_unit_theta) && (current_unit_theta <= upTheta)){
-            CIwFVec2 tempPos = temp->getPosition();
-
-			// We can just use the squared distance here since we only care about relative
-			// positioning.
-            sq_dist = SQ(tempPos.x - pos.x) + SQ(tempPos.y - pos.y);
-			radii = pow(size + temp->getSize(), 2);
-            if (sq_dist <= radii) {
-                collide_array->push_back(temp);
-            }
-        }
-    }
-    return collide_array;
-}
-
 template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* unit)
 {
 	std::list<Unit*>* units = game->getUnits();
