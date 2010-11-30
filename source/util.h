@@ -17,4 +17,10 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, i
 void polarize(CIwFVec2& v);
 CIwFVec2 worldify(int32 x, int32 y, float innerRadius, float rotation);
 float angle_diff(const CIwFVec2& pos1, const CIwFVec2& pos2);
+
+
+/**
+Check if a position sits within the world. The position is in x, y coordinates.
+*/
+bool isInWorld(CIwFVec2 position, float innerRad, float outerRad);
 #endif
