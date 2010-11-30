@@ -20,6 +20,7 @@ unit_type Thrower::getType() {
 	return THROWER;
 }
 
-/*Unit* Thrower::spawnCopy() {
-	return new Thrower(*this);
-}*/
+Unit* Thrower::spawnCopy() {
+    return NULL;
+	//return new Thrower(*this);
+}
