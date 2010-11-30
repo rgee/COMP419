@@ -119,7 +119,7 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
         } else {
 			switch(touch->gesture_type) {
 				case CREATE_UNIT: renderUnitCreation(touch); break;
-				case DRAG_WORLD: worldScrollSpeed = getAngleDiff(touch); break;
+				case DRAG_WORLD: /* shouldn't need to do anything */ break;
 				default: break;
             }
         }
