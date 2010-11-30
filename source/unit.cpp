@@ -126,3 +126,6 @@ float Unit::getAngle(){
     return PI + atan2(norm.y, norm.x);
 }
 
+string Unit::getType(){return unitType;}
+
+

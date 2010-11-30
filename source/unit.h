@@ -31,6 +31,8 @@ class Unit : public WorldObject {
 		int spriteSize;
 		int numFrames;
 		int curFrame;
+    
+        string unitType;
 	
 		// The unit this unit is attacking.
 		Unit *attackTarget;
@@ -95,8 +97,11 @@ class Unit : public WorldObject {
         virtual void display();
         void displayOnScreen(int x, int y);
 		
-		void attack();
-		void receiveDamage(float amount, Unit *attacker); 
+		virtual void attack();
+		virtual void receiveDamage(float amount, Unit* attacker); 
+        virtual int getDammage(Unit* unit);
+        
+        string getType();
     
         float getSight();
         float getAngle();
