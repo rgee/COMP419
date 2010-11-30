@@ -25,6 +25,8 @@ class Icing : public WorldObject {
 	
 		Player* getOwner();
 	
+		void update();
+	
 		virtual void display();
 	
 		virtual const char* getTextureName();

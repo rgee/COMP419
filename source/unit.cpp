@@ -20,36 +20,22 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), curFrame(0)
+		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL)
 {
 	
 }
 
 void Unit::display(){
-	
-	CIwColour ownerColor = owner->getColor();
-	
-	//Have to do this instead of static - otherwise, the color doesn't actually change 
-	//when it should. If there's a way around this heap allocation, I'm all ears.	
-	CIwColour* colors = (CIwColour*)malloc(sizeof(CIwColour)*4);
-	
-	colors[0] = ownerColor;
-	colors[1] = ownerColor;
-	colors[2] = ownerColor;
-	colors[3] = ownerColor;
-	
-	/*static CIwColour colors[4] = {
-		ownerColor,
-		ownerColor,
-		ownerColor,
-		ownerColor
-	};*/
-	
-	IwGxSetColStream(colors, 4);
-	
-    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.1f);
-	
-	free(colors);
+	IwGxSetColStream(owner->getColors(), 4);
+    renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
+
+    /* UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
+    CIwMat pMat = CIwMat::g_Identity;
+    pMat.SetTrans(CIwVec3(position.x, -position.y, 1));
+
+    IwGxDebugPrimCircle(pMat, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
+    IwGxDebugPrimCircle(pMat, getSize(), 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+    */
 }
 
 void Unit::displayOnScreen(int x, int y){    

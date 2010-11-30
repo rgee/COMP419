@@ -11,6 +11,10 @@ Player* Icing::getOwner() {
 	return owner;
 }
 
+void Icing::update() {
+	scale = scale < finalScale ? scale + .04 : scale;
+}
+
 void Icing::display() {
 	
 	CIwColour ownerCol = owner->getColor();
@@ -23,10 +27,8 @@ void Icing::display() {
 	colors[3] = ownerCol;
 	
 	IwGxSetColStream(colors, 4);
-	
-	scale = scale < finalScale ? scale + .04 : scale;
-	
-	renderImageWorldSpace(position, angle, scale, 256, game->getRotation(), 0, 1);
+		
+	renderImageWorldSpace(position, angle, scale, 256, game->getRotation(), 0, 1, .2f);
 	
 	delete colors;
 }

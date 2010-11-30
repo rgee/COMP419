@@ -7,6 +7,8 @@ class Unit;
 #include "game.h"
 #include "player.h"
 #include "player.h"
+#include "IwDebugPrim.h"
+
 
 /**
 This lets us quickly determine a unit's type at run time.

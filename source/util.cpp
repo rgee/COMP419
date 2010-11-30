@@ -10,14 +10,14 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor,
 	
 	int vertexDist = scaleFactor*textureSize/2;
 	
-	vertices[0] = CIwSVec3(-1*vertexDist, -1*vertexDist, 0);
-	vertices[2] = CIwSVec3(vertexDist, -1*vertexDist,    0);
-	vertices[3] = CIwSVec3(vertexDist, vertexDist,       0);
-	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist,    0);
+	vertices[0] = CIwSVec3(-1*vertexDist, -1*vertexDist, z);
+	vertices[2] = CIwSVec3(vertexDist, -1*vertexDist,    z);
+	vertices[3] = CIwSVec3(vertexDist, vertexDist,       z);
+	vertices[1] = CIwSVec3(-1*vertexDist, vertexDist,    z);
 	
 	CIwMat modelTransform = CIwMat::g_Identity;
 	modelTransform.SetRotZ(IW_ANGLE_FROM_RADIANS(angle));
-	modelTransform.SetTrans(CIwVec3(position.x, -position.y, z));
+	modelTransform.SetTrans(CIwVec3(position.x, -position.y, 0));
 	    
 	CIwMat rot = CIwMat::g_Identity;
  	rot.SetRotZ(IW_ANGLE_FROM_RADIANS(worldRot));
@@ -39,6 +39,8 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor,
 		
 	//render the unit in model space
 	IwGxSetUVStream(UVs);
+	
+	IwGxSetZDepthFixed(8);	
 	
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);

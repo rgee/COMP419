@@ -13,7 +13,9 @@
 #include "wrecker.h"
 #include "spreader.h"
 
-#define	MS_PER_FRAME (1000 / 12)
+//run at 60 fps, but only update the game at 12fps
+#define	MS_PER_FRAME (1000 / 60)
+#define FRAMES_PER_UPDATE 5
 
 enum gesture_t { CREATE_UNIT, DRAG_WORLD };
 
