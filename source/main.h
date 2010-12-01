@@ -27,8 +27,8 @@ struct CTouch {
 	bool active;        	// whether touch is currently active
 	int32 id;	         	// touch's unique identifier
     Unit* unit;             // unit created by this touch if it's a create_unit gesture
-	int32 start_x;			// initial x position of a world_drag gesture
-    int32 start_y;          // initial y position of a world_drag gesture
+	int32 last_x;			// previous x position of a world_drag gesture
+    int32 last_y;           // previous y position of a world_drag gesture
 };
 
 Game* game = NULL;
@@ -38,6 +38,11 @@ Player* opponentPlayer = NULL;
 #define MAX_TOUCHES 10
 CTouch touches[MAX_TOUCHES];
 
+float worldScrollSpeed = 0;
+
+float getAngleDiff(int32 x0, int32 y0, int32 x1, int32 y1);
+float getAngleDiff(CTouch* touch);
+
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id);
 
@@ -46,11 +51,9 @@ bool renderUnitCreation(CTouch* touch);
 bool renderDragUnit(CTouch* touch);
 bool renderDragWorld(CTouch* touch);
 
-// assign activity and position info to the touch struct associated with an event
-// for a multitouch click.
+void giveWorldInitialScrollingSpeed(CTouch* touch);
+
 void MultiTouchButtonCB(s3ePointerTouchEvent* event);
-// assign position info to the touch struct associated with an event for
-// multitouch motion.
 void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event);
 
 void SingleTouchButtonCB(s3ePointerEvent* event);

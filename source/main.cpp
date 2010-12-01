@@ -24,22 +24,19 @@ CTouch* GetTouch(int32 id) {
 }
 
 bool renderTouches() {
-	bool true_so_far = true;
+	bool successful_so_far = true;
 
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
-            if(touches[i].gesture_type == CREATE_UNIT) {
-                true_so_far &= renderDragUnit(&touches[i]);
-			}else{
-                true_so_far &= renderDragWorld(&touches[i]);
+			switch(touches[i].gesture_type) {
+				case CREATE_UNIT: successful_so_far &= renderDragUnit(&touches[i]);
+				default: break;
 			}
 		}
 	}
 
-	return true_so_far;
+	return successful_so_far;
 }
-
-
 
 bool renderUnitCreation(CTouch* touch) {
     if(!touch->unit)
@@ -71,28 +68,23 @@ bool renderDragUnit(CTouch* touch){
 	}
 }
 
-bool renderDragWorld(CTouch* touch) {
-    if(touch->start_y != touch->y || touch->start_x != touch->x){
-        
+float getAngleDiff(int32 x0, int32 y0, int32 x1, int32 y1) {
+	if (y0 != y1 || x0 != x1) {
 		float inner_radius = game->getWorldRadius().x;
-        
-        CIwFVec2 start_pos_world = worldify(touch->start_x, touch->start_y, inner_radius, game->getRotation());
-        CIwFVec2 end_pos_world = worldify(touch->x, touch->y, inner_radius, game->getRotation());
+		CIwFVec2 start_pos_world = worldify(x0, y0, inner_radius, game->getRotation());
+		CIwFVec2 end_pos_world = worldify(x1, y1, inner_radius, game->getRotation());
 
-		float angle = angle_diff(start_pos_world, end_pos_world);
-        
-        game->rotate(angle);
-        
-        touch->start_x = touch->x;
-        touch->start_y = touch->y;        
-    }
-    
-    return true;
+		return angle_diff(start_pos_world, end_pos_world);
+	} else {
+		return 0.0;
+	}
 }
 
+float getAngleDiff(CTouch* touch) {
+	return getAngleDiff(touch->last_x, touch->last_y, touch->x, touch->y);
+}
 
-// assign activity and position info to the touch struct associated with an event
-// for a multitouch click.
+// callback called whenever a touch is initiated or ended.
 void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 	CTouch* touch = GetTouch(event->m_TouchID);
 	if (touch) {
@@ -102,8 +94,6 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
 
         // if it's the beginning of a touch, then determine what kind of gesture it is and set initial info.
         if (touch->active) {
-            touch->start_x = touch->x;
-            touch->start_y = touch->y;
             if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
                 
@@ -125,25 +115,29 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
             }
         // if it's the end of a touch, check what kind of gesture it and render.
         } else {
-            if (touch->gesture_type == CREATE_UNIT) {
-                renderUnitCreation(touch);
+			switch(touch->gesture_type) {
+				case CREATE_UNIT: renderUnitCreation(touch); break;
+				case DRAG_WORLD: /* shouldn't need to do anything */ break;
+				default: break;
             }
         }
 	}
 }
 
-// assign position info to the touch struct associated with an event for
-// multitouch motion.
+// called whenever a touch is moved.
 void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
     if(event->m_x < 0) return;
     
 	CTouch* touch = GetTouch(event->m_TouchID);
-	if (touch) {
-        if (touch->gesture_type == DRAG_WORLD) {
-            touch->start_x = touch->x;
-            touch->start_y = touch->y;
-        }
-        
+
+    if (touch->gesture_type == DRAG_WORLD && touch->active) {
+		touch->last_x = touch->x;
+        touch->last_y = touch->y;
+		touch->x = event->m_x;
+        touch->y = event->m_y;
+			
+		worldScrollSpeed = getAngleDiff(touch);
+    } else {
 		touch->x = event->m_x;
 		touch->y = event->m_y;
 	}
@@ -222,6 +216,11 @@ void doMain() {
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
         
+		if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {
+			game->rotate(worldScrollSpeed);
+			worldScrollSpeed = worldScrollSpeed / 1.25;
+		}
+	
         if(frameCount%FRAMES_PER_UPDATE == 0) {
 			game->tick();
 		}
