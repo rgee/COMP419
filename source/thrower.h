@@ -10,11 +10,11 @@ class Thrower : public Unit {
 		~Thrower(){};
 
 		virtual bool update();
-		virtual void display();
 		virtual unit_type getType();
 	
 		virtual Unit* spawnCopy();
-
+    
+        virtual const char* getTextureName();
 };
 
 #endif

@@ -110,7 +110,7 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
                 if(y < 0) return;
                 
                 switch (y / 60) { // 60px is size of icons
-                    case 0: break; //touch->unit = new Thrower(NULL,  game, CIwFVec2(0,0)); break;
+                    case 0: touch->unit = new Thrower(localPlayer,  game, 0, 0); break;
                     case 1: touch->unit = new Wrecker(localPlayer,  game, 0, 0); break;
                     case 2: touch->unit = new Muncher(localPlayer,  game, 0, 0); break;
                     case 3: touch->unit = new Shooter(localPlayer,  game, 0, 0); break;

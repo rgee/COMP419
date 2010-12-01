@@ -13,6 +13,7 @@
 #include "shooter.h"
 #include "wrecker.h"
 #include "spreader.h"
+#include "thrower.h"
 
 //run at 60 fps, but only update the game at 12fps
 #define	MS_PER_FRAME (1000 / 60)
