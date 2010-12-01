@@ -38,8 +38,8 @@ unit_type Thrower::getType() {
 }
 
 Unit* Thrower::spawnCopy() {
-<<<<<<< HEAD
-    return NULL;
+
+    return new Thrower(*this);
 	//return new Thrower(*this);
 } 
 
@@ -66,9 +66,7 @@ void Thrower::receiveDamage(float amount, Unit* attacker){
 int Thrower::getDammage(Unit* unit){
     unit_type type = unit->getType();
     return statAttacks[type];
-=======
-    return new Thrower(*this);
->>>>>>> 06b9a6382a508ca119ea40c025c52d6d4cd077b6
+
 }
 
 

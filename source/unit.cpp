@@ -127,6 +127,8 @@ float Unit::getAngle(){
 
 void Unit::attack(){}
 void Unit::receiveDamage(float amount, Unit *attacker){}
-int Unit::getDammage(Unit* unit){}
+int Unit::getDammage(Unit* unit){
+    return 0;
+}
 
 
