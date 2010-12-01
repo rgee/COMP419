@@ -60,3 +60,4 @@ float WorldObject::getTheta() {
 Game* WorldObject::getGame() {
 	return game;
 }
+

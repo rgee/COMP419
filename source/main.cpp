@@ -208,8 +208,8 @@ void doMain() {
     background->SetModulateMode(CIwMaterial::MODULATE_NONE);
     background->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     
-	static CIwSVec2 palate_xy(260, 0);
-	static CIwSVec2 palate_wh(60, 480);
+	static CIwSVec2 palate_xy(245, 0);
+	static CIwSVec2 palate_wh(75, 480);
     static CIwSVec2 bg_wh(320, 480);
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
