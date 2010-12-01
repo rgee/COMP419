@@ -21,6 +21,7 @@ bool Muncher::update() {
 		game->addIcing(new Icing(position, game, owner));
 		game->getAI()->updateAI(this);
 	}
+	
     
 	return true;
 }

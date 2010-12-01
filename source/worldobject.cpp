@@ -34,12 +34,16 @@ float WorldObject::getY() {
 }
 
 void WorldObject::setPolarPosition(float _r, float _theta){
+	
 	r = _r;
 	theta = _theta;
     while(theta > 2 * PI) theta -= 2*PI;
+	
+	CIwFVec2 v = CIwFVec2(r, theta);
+	polarToXY(v);
     
-	position.x = r * cos(theta);
-	position.y = r * sin(theta);
+	position.x = v.x;
+	position.y = v.y;
 }
 
 
