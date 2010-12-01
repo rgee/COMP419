@@ -5,9 +5,8 @@ AI::AI(Game* game):game(game){
 }
 
 void AI::doIdle(Unit* unit) {
-    unit->setPursuing(detectEnemy(unit));
-    if(unit->pursuing()) {
-        unit->setAIState(PURSUING);
+    if(detectEnemy(unit)) {
+        doPursue(unit);
 		return;
     }
 
@@ -105,6 +104,13 @@ void AI::updateAI(Unit* unit){
 }
 
 void AI::doAttack(Unit* unit) {
+    if (!unit->attacking() && unit->pursuing()) {
+        unit->setAttacking(unit->getPursuing());
+    }else if(!unit->pursuing() || !unit->attacking()){
+        unit->setAIState(IDLE);
+        doIdle(unit);
+    }
+    
     float attacker_distance = (unit->getAttacking()->getPosition() - unit->getPosition()).GetLength();
     float attack_range = unit->getRange();
 
@@ -127,6 +133,7 @@ void AI::doPursue(Unit* unit) {
     unit->setPursuing(detectEnemy(unit));
     
     if(unit->pursuing()) {
+        unit->setAIState(PURSUING);
 
         float speed = unit->getSpeed();
         float range = unit->getRange();

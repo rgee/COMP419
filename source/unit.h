@@ -39,6 +39,8 @@ class Unit : public WorldObject {
 		float spread_radius;
         float scale;
 
+        ai_state state;
+    
 		Player *owner;
 		CIwFVec2 velocity;
 		int uid;
@@ -132,7 +134,6 @@ class Unit : public WorldObject {
         float getSight();
         float getAngle();
     
-        ai_state state;
         void setAIState(ai_state newState);
         ai_state getAIState();
 };
