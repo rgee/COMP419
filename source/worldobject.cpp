@@ -2,7 +2,7 @@
 
 WorldObject::WorldObject(Game* game) : game(game){}
 
-WorldObject::WorldObject(CIwFVec2 position, Game* game) : position(position), game(game) { 
+WorldObject::WorldObject(CIwFVec2 position, Game* game) : game(game) { 
     setPosition(position);
 }
 
