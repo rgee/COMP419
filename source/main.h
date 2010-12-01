@@ -53,7 +53,6 @@ CTouch* GetTouch(int32 id);
 bool renderTouches(CTouch touches[]);
 bool renderUnitCreation(CTouch* touch);
 bool renderDragUnit(CTouch* touch);
-bool renderDragWorld(CTouch* touch);
 
 void giveWorldInitialScrollingSpeed(CTouch* touch);
 

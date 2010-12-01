@@ -31,8 +31,6 @@ bool renderTouches() {
         if(touches[i].active) {
             if(touches[i].gesture_type == CREATE_UNIT) {
                 successful_so_far &= renderDragUnit(&touches[i]);
-			}else{
-                successful_so_far &= renderDragWorld(&touches[i]);
 			}
 		}else {
             all_active = false;
