@@ -42,7 +42,8 @@ void Unit::display(){
 
 void Unit::displayOnScreen(int x, int y){    
     
-	CIwMaterial *mat = new CIwMaterial();
+	if(deathflag == false){
+    CIwMaterial *mat = new CIwMaterial();
     mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
     mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
@@ -58,6 +59,7 @@ void Unit::displayOnScreen(int x, int y){
     IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
     
     delete mat;
+    }
 }
 
 
