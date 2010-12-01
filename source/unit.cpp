@@ -8,7 +8,7 @@ Unit::Unit(const Unit& newUnit)
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
 	owner(newUnit.owner), scale(newUnit.scale), attackTarget(newUnit.attackTarget), 
 	pursueTarget(newUnit.pursueTarget), curFrame(0), numFrames(newUnit.numFrames), 
-	spriteSize(newUnit.spriteSize), deathflag(false)
+    spriteSize(newUnit.spriteSize), deathflag(false), state(newUnit.state)
 {
 
 }
@@ -21,7 +21,8 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL), deathflag(false)
+		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL),
+          deathflag(false), state(IDLE)
 {
     
 }
@@ -134,4 +135,10 @@ int Unit::getDammage(Unit* unit){
     return 0;
 }
 
+ai_state Unit::getAIState(){
+    return state;
+}
 
+void Unit::setAIState(ai_state newState){
+    state = newState;
+}
