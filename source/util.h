@@ -15,6 +15,9 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, i
  * The y component represents the theta.
  */
 void polarize(CIwFVec2& v);
+
+void polarToXY(CIwFVec2& v);
+
 CIwFVec2 worldify(int32 x, int32 y, float innerRadius, float rotation);
 float angle_diff(const CIwFVec2& pos1, const CIwFVec2& pos2);
 
