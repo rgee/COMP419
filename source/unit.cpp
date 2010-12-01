@@ -1,4 +1,5 @@
 #include "unit.h"
+#include "IwGeom.h"
 
 Unit::Unit(const Unit& newUnit)
 	: WorldObject(newUnit), 
@@ -33,9 +34,11 @@ void Unit::display(){
     //UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
     CIwMat pMat = CIwMat::g_Identity;
     pMat.SetTrans(CIwVec3(position.x, -position.y, 1));
+    CIwMat rot = CIwMat::g_Identity;
+    rot.SetRotZ(IW_ANGLE_FROM_RADIANS(game->getRotation()));
 
-    //IwGxDebugPrimCircle(pMat, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
-    //IwGxDebugPrimCircle(pMat, getSize()/2.0, 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+    IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
+    //IwGxDebugPrimCircle(pMat*rot, getSize()/2.0, 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
 
     
 }

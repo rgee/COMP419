@@ -12,10 +12,7 @@ void AI::path(Unit* unit){
 
 	// If we are neither attacking nor pursuing, find a unit to pursue
     if(!unit->attacking() && !unit->pursuing()){
-        Unit *enemy;
-        if((enemy = detectEnemy(unit)) != NULL){
-            unit->setPursuing(enemy);
-        }
+        unit->setPursuing(detectEnemy(unit));
     }
 
 	// If we are attacking, continue attacking.
@@ -81,6 +78,7 @@ void AI::path(Unit* unit){
 		CIwFVec2 curPolarPos = curPos;
 		polarize(curPolarPos);
 		
+
         unit->setPolarPosition(rad, tempTheta);
         unit->setVelocity(unit->getPosition() - curPos);
 
@@ -161,7 +159,6 @@ Unit* AI::detectEnemy(Unit* unit){
     
     float aggro_radii = unit->getSight();
     float sq_dist = 0.0f;
-    float radii = 0.0f;
     float closest_distance = SQ(aggro_radii);
     Unit* closest =  NULL;
     
@@ -170,9 +167,7 @@ Unit* AI::detectEnemy(Unit* unit){
     for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
         if(&(*itr)->getOwner() != &unit->getOwner()) {
 			temp_Pos = (*itr)->getPosition();
-
 			sq_dist = SQ(position.x - temp_Pos.x) + SQ(position.y - temp_Pos.y);
-            radii = aggro_radii;
 
             // Check if we've seen a nearer unit. If so, ignore this one and prefer the closer one.
 			if(sq_dist <= closest_distance) {
@@ -181,7 +176,7 @@ Unit* AI::detectEnemy(Unit* unit){
 			}
 		}
 	}
-    
+
     return closest;
 }
  

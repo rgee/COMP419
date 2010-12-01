@@ -9,10 +9,12 @@
 #include <iterator>
 #include <algorithm>
 
-class AI;
 
+class AI;
+#include "game.h"
 #include "util.h"
 #include "unit.h"
+#include "IwDebug.h"
 
 
 class AI{
