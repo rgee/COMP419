@@ -1,7 +1,7 @@
 #include "wrecker.h"
 
 Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
-	: Unit(350.0f, 100.0f, 40.0f, 5.0f, 5.0f, 5.0f, 40.0f, 0.0f, 0.0f, owner, game)
+	: Unit(350.0f, 100.0f, 40.0f, 3.0f, 5.0f, 5.0f, 40.0f, 0.0f, 0.0f, owner, game)
 {
 	spriteSize = 256;
 	numFrames = 6;
@@ -22,7 +22,7 @@ Wrecker::Wrecker(const Wrecker& newWrecker) : Unit(newWrecker) { }
 bool Wrecker::update(){
     curFrame = (curFrame + 1) % numFrames;
     
-    game->getAI()->updateAI(this);
+	game->getAI()->updateAI(this);
     
     return true;
 }

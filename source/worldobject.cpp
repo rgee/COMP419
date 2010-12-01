@@ -6,7 +6,9 @@ WorldObject::WorldObject(CIwFVec2 position, Game* game) : position(position), ga
     setPosition(position);
 }
 
-WorldObject::WorldObject(const WorldObject& newObj) : position(newObj.position), game(newObj.game), r(newObj.r), theta(newObj.theta) { }
+WorldObject::WorldObject(const WorldObject& newObj) : game(newObj.game), r(newObj.r), theta(newObj.theta) {
+    setPosition(newObj.position);
+}
 
 void WorldObject::setPosition(float x, float y) {
     position = CIwFVec2(x, y);

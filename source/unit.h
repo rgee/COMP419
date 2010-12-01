@@ -42,7 +42,7 @@ class Unit : public WorldObject {
 		Player *owner;
 		CIwFVec2 velocity;
 		int uid;
-	
+		
 		//info for sprite animation
 		int spriteSize;
 		int numFrames;

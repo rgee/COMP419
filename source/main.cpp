@@ -182,8 +182,6 @@ void init(){
     game = new Game(localPlayer, opponentPlayer);
     
     frameCount = 0;
-    
-    s3eDebugOutputString(s3eDeviceGetString(S3E_DEVICE_OS));
 }
 
 void doMain() {
