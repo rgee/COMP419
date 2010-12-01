@@ -95,12 +95,12 @@ void Game::addUnit(Unit *u){
 	(unitBucket[u->getTextureName()])->insert(u);
 
 	//have the opponent mirror the local player
-	/*if(&(u->getOwner()) == localPlayer) {
+	if(&(u->getOwner()) == localPlayer) {
 		Unit* newUnit = u->spawnCopy();
 		newUnit->setOwner(opponentPlayer);
 		newUnit->setPolarPosition(u->getR() + 1, PI - u->getTheta());
 		addUnit(newUnit);
-    }*/
+    }
 }
 
 void Game::tick(){

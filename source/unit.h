@@ -9,6 +9,7 @@ class Unit;
 #include "player.h"
 #include "IwDebugPrim.h"
 #include <string>
+#include "AI.h"
 
 
 /**
@@ -17,6 +18,11 @@ This lets us quickly determine a unit's type at run time.
 enum unit_type {
 	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER, LEADER
 };
+
+typedef enum ai_state {
+    ATTACKING, IDLE, PURSUING
+};
+
 
 class Unit : public WorldObject {
     
@@ -36,9 +42,7 @@ class Unit : public WorldObject {
 		Player *owner;
 		CIwFVec2 velocity;
 		int uid;
-	
-		CIwFVec2 targetPos;
-	
+		
 		//info for sprite animation
 		int spriteSize;
 		int numFrames;
@@ -127,6 +131,10 @@ class Unit : public WorldObject {
     
         float getSight();
         float getAngle();
+    
+        ai_state state;
+        void setAIState(ai_state newState);
+        ai_state getAIState();
 };
 
 #endif
