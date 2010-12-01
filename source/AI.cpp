@@ -49,7 +49,7 @@ void AI::path(Unit* unit){
             if (!tempArray.empty()){
                 unit->setPosition(old_position);
 		    } else {
-                unit->setVelocity(old_position - unit->getPosition());
+                unit->setVelocity(unit->getPosition() - old_position);
             }
         } else {
             unit->setVelocity(pursuitVector);
@@ -110,8 +110,8 @@ Unit* AI::detectEnemy(Unit* unit){
         if(&(*itr)->getOwner() != &unit->getOwner()) {
 			temp_Pos = (*itr)->getPosition();
 
-			sq_dist = SQ(temp_Pos.x - position.x) + SQ(temp_Pos.y - position.y);
-			radii = SQ(((*itr)->getSize() + aggro_radii));
+			sq_dist = sqrt(SQ(position.x - temp_Pos.x) + SQ(position.y - temp_Pos.y));
+            radii = aggro_radii;
 			if(sq_dist < 0) sq_dist *= -1;
 
             // Check if we've seen a nearer unit. If so, ignore this one and prefer the closer one.
