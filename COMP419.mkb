@@ -54,6 +54,7 @@ assets
 	shooter_sprite_sheet.png
 	palate.png
 	icing.png
+	background.png
 	
 	(data/resource_groups)
 	game.group

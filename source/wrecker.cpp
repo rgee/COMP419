@@ -4,7 +4,7 @@ Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
 	: Unit(350.0f, 100.0f, 40.0f, 5.0f, 5.0f, 5.0f, 40.0f, 0.0f, 0.0f, owner, game)
 {
 	spriteSize = 256;
-	numFrames = 5;
+	numFrames = 6;
 	curFrame = 0;
     scale = 0.2;
     setPosition(x, y);
@@ -21,7 +21,13 @@ bool Wrecker::update(){
 }
 
 const char* Wrecker::getTextureName(){
-    return "wrecker_walk_sprite_sheet";
+    if (attackTarget == NULL) {
+        numFrames = 6;
+        return "wrecker_walk_sprite_sheet";
+    }else{
+        numFrames = 8;
+        return "wrecker_attack_sprite_sheet";
+    }
 }
 
 unit_type Wrecker::getType() {
