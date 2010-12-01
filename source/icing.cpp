@@ -28,7 +28,7 @@ void Icing::display() {
 	
 	IwGxSetColStream(colors, 4);
 		
-	//renderImageWorldSpace(position, angle, scale, 256, game->getRotation(), 0, 1, .2f);
+	renderImageWorldSpace(position, angle, scale, 256, game->getRotation(), 0, 1, .2f);
 	
 	delete colors;
 }
