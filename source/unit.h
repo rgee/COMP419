@@ -37,6 +37,8 @@ class Unit : public WorldObject {
 		CIwFVec2 velocity;
 		int uid;
 	
+		CIwFVec2 targetPos;
+	
 		//info for sprite animation
 		int spriteSize;
 		int numFrames;
@@ -125,8 +127,6 @@ class Unit : public WorldObject {
     
         float getSight();
         float getAngle();
-    
-
 };
 
 #endif

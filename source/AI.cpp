@@ -59,8 +59,9 @@ void AI::path(Unit* unit){
 	// head in the direction of the enemy base.
 	else {
 		
-		CIwFVec2 polarVel = unit->getVelocity();
-		polarize(polarVel);
+		CIwFVec2 position = unit->getPosition();
+		float unitR = unit->getR();
+		float unitTheta = unit->getTheta();
         
         Player *p = game->getLocalPlayer();
         Player *q = &unit->getOwner();
@@ -72,71 +73,36 @@ void AI::path(Unit* unit){
         if(diff < PI && diff > 0) direction = 1;
 		
 		float thetaChange = direction*speed/rad;
-		float tempTheta = thetaChange + theta;
-        
-		float curR = unit->getR(); 
-		float curTheta = unit->getTheta();
-		CIwFVec2 curPos = unit->getPosition();
 		
-		CIwFVec2 curPolarPos = curPos;
-		polarize(curPolarPos);
 		
-        unit->setPolarPosition(rad, tempTheta);
-        unit->setVelocity(unit->getPosition() - curPos);
-
-        // Check if we would hit any other unit.
-        std::list<Unit*> tempArray; 
-		collide(std::back_inserter(tempArray), unit);
-
-		// If we hit something, reset the movement.
-        if (!tempArray.empty()) {
+		std::list<Unit*>* units = game->getUnits();
+		float rChange = 0.0;
+		
+		for (std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
 			
-			float rIncr;
+			Unit* otherUnit = *(itr);
 			
-			bool foundDir = false;
-			
-			for (rIncr = 0.0; rIncr < 30.0; rIncr += 5) {
-				unit->setPolarPosition(rad + rIncr, tempTheta);
-				collide(std::back_inserter(tempArray), unit);
+			if(otherUnit != unit) {
 				
-				if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
-					foundDir = true;
-					break;
-				}
-				else {
-					unit->setPolarPosition(rad - rIncr, tempTheta);
-					collide(std::back_inserter(tempArray), unit);
-					
-					if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
-						foundDir = true;
-						break;
-					}
-				}
+				CIwFVec2 otherPos = otherUnit->getPosition();
+				float otherR = otherUnit->getR();
+				float otherTheta = otherUnit->getTheta();
+				float distSquare = abs((otherPos-position).GetLengthSquared());
+				
+				
+				float rDiff = unitR - otherR;
+				float dir = rDiff > 0 ? 1.0 : -1.0;
+				
+				rChange += dir*15000.0/distSquare;
 			}
-			
-			if (!foundDir) {
-				
-				float unitSize = unit->getSize();
-				
-				CIwFVec2 nextMoveOut = curPolarPos + CIwFVec2(20.0, 0.0);
-				CIwFVec2 nextMoveIn = curPolarPos + CIwFVec2(-20.0, 0.0);
+		}
+		
+		rChange += 5000/pow((worldRad.x - unitR), 2.0);
+		rChange -= 5000/pow((worldRad.y - unitR), 2.0); 
+		
+		unit->setPolarPosition(unitR + rChange, unit->getTheta() + thetaChange);
+		unit->setVelocity(unit->getPosition() - position);
 
-				polarToXY(nextMoveIn);
-				polarToXY(nextMoveOut);
-				
-				if (isInWorld(nextMoveIn, worldRad.x, worldRad.y)) {
-					unit->setPolarPosition(rad-20.0, theta);
-				}
-				else if (isInWorld(nextMoveOut, worldRad.x, worldRad.y)) {
-					unit->setPolarPosition(rad+20.0, theta);
-				}
-				else {
-					//unit->setPolarPosition(rad, theta-thetaChange);
-				}
-			}
-					
-			unit->setVelocity(unit->getPosition() - curPos);
-        }
 	}
 		
 }
