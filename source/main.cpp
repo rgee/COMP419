@@ -29,7 +29,7 @@ bool renderTouches() {
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
             if(touches[i].gesture_type == CREATE_UNIT) {
-                //true_so_far &= renderDragUnit(&touches[i]);
+                true_so_far &= renderDragUnit(&touches[i]);
 			}else{
                 true_so_far &= renderDragWorld(&touches[i]);
 			}
