@@ -191,6 +191,10 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 	Unit* collideUnit; //unit that we're colliding with
 	float collideRad; //radius of circle containing the colliding unit
 	float unitRad = unit->getSize()/2.0;
+    CIwFVec2 collidePos = CIwFVec2::g_Zero;
+    CIwFVec2 collideDir = CIwFVec2::g_Zero;
+    CIwFVec2 collideRadPoint = CIwFVec2::g_Zero;
+    float collideT = 0.0f;
 	
 	for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
 		
@@ -198,21 +202,15 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 			collideUnit = *(itr);
 			collideRad = collideUnit->getSize()/2.0;
 			
-			CIwFVec2 collidePos = collideUnit->getPosition(); //position of unit we're colliding with
-			CIwFVec2 collideDir = (collidePos - unitPos); //normalized vector pointing from the unit toward the one being collided with
+			collidePos = collideUnit->getPosition(); //position of unit we're colliding with
+			collideDir = (collidePos - unitPos); //normalized vector pointing from the unit toward the one being collided with
 			collideDir.Normalise();
 			
-			CIwFVec2 collideRadPoint = (-1*collideDir)*collideRad + collidePos; //point on edge of colliding unit's bounding circle closest to our unit
+			collideRadPoint = (-1*collideDir)*collideRad + collidePos; //point on edge of colliding unit's bounding circle closest to our unit
 				
-			float collideT = (collideRadPoint.x - unitPos.x)/collideDir.x;
-				
-			char* str = (char*)calloc(100, sizeof(char));
-			sprintf(str, "%f %f", collideT, unitRad);
-			s3eDebugOutputString(str);
-			free(str);
+			collideT = (collideRadPoint.x - unitPos.x)/collideDir.x;
 			
 			if (collideT <= unitRad) {
-				
 				*(out++) = collideUnit;
 			}
 		}
