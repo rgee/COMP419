@@ -5,95 +5,57 @@ AI::AI(Game* game):game(game){
 }
 
 void AI::doIdle(Unit* unit) {
-    unit->setPursuing(detectEnemy(unit));
-    if(unit->pursuing()) {
-        unit->setAIState(PURSUING);
+    if(detectEnemy(unit)) {
+        doPursue(unit);
 		return;
     }
 
-    float rad = unit->getR();
-	float speed = unit->getSpeed();
-	float range = unit->getRange();
-    float theta = unit->getTheta();
-    CIwFVec2 polarVel = unit->getVelocity();
-	polarize(polarVel);
-        
-    Player *p = game->getLocalPlayer();
-    Player *q = &unit->getOwner();
-    float targetTheta = (p == q) ? 0 : PI;
-        
-    int direction = -1;
-    float diff = theta - targetTheta; // so theta or theta - PI
-        
-    if(diff < PI && diff > 0) direction = 1;
-		
-	float thetaChange = direction*speed/rad;
-	float tempTheta = thetaChange + theta;
-        
-	float curR = unit->getR(); 
-	float curTheta = unit->getTheta();
-	CIwFVec2 curPos = unit->getPosition();
-		
-	CIwFVec2 curPolarPos = curPos;
-	polarize(curPolarPos);
-		
 
-    unit->setPolarPosition(rad, tempTheta);
-    unit->setVelocity(unit->getPosition() - curPos);
-
-    // Check if we would hit any other unit.
-    std::list<Unit*> tempArray; 
-	collide(std::back_inserter(tempArray), unit);
-
-	// If we hit something, reset the movement.
-    if (!tempArray.empty()) {
+    CIwFVec2 position = unit->getPosition();
+	float unitR = unit->getR();
+	float unitTheta = unit->getTheta();
+	float unitSpeed = unit->getSpeed();
+	
+	Player *p = game->getLocalPlayer();
+	Player *q = &unit->getOwner();
+	float targetTheta = (p == q) ? 0 : PI;
+	
+	int direction = -1;
+	float diff = unitTheta - targetTheta; // so theta or theta - PI
+	
+	if(diff < PI && diff > 0) direction = 1;
+		
+	float thetaChange = direction*unitSpeed/unitR;
+	
+	
+	std::list<Unit*>* units = game->getUnits();
+	float rChange = 0.0;
+	
+	for (std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
+		
+		Unit* otherUnit = *(itr);
+		
+		if(otherUnit != unit) {
 			
-		float rIncr;
+			CIwFVec2 otherPos = otherUnit->getPosition();
+			float otherR = otherUnit->getR();
+			float otherTheta = otherUnit->getTheta();
+			float distSquare = abs((otherPos-position).GetLengthSquared());
 			
-		bool foundDir = false;
 			
-		for (rIncr = 0.0; rIncr < 30.0; rIncr += 5) {
-			unit->setPolarPosition(rad + rIncr, tempTheta);
-			collide(std::back_inserter(tempArray), unit);
-				
-			if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
-				foundDir = true;
-				break;
-			}
-			else {
-				unit->setPolarPosition(rad - rIncr, tempTheta);
-				collide(std::back_inserter(tempArray), unit);
-					
-				if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
-					foundDir = true;
-					break;
-				}
-			}
+			float rDiff = unitR - otherR;
+			float dir = rDiff > 0 ? 1.0 : -1.0;
+			
+			rChange += dir*15000.0/distSquare;
 		}
-			
-		if (!foundDir) {
-				
-			float unitSize = unit->getSize();
-				
-			CIwFVec2 nextMoveOut = curPolarPos + CIwFVec2(20.0, 0.0);
-			CIwFVec2 nextMoveIn = curPolarPos + CIwFVec2(-20.0, 0.0);
-
-			polarToXY(nextMoveIn);
-			polarToXY(nextMoveOut);
-				
-			if (isInWorld(nextMoveIn, worldRad.x, worldRad.y)) {
-				unit->setPolarPosition(rad-20.0, theta);
-			}
-			else if (isInWorld(nextMoveOut, worldRad.x, worldRad.y)) {
-				unit->setPolarPosition(rad+20.0, theta);
-			}
-			else {
-				//unit->setPolarPosition(rad, theta-thetaChange);
-			}
-		}
-					
-		unit->setVelocity(unit->getPosition() - curPos);
-    }
+	}
+	
+	rChange += 5000/pow((worldRad.x - unitR), 2.0);
+	rChange -= 5000/pow((worldRad.y - unitR), 2.0); 
+	
+	unit->setPolarPosition(unitR + rChange, unit->getTheta() + thetaChange);
+	unit->setVelocity(unit->getPosition() - position);
+	
 }
 
 
@@ -142,6 +104,13 @@ void AI::updateAI(Unit* unit){
 }
 
 void AI::doAttack(Unit* unit) {
+    if (!unit->attacking() && unit->pursuing()) {
+        unit->setAttacking(unit->getPursuing());
+    }else if(!unit->pursuing() || !unit->attacking()){
+        unit->setAIState(IDLE);
+        doIdle(unit);
+    }
+    
     float attacker_distance = (unit->getAttacking()->getPosition() - unit->getPosition()).GetLength();
     float attack_range = unit->getRange();
 
@@ -164,6 +133,7 @@ void AI::doPursue(Unit* unit) {
     unit->setPursuing(detectEnemy(unit));
     
     if(unit->pursuing()) {
+        unit->setAIState(PURSUING);
 
         float speed = unit->getSpeed();
         float range = unit->getRange();

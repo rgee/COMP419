@@ -1,7 +1,7 @@
 #include "muncher.h"
 
 Muncher::Muncher(Player* owner, Game* game, float x, float y)
-		 : Unit(100.0f, 50.0f, 10.0f, 25.0f, 10.0f, 5.0f, 10.0f, 0.0f, 0.0f, owner, game)
+		 : Unit(100.0f, 50.0f, 10.0f, 4.0f, 10.0f, 5.0f, 10.0f, 0.0f, 0.0f, owner, game)
 {
 	spriteSize = 256;
 	numFrames = 12;
@@ -22,7 +22,7 @@ bool Muncher::update() {
 	
     curFrame = (curFrame + 1) % numFrames;
    
-    if(curFrame == 0) {
+    if(curFrame >= 8) {
 		game->getAI()->updateAI(this);
 	}
 	

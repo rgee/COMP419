@@ -10,7 +10,7 @@ Unit::Unit(const Unit& newUnit)
 	pursueTarget(newUnit.pursueTarget), curFrame(0), numFrames(newUnit.numFrames), 
     spriteSize(newUnit.spriteSize), deathflag(false), state(newUnit.state)
 {
-
+	
 }
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
@@ -38,7 +38,7 @@ void Unit::display(){
     CIwMat rot = CIwMat::g_Identity;
     rot.SetRotZ(IW_ANGLE_FROM_RADIANS(game->getRotation()));
 
-    IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
+    //IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
     //IwGxDebugPrimCircle(pMat*rot, getSize()/2.0, 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
 
     

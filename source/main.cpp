@@ -30,7 +30,7 @@ bool renderTouches() {
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
             if(touches[i].gesture_type == CREATE_UNIT) {
-                //successful_so_far &= renderDragUnit(&touches[i]);
+                successful_so_far &= renderDragUnit(&touches[i]);
 			}
 		}else {
             all_active = false;
@@ -182,8 +182,6 @@ void init(){
     game = new Game(localPlayer, opponentPlayer);
     
     frameCount = 0;
-    
-    s3eDebugOutputString(s3eDeviceGetString(S3E_DEVICE_OS));
 }
 
 void doMain() {
@@ -210,8 +208,8 @@ void doMain() {
     background->SetModulateMode(CIwMaterial::MODULATE_NONE);
     background->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     
-	static CIwSVec2 palate_xy(260, 0);
-	static CIwSVec2 palate_wh(60, 480);
+	static CIwSVec2 palate_xy(245, 0);
+	static CIwSVec2 palate_wh(75, 480);
     static CIwSVec2 bg_wh(320, 480);
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
