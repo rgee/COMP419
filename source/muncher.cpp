@@ -8,7 +8,12 @@ Muncher::Muncher(Player* owner, Game* game, float x, float y)
 	curFrame = 0;
     scale = 0.2f;
     setPosition(x, y);
-    //statAttacks = {{"Muncher",0},{"Wrecker",10},{"Thrower",0},{"Shooter",0},{"Invader",0},{"Spreader",0},{"Leader",0}};
+    statAttacks.insert(std::pair<unit_type, int>(MUNCHER,0));
+    statAttacks.insert(std::pair<unit_type, int>(WRECKER,10));
+    statAttacks.insert(std::pair<unit_type, int>(THROWER,0));
+    statAttacks.insert(std::pair<unit_type, int>(SHOOTER,0));
+    statAttacks.insert(std::pair<unit_type, int>(SPREADER,0));
+    statAttacks.insert(std::pair<unit_type, int>(LEADER,0));
 }
 
 Muncher::Muncher(const Muncher& newMuncher) : Unit(newMuncher) { }
@@ -24,6 +29,30 @@ bool Muncher::update() {
 	
     
 	return true;
+}
+void Muncher::attack(){
+    Unit* attacking = this->attackTarget;
+    if((attacking->getPosition()-position).GetLength()>range){
+        pursueTarget = attacking;
+        attackTarget = NULL;
+    }
+    else{
+        int dmg = getDammage(attacking);
+        attacking->receiveDamage(dmg, this);
+    }
+}
+void Muncher::receiveDamage(float amount, Unit* attacker){
+    if (hp<=amount) {
+        attacker->setAttacking(NULL);
+        deathflag = true;
+    } 
+    else {
+        hp = hp - amount;}
+}
+
+int Muncher::getDammage(Unit* unit){
+    unit_type type = unit->getType();
+    return statAttacks[type];
 }
 
 const char* Muncher::getTextureName() {

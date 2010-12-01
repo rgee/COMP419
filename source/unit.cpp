@@ -7,7 +7,7 @@ Unit::Unit(const Unit& newUnit)
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
 	owner(newUnit.owner), scale(newUnit.scale), attackTarget(newUnit.attackTarget), 
 	pursueTarget(newUnit.pursueTarget), curFrame(0), numFrames(newUnit.numFrames), 
-	spriteSize(newUnit.spriteSize)
+	spriteSize(newUnit.spriteSize), deathflag(false)
 {
 
 }
@@ -20,14 +20,15 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL)
+		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL), deathflag(false)
 {
-	
+    
 }
 
 void Unit::display(){
 	IwGxSetColStream(owner->getColors(), 4);
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
+
 
     //UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
     CIwMat pMat = CIwMat::g_Identity;
@@ -35,6 +36,7 @@ void Unit::display(){
 
     //IwGxDebugPrimCircle(pMat, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
     //IwGxDebugPrimCircle(pMat, getSize()/2.0, 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+
     
 }
 
@@ -104,9 +106,6 @@ float Unit::getSize() {
 	return ((float)spriteSize)*scale;
 }
 
-void Unit::attack(){}
-
-void Unit::receiveDamage(float amount, Unit *attacker){}
 
 void Unit::setVelocity(const CIwFVec2& vel){
     velocity = vel;
@@ -125,4 +124,9 @@ float Unit::getAngle(){
     CIwFVec2 norm = velocity.GetNormalised();
     return PI + atan2(norm.y, norm.x);
 }
+
+void Unit::attack(){}
+void Unit::receiveDamage(float amount, Unit *attacker){}
+int Unit::getDammage(Unit* unit){}
+
 

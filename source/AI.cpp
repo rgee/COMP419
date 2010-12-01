@@ -139,6 +139,7 @@ bool AI::attack(Unit* unit){
 	if(unit->attacking() && unit->pursuing()){
 		unit->setPursuing(NULL);
 	}
+    unit->attack();
     return false;
     
 } 

@@ -4,6 +4,7 @@
 class Muncher;
 
 #include "unit.h"
+#include <map>
 
 class Muncher : public Unit {
 
@@ -14,13 +15,20 @@ class Muncher : public Unit {
 		Muncher(const Muncher& newMuncher);
 	
 		~Muncher() {};
+    
+        std::map<unit_type, int> statAttacks;
 
 		virtual const char* getTextureName();
 		virtual bool update();
+        
+        virtual void attack();
+        virtual void receiveDamage(float amount, Unit *attacker); 
+        virtual int getDammage(Unit* unit);
 
 		virtual unit_type getType();
 	
 		virtual Unit* spawnCopy();
+
 };
 
 #endif

@@ -14,6 +14,14 @@ class Thrower : public Unit {
 		virtual unit_type getType();
 	
 		virtual Unit* spawnCopy();
+    
+        std::map<unit_type, int> statAttacks;
+    
+        virtual void attack();
+        virtual void receiveDamage(float amount, Unit *attacker); 
+        virtual int getDammage(Unit* unit);
+    
+         
 
 };
 

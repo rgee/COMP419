@@ -63,3 +63,13 @@ Unit* Spreader::spawnCopy() {
 	return new Spreader(*this);
 }
 
+void Spreader::receiveDamage(float amount, Unit* attacker){
+    if (hp<=amount) {
+        attacker->setAttacking(NULL);
+        deathflag = true;
+    } 
+    else {
+        hp = hp - amount;}
+}
+
+

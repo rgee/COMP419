@@ -72,6 +72,7 @@ float angle_diff(const CIwFVec2& pos1, const CIwFVec2&  pos2) {
 	return atan2(pos2.y, pos2.x) - atan2(pos1.y, pos1.x);
 }
 
+
 bool isInWorld(CIwFVec2 position, float innerRad, float outerRad) {
 	polarize(position);
 	return position.x > innerRad &&  position.x < outerRad;
@@ -85,3 +86,4 @@ void polarToXY(CIwFVec2& v) {
 	v.x = r * cos(theta);
 	v.y = r * sin(theta);
 }
+
