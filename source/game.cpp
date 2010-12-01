@@ -98,7 +98,7 @@ void Game::addUnit(Unit *u){
 	if(&(u->getOwner()) == localPlayer) {
 		Unit* newUnit = u->spawnCopy();
 		newUnit->setOwner(opponentPlayer);
-		newUnit->setPolarPosition(u->getR() - 20.0, u->getTheta() + .75);
+		newUnit->setPolarPosition(u->getR() + 1, PI - u->getTheta());
 		addUnit(newUnit);
     }
 }
