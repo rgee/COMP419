@@ -38,7 +38,7 @@ void AI::path(Unit* unit){
 
         // We just set the velocity vector to face their target if
         // we're updating a stationary unit, otherwise, move them.
-        if(speed > 0.0f) {
+        if(speed > 0.01f) { // use a small number because floats are imprecise
 		    tempPos = (pursuitVector/speed) + unit->getPosition();
 
             unit->setPosition(tempPos);
@@ -49,7 +49,7 @@ void AI::path(Unit* unit){
             if (!tempArray.empty()){
                 unit->setPosition(old_position);
 		    } else {
-                unit->setVelocity(old_position - unit->getPosition());
+                unit->setVelocity(unit->getPosition() - old_position);
             }
         } else {
             unit->setVelocity(pursuitVector);
@@ -61,8 +61,17 @@ void AI::path(Unit* unit){
 		
 		CIwFVec2 polarVel = unit->getVelocity();
 		polarize(polarVel);
+        
+        Player *p = game->getLocalPlayer();
+        Player *q = &unit->getOwner();
+        float targetTheta = (p == q) ? 0 : PI;
+        
+        int direction = -1;
+        float diff = theta - targetTheta; // so theta or theta - PI
+        
+        if(diff < PI && diff > 0) direction = 1;
 		
-		float thetaChange = speed/rad;
+		float thetaChange = direction*speed/rad;
 		float tempTheta = thetaChange + theta;
         
 		float curR = unit->getR(); 
@@ -87,8 +96,6 @@ void AI::path(Unit* unit){
 			bool foundDir = false;
 			
 			for (rIncr = 0.0; rIncr < 30.0; rIncr += 5) {
-				
-				tempArray.clear();
 				unit->setPolarPosition(rad + rIncr, tempTheta);
 				collide(std::back_inserter(tempArray), unit);
 				
@@ -97,7 +104,6 @@ void AI::path(Unit* unit){
 					break;
 				}
 				else {
-					tempArray.clear();
 					unit->setPolarPosition(rad - rIncr, tempTheta);
 					collide(std::back_inserter(tempArray), unit);
 					
@@ -142,6 +148,7 @@ bool AI::attack(Unit* unit){
 	if(unit->attacking() && unit->pursuing()){
 		unit->setPursuing(NULL);
 	}
+    unit->attack();
     return false;
     
 } 
@@ -152,10 +159,10 @@ Unit* AI::detectEnemy(Unit* unit){
     CIwFVec2 position = unit->getPosition() + unit->getVelocity();
     CIwFVec2 temp_Pos = CIwFVec2::g_Zero;
     
-    float closest_distance = 1000000.0f;
     float aggro_radii = unit->getSight();
     float sq_dist = 0.0f;
     float radii = 0.0f;
+    float closest_distance = SQ(aggro_radii);
     Unit* closest =  NULL;
     
 
@@ -164,67 +171,22 @@ Unit* AI::detectEnemy(Unit* unit){
         if(&(*itr)->getOwner() != &unit->getOwner()) {
 			temp_Pos = (*itr)->getPosition();
 
-			sq_dist = SQ(temp_Pos.x - position.x) + SQ(temp_Pos.y - position.y);
-			radii = SQ(((*itr)->getSize() + aggro_radii));
-			if(sq_dist < 0) sq_dist *= -1;
+			sq_dist = SQ(position.x - temp_Pos.x) + SQ(position.y - temp_Pos.y);
+            radii = aggro_radii;
 
             // Check if we've seen a nearer unit. If so, ignore this one and prefer the closer one.
-			if(sq_dist <= radii && sq_dist <= closest_distance) {
+			if(sq_dist <= closest_distance) {
                 closest_distance = sq_dist;
                 closest = *(itr);
 			}
 		}
 	}
+    
     return closest;
 }
  
 void AI::updateAI(Unit* unit){
      path(unit);
-}
-
-std::list<Unit*>* AI::collisionDetection(Unit* unit){
-    float lowTheta = unit->getTheta()-10;
-    float upTheta  = unit->getTheta()+10;
-    float upRad  = worldRad.y;
-    float lowRad = worldRad.x;
-
-	std::list<Unit*>* Units = game->getUnits();
- 
-    CIwFVec2 pos = unit->getPosition()+unit->getVelocity();
-    polarize(pos);
-    
-    float rad   = pos.x;
-    float theta = pos.y;
-    
-    float size = unit->getSize();
-	float current_unit_theta = 0.0f;
-    
-	float sq_dist = 0.0f;
-	float radii = 0.0f;
-   
-    
-    std::list<Unit*>* collide_array = new std::list<Unit*>();
-    
-    if((lowRad <= rad) && (rad <= upRad)){
-        return NULL;
-    }
-    
-    for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
-        Unit *temp = *itr;
-		current_unit_theta = temp->getTheta();
-        if((lowTheta <= current_unit_theta) && (current_unit_theta <= upTheta)){
-            CIwFVec2 tempPos = temp->getPosition();
-
-			// We can just use the squared distance here since we only care about relative
-			// positioning.
-            sq_dist = SQ(tempPos.x - pos.x) + SQ(tempPos.y - pos.y);
-			radii = pow(size + temp->getSize(), 2);
-            if (sq_dist <= radii) {
-                collide_array->push_back(temp);
-            }
-        }
-    }
-    return collide_array;
 }
 
 template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* unit)
@@ -236,6 +198,10 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 	Unit* collideUnit; //unit that we're colliding with
 	float collideRad; //radius of circle containing the colliding unit
 	float unitRad = unit->getSize()/2.0;
+    CIwFVec2 collidePos = CIwFVec2::g_Zero;
+    CIwFVec2 collideDir = CIwFVec2::g_Zero;
+    CIwFVec2 collideRadPoint = CIwFVec2::g_Zero;
+    float collideT = 0.0f;
 	
 	for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
 		
@@ -243,21 +209,15 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 			collideUnit = *(itr);
 			collideRad = collideUnit->getSize()/2.0;
 			
-			CIwFVec2 collidePos = collideUnit->getPosition(); //position of unit we're colliding with
-			CIwFVec2 collideDir = (collidePos - unitPos); //normalized vector pointing from the unit toward the one being collided with
+			collidePos = collideUnit->getPosition(); //position of unit we're colliding with
+			collideDir = (collidePos - unitPos); //normalized vector pointing from the unit toward the one being collided with
 			collideDir.Normalise();
 			
-			CIwFVec2 collideRadPoint = (-1*collideDir)*collideRad + collidePos; //point on edge of colliding unit's bounding circle closest to our unit
+			collideRadPoint = (-1*collideDir)*collideRad + collidePos; //point on edge of colliding unit's bounding circle closest to our unit
 				
-			float collideT = (collideRadPoint.x - unitPos.x)/collideDir.x;
-				
-			char* str = (char*)calloc(100, sizeof(char));
-			sprintf(str, "%f %f", collideT, unitRad);
-			s3eDebugOutputString(str);
-			free(str);
+			collideT = (collideRadPoint.x - unitPos.x)/collideDir.x;
 			
 			if (collideT <= unitRad) {
-				
 				*(out++) = collideUnit;
 			}
 		}

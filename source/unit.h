@@ -8,13 +8,14 @@ class Unit;
 #include "player.h"
 #include "player.h"
 #include "IwDebugPrim.h"
+#include <string>
 
 
 /**
 This lets us quickly determine a unit's type at run time.
 */
 enum unit_type {
-	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER
+	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER, LEADER
 };
 
 class Unit : public WorldObject {
@@ -40,6 +41,10 @@ class Unit : public WorldObject {
 		int spriteSize;
 		int numFrames;
 		int curFrame;
+        
+        bool deathflag;
+    
+        std::string unitType;
 	
 		// The unit this unit is attacking.
 		Unit *attackTarget;
@@ -113,11 +118,15 @@ class Unit : public WorldObject {
         virtual void display();
         void displayOnScreen(int x, int y);
 		
-		void attack();
-		void receiveDamage(float amount, Unit *attacker); 
+		virtual void attack();
+		virtual void receiveDamage(float amount, Unit* attacker); 
+        virtual int getDammage(Unit* unit);
+        
     
         float getSight();
         float getAngle();
+    
+
 };
 
 #endif

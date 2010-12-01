@@ -2,4 +2,5 @@ CIwResGroup
 {
 	name "Palate"
 	"../images/palate.png"
+    "../images/background.png"
 }

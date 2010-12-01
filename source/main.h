@@ -2,6 +2,7 @@
 #define _MAIN_H
 
 #include "s3e.h"
+#include "s3eDebug.h"
 #include "IwUtil.h"
 #include "IwGx.h"
 #include "IwGeomMat.h"
@@ -12,10 +13,13 @@
 #include "shooter.h"
 #include "wrecker.h"
 #include "spreader.h"
+#include "thrower.h"
 
 //run at 60 fps, but only update the game at 12fps
 #define	MS_PER_FRAME (1000 / 60)
 #define FRAMES_PER_UPDATE 5
+
+int frameCount;
 
 enum gesture_t { CREATE_UNIT, DRAG_WORLD };
 
@@ -27,8 +31,8 @@ struct CTouch {
 	bool active;        	// whether touch is currently active
 	int32 id;	         	// touch's unique identifier
     Unit* unit;             // unit created by this touch if it's a create_unit gesture
-	int32 start_x;			// initial x position of a world_drag gesture
-    int32 start_y;          // initial y position of a world_drag gesture
+	int32 last_x;			// previous x position of a world_drag gesture
+    int32 last_y;           // previous y position of a world_drag gesture
 };
 
 Game* game = NULL;
@@ -38,19 +42,21 @@ Player* opponentPlayer = NULL;
 #define MAX_TOUCHES 10
 CTouch touches[MAX_TOUCHES];
 
+float worldScrollSpeed = 0;
+
+float getAngleDiff(int32 x0, int32 y0, int32 x1, int32 y1);
+float getAngleDiff(CTouch* touch);
+
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id);
 
 bool renderTouches(CTouch touches[]);
 bool renderUnitCreation(CTouch* touch);
 bool renderDragUnit(CTouch* touch);
-bool renderDragWorld(CTouch* touch);
 
-// assign activity and position info to the touch struct associated with an event
-// for a multitouch click.
+void giveWorldInitialScrollingSpeed(CTouch* touch);
+
 void MultiTouchButtonCB(s3ePointerTouchEvent* event);
-// assign position info to the touch struct associated with an event for
-// multitouch motion.
 void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event);
 
 void SingleTouchButtonCB(s3ePointerEvent* event);

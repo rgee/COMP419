@@ -44,7 +44,8 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor,
 	
 	IwGxSetVertStreamModelSpace(vertices, 4);
 	IwGxDrawPrims(IW_GX_QUAD_STRIP, NULL, 4);
-	IwGxFlush();
+	
+    IwGxFlush();
 }
 
 void polarize(CIwFVec2& v){
@@ -64,7 +65,7 @@ CIwFVec2 worldify(int32 x, int32 y, float innerRadius, float rotation){
     // Rotates (world_x, world_y) around world origin (w/2 + radii.x - 20, h/2) by theta
     
     return CIwFVec2(world_x * cos(rotation) - world_y * sin(rotation),
-                        world_x * sin(rotation) + world_y * cos(rotation));
+                    world_x * sin(rotation) + world_y * cos(rotation));
     
 }
 
@@ -77,7 +78,6 @@ bool isInWorld(CIwFVec2 position, float innerRad, float outerRad) {
 	polarize(position);
 	return position.x > innerRad &&  position.x < outerRad;
 }
-
 void polarToXY(CIwFVec2& v) {
 	
 	float r = v.x;
@@ -87,3 +87,4 @@ void polarToXY(CIwFVec2& v) {
 	v.x = r * cos(theta);
 	v.y = r * sin(theta);
 }
+
