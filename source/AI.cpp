@@ -4,27 +4,169 @@ AI::AI(Game* game):game(game){
     worldRad = game->getWorldRadius();
 }
 
-void AI::path(Unit* unit){ 
-	float rad = unit->getR();
-	float theta = unit->getTheta();
-	float speed = unit->getSpeed();
-	float range = unit->getRange();
-
-	// If we are neither attacking nor pursuing, find a unit to pursue
-    if(!unit->attacking() && !unit->pursuing()){
-        Unit *enemy;
-        if((enemy = detectEnemy(unit)) != NULL){
-            unit->setPursuing(enemy);
-        }
+void AI::doIdle(Unit* unit) {
+    unit->setPursuing(detectEnemy(unit));
+    if(unit->pursuing()) {
+        unit->setAIState(PURSUING);
+		return;
     }
 
-	// If we are attacking, continue attacking.
-	if(unit->attacking()){
-        attack(unit); 
+    float rad = unit->getR();
+	float speed = unit->getSpeed();
+	float range = unit->getRange();
+    float theta = unit->getTheta();
+    CIwFVec2 polarVel = unit->getVelocity();
+	polarize(polarVel);
+        
+    Player *p = game->getLocalPlayer();
+    Player *q = &unit->getOwner();
+    float targetTheta = (p == q) ? 0 : PI;
+        
+    int direction = -1;
+    float diff = theta - targetTheta; // so theta or theta - PI
+        
+    if(diff < PI && diff > 0) direction = 1;
+		
+	float thetaChange = direction*speed/rad;
+	float tempTheta = thetaChange + theta;
+        
+	float curR = unit->getR(); 
+	float curTheta = unit->getTheta();
+	CIwFVec2 curPos = unit->getPosition();
+		
+	CIwFVec2 curPolarPos = curPos;
+	polarize(curPolarPos);
+		
+
+    unit->setPolarPosition(rad, tempTheta);
+    unit->setVelocity(unit->getPosition() - curPos);
+
+    // Check if we would hit any other unit.
+    std::list<Unit*> tempArray; 
+	collide(std::back_inserter(tempArray), unit);
+
+	// If we hit something, reset the movement.
+    if (!tempArray.empty()) {
+			
+		float rIncr;
+			
+		bool foundDir = false;
+			
+		for (rIncr = 0.0; rIncr < 30.0; rIncr += 5) {
+			unit->setPolarPosition(rad + rIncr, tempTheta);
+			collide(std::back_inserter(tempArray), unit);
+				
+			if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
+				foundDir = true;
+				break;
+			}
+			else {
+				unit->setPolarPosition(rad - rIncr, tempTheta);
+				collide(std::back_inserter(tempArray), unit);
+					
+				if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
+					foundDir = true;
+					break;
+				}
+			}
+		}
+			
+		if (!foundDir) {
+				
+			float unitSize = unit->getSize();
+				
+			CIwFVec2 nextMoveOut = curPolarPos + CIwFVec2(20.0, 0.0);
+			CIwFVec2 nextMoveIn = curPolarPos + CIwFVec2(-20.0, 0.0);
+
+			polarToXY(nextMoveIn);
+			polarToXY(nextMoveOut);
+				
+			if (isInWorld(nextMoveIn, worldRad.x, worldRad.y)) {
+				unit->setPolarPosition(rad-20.0, theta);
+			}
+			else if (isInWorld(nextMoveOut, worldRad.x, worldRad.y)) {
+				unit->setPolarPosition(rad+20.0, theta);
+			}
+			else {
+				//unit->setPolarPosition(rad, theta-thetaChange);
+			}
+		}
+					
+		unit->setVelocity(unit->getPosition() - curPos);
+    }
+}
+
+
+Unit* AI::detectEnemy(Unit* unit){
+    std::list<Unit*>* units = game->getUnits();
+    CIwFVec2 position = unit->getPosition() + unit->getVelocity();
+    CIwFVec2 temp_Pos = CIwFVec2::g_Zero;
+    
+    float aggro_radii = unit->getSight();
+    float sq_dist = 0.0f;
+    float closest_distance = SQ(aggro_radii);
+    Unit* closest =  NULL;
+    
+
+    // Just treat sight as a radius for now and return the closest enemy unit within it.
+    for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
+        if(&(*itr)->getOwner() != &unit->getOwner()) {
+			temp_Pos = (*itr)->getPosition();
+			sq_dist = SQ(position.x - temp_Pos.x) + SQ(position.y - temp_Pos.y);
+
+            // Check if we've seen a nearer unit. If so, ignore this one and prefer the closer one.
+			if(sq_dist <= closest_distance) {
+                closest_distance = sq_dist;
+                closest = *(itr);
+			}
+		}
 	}
 
-	// If we are pursuing, set our velocity to move toward our target.
-	if(unit->pursuing()){ 
+    return closest;
+}
+ 
+void AI::updateAI(Unit* unit){
+    switch(unit->getAIState()) {
+    case IDLE:
+        doIdle(unit);
+        break;
+    case PURSUING:
+        doPursue(unit);
+        break;
+    case ATTACKING:
+        doAttack(unit);
+        break;
+    default:
+        break;
+    }
+}
+
+void AI::doAttack(Unit* unit) {
+    float attacker_distance = (unit->getAttacking()->getPosition() - unit->getPosition()).GetLength();
+    float attack_range = unit->getRange();
+
+    // If the target is out of range, look for a nearer target.
+    //
+    // Units don't chase targets if there are nearer ones, currently. This is so we don't
+    // completely strand shooters, who can't actually pursue, but will stay fixated on
+    // an enemy they can't hit.
+    //
+    // This is also an example of why we may want units to do their own AI.
+    if(attacker_distance >= attack_range) {
+        unit->setAIState(PURSUING);
+        unit->setPursuing(detectEnemy(unit));
+        return;
+    }
+    unit->attack();
+}
+
+void AI::doPursue(Unit* unit) {
+    unit->setPursuing(detectEnemy(unit));
+    
+    if(unit->pursuing()) {
+
+        float speed = unit->getSpeed();
+        float range = unit->getRange();
 		Unit *pursuing = unit->getPursuing();
         CIwFVec2 old_position = unit->getPosition();
 		CIwFVec2 pursuingPos = pursuing->getPosition();
@@ -33,13 +175,14 @@ void AI::path(Unit* unit){
 
         // If we've reached attack range, attack.
 		if (pursuitVector.GetLength() <= range) {
-            attack(unit);
+            unit->setAIState(ATTACKING);
+            return;
         }
 
         // We just set the velocity vector to face their target if
         // we're updating a stationary unit, otherwise, move them.
         if(speed > 0.01f) { // use a small number because floats are imprecise
-		    tempPos = (pursuitVector.GetNormalised() * speed) + unit->getPosition();
+		    tempPos = (pursuitVector/speed) + unit->getPosition();
 
             unit->setPosition(tempPos);
 
@@ -54,139 +197,10 @@ void AI::path(Unit* unit){
         } else {
             unit->setVelocity(pursuitVector);
         }
-	}
-	// If we are neither attacking, nor pursuing and there is no one to pursue,
-	// head in the direction of the enemy base.
-	else {
-		
-		CIwFVec2 polarVel = unit->getVelocity();
-		polarize(polarVel);
-        
-        Player *p = game->getLocalPlayer();
-        Player *q = &unit->getOwner();
-        float targetTheta = (p == q) ? 0 : PI;
-        
-        int direction = -1;
-        float diff = theta - targetTheta; // so theta or theta - PI
-        
-        if(diff < PI && diff > 0) direction = 1;
-		
-		float thetaChange = direction*speed/rad;
-		float tempTheta = thetaChange + theta;
-        
-		float curR = unit->getR(); 
-		float curTheta = unit->getTheta();
-		CIwFVec2 curPos = unit->getPosition();
-		
-		CIwFVec2 curPolarPos = curPos;
-		polarize(curPolarPos);
-		
-        unit->setPolarPosition(rad, tempTheta);
-        unit->setVelocity(unit->getPosition() - curPos);
-
-        // Check if we would hit any other unit.
-        std::list<Unit*> tempArray; 
-		collide(std::back_inserter(tempArray), unit);
-
-		// If we hit something, reset the movement.
-        if (!tempArray.empty()) {
-			
-			float rIncr;
-			
-			bool foundDir = false;
-			
-			for (rIncr = 0.0; rIncr < 30.0; rIncr += 5) {
-				unit->setPolarPosition(rad + rIncr, tempTheta);
-				collide(std::back_inserter(tempArray), unit);
-				
-				if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
-					foundDir = true;
-					break;
-				}
-				else {
-					unit->setPolarPosition(rad - rIncr, tempTheta);
-					collide(std::back_inserter(tempArray), unit);
-					
-					if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
-						foundDir = true;
-						break;
-					}
-				}
-			}
-			
-			if (!foundDir) {
-				
-				float unitSize = unit->getSize();
-				
-				CIwFVec2 nextMoveOut = curPolarPos + CIwFVec2(20.0, 0.0);
-				CIwFVec2 nextMoveIn = curPolarPos + CIwFVec2(-20.0, 0.0);
-
-				polarToXY(nextMoveIn);
-				polarToXY(nextMoveOut);
-				
-				if (isInWorld(nextMoveIn, worldRad.x, worldRad.y)) {
-					unit->setPolarPosition(rad-20.0, theta);
-				}
-				else if (isInWorld(nextMoveOut, worldRad.x, worldRad.y)) {
-					unit->setPolarPosition(rad+20.0, theta);
-				}
-				else {
-					//unit->setPolarPosition(rad, theta-thetaChange);
-				}
-			}
-					
-			unit->setVelocity(unit->getPosition() - curPos);
-        }
-	}
-		
-}
-			
-bool AI::attack(Unit* unit){
-	if(!unit->attacking()){
-        unit->setAttacking(unit->getPursuing());
-	}
-	if(unit->attacking() && unit->pursuing()){
-		unit->setPursuing(NULL);
-	}
-    unit->attack();
-    return false;
-    
-} 
-
-
-Unit* AI::detectEnemy(Unit* unit){
-    std::list<Unit*>* units = game->getUnits();
-    CIwFVec2 position = unit->getPosition() + unit->getVelocity();
-    CIwFVec2 temp_Pos = CIwFVec2::g_Zero;
-    
-    float aggro_radii = unit->getSight();
-    float sq_dist = 0.0f;
-    float radii = 0.0f;
-    float closest_distance = SQ(aggro_radii);
-    Unit* closest =  NULL;
-    
-
-    // Just treat sight as a radius for now and return the closest enemy unit within it.
-    for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
-        if(&(*itr)->getOwner() != &unit->getOwner()) {
-			temp_Pos = (*itr)->getPosition();
-
-			sq_dist = SQ(position.x - temp_Pos.x) + SQ(position.y - temp_Pos.y);
-            radii = aggro_radii;
-
-            // Check if we've seen a nearer unit. If so, ignore this one and prefer the closer one.
-			if(sq_dist <= closest_distance) {
-                closest_distance = sq_dist;
-                closest = *(itr);
-			}
-		}
-	}
-    
-    return closest;
-}
- 
-void AI::updateAI(Unit* unit){
-     path(unit);
+    } else {
+        // If we were pursuing, and lost our target, return to idle.
+        unit->setAIState(IDLE);
+    }
 }
 
 template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* unit)
