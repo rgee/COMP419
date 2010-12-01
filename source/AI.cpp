@@ -39,7 +39,7 @@ void AI::path(Unit* unit){
         // We just set the velocity vector to face their target if
         // we're updating a stationary unit, otherwise, move them.
         if(speed > 0.01f) { // use a small number because floats are imprecise
-		    tempPos = (pursuitVector/speed) + unit->getPosition();
+		    tempPos = (pursuitVector.GetNormalised() * speed) + unit->getPosition();
 
             unit->setPosition(tempPos);
 
