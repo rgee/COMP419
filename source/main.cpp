@@ -29,9 +29,10 @@ bool renderTouches() {
 
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
-			switch(touches[i].gesture_type) {
-				case CREATE_UNIT: successful_so_far &= renderDragUnit(&touches[i]);
-				default: break;
+            if(touches[i].gesture_type == CREATE_UNIT) {
+                successful_so_far &= renderDragUnit(&touches[i]);
+			}else{
+                successful_so_far &= renderDragWorld(&touches[i]);
 			}
 		}else {
             all_active = false;

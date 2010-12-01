@@ -96,8 +96,6 @@ void AI::path(Unit* unit){
 			bool foundDir = false;
 			
 			for (rIncr = 0.0; rIncr < 30.0; rIncr += 5) {
-				
-				tempArray.clear();
 				unit->setPolarPosition(rad + rIncr, tempTheta);
 				collide(std::back_inserter(tempArray), unit);
 				
@@ -106,7 +104,6 @@ void AI::path(Unit* unit){
 					break;
 				}
 				else {
-					tempArray.clear();
 					unit->setPolarPosition(rad - rIncr, tempTheta);
 					collide(std::back_inserter(tempArray), unit);
 					
