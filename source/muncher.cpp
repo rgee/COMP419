@@ -23,7 +23,6 @@ bool Muncher::update() {
     curFrame = (curFrame + 1) % numFrames;
    
     if(curFrame == 0) {
-		game->addIcing(new Icing(position, game, owner));
 		game->getAI()->updateAI(this);
 	}
 	

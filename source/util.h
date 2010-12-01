@@ -1,8 +1,8 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-#define TO_RADIANS(X) (X * (PI / 180.0f))
-#define SQ(x) (x*x)
+#define TO_RADIANS(X) ((X) * (PI / 180.0f))
+#define SQ(x) ((x)*(x))
 
 #include "IwGx.h"
 #include "IwGeom.h"

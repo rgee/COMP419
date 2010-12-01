@@ -98,7 +98,7 @@ void Game::addUnit(Unit *u){
 	if(&(u->getOwner()) == localPlayer) {
 		Unit* newUnit = u->spawnCopy();
 		newUnit->setOwner(opponentPlayer);
-		newUnit->setPolarPosition(u->getR() - 20.0, u->getTheta() + .75);
+		newUnit->setPolarPosition(u->getR() + 1, PI - u->getTheta());
 		addUnit(newUnit);
     }
 }
@@ -110,7 +110,11 @@ void Game::tick(){
 	}
 	
 	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
-		 (*itr)->update();
+		(*itr)->update();
+        
+        //if(itr != localIcing.begin() &&
+         //       ((*itr)->getPosition() + (*(itr-1))->getPosition())->GetLengthSquared() < 15)
+          //  localIcing->erase(itr);
 	}
 	
 	for(std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {
@@ -218,4 +222,8 @@ float Game::rotate(float rot) {
 
 CIwResGroup* Game::getSprites(){
     return sprites;
+}
+
+Player *Game::getLocalPlayer(){
+    return localPlayer;
 }
