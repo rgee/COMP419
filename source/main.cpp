@@ -25,7 +25,8 @@ CTouch* GetTouch(int32 id) {
 
 bool renderTouches() {
 	bool true_so_far = true;
-
+    bool all_active = true;
+    
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
             if(touches[i].gesture_type == CREATE_UNIT) {
@@ -33,8 +34,15 @@ bool renderTouches() {
 			}else{
                 true_so_far &= renderDragWorld(&touches[i]);
 			}
-		}
+		}else {
+            all_active = false;
+        }
+
 	}
+    
+    if(all_active){
+        
+    }
 
 	return true_so_far;
 }
@@ -108,6 +116,7 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
                 touch->gesture_type = CREATE_UNIT;
                 
                 int y = touch->y - 110; // Palate offset
+                
                 if(y < 0) return;
                 
                 switch (y / 60) { // 60px is size of icons
@@ -168,6 +177,20 @@ void SingleTouchMotionCB(s3ePointerMotionEvent* event){
     free(e2);
 }
 
+void init(){
+    if(localPlayer) free(localPlayer);
+    if(opponentPlayer) free(opponentPlayer);
+    if(game) free(game);
+    
+    CIwColour localCol = {255, 180, 180, 255};
+	CIwColour opponentCol = {180, 255, 160, 255};
+	localPlayer = new Player(localCol);
+	opponentPlayer = new Player(opponentCol);
+    game = new Game(localPlayer, opponentPlayer);
+    
+    frameCount = 0;
+}
+
 void doMain() {
     if(s3ePointerGetInt(S3E_POINTER_MULTI_TOUCH_AVAILABLE)){
         s3ePointerRegister(S3E_POINTER_TOUCH_EVENT, (s3eCallback)MultiTouchButtonCB, NULL);
@@ -189,18 +212,11 @@ void doMain() {
 	static CIwSVec2 wh(60, 480);
 	static CIwSVec2 uv(0, 0);
 	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
-    
-    CIwColour localCol = {255, 180, 180, 255};
-	CIwColour opponentCol = {180, 255, 160, 255};
-	localPlayer = new Player(localCol);
-	opponentPlayer = new Player(opponentCol);
-    game = new Game(localPlayer, opponentPlayer);
 
+    init();
+    
 	IwGxLightingOff();
 
-	
-	int frameCount = 0;
-	
 	while (1) {
         int64 start = s3eTimerGetMs();
 	

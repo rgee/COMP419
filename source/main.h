@@ -18,6 +18,8 @@
 #define	MS_PER_FRAME (1000 / 60)
 #define FRAMES_PER_UPDATE 5
 
+int frameCount;
+
 enum gesture_t { CREATE_UNIT, DRAG_WORLD };
 
 // Structure to track touches.
