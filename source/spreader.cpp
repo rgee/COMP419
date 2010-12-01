@@ -9,11 +9,13 @@ Spreader::Spreader(Player* owner, Game* game, float x, float y)
     amountSpread = 1;
 	spreadDelay = 0;
     setPosition(x, y);
+	worldRad = game->getWorldRadius();
 }
 
 Spreader::Spreader(const Spreader& newSpreader) : Unit(newSpreader) {
 	amountSpread = 1;
 	spreadDelay = 0;
+	worldRad = game->getWorldRadius();
 }
 
 bool Spreader::update(){
@@ -34,8 +36,10 @@ bool Spreader::update(){
 				
 				float xIncr = radius * cos(spreadTheta);
 				float yIncr = radius * sin(spreadTheta);
-			
-				game->addIcing(new Icing(CIwFVec2(position.x + xIncr, position.y + yIncr), game, owner));
+				
+				if(isInWorld(CIwFVec2(position.x + xIncr, position.y + yIncr), worldRad.x, worldRad.y)) {
+					game->addIcing(new Icing(CIwFVec2(position.x + xIncr, position.y + yIncr), game, owner));
+				}
 			}
 			
 			amountSpread++;
@@ -58,4 +62,14 @@ unit_type Spreader::getType() {
 Unit* Spreader::spawnCopy() {
 	return new Spreader(*this);
 }
+
+void Spreader::receiveDamage(float amount, Unit* attacker){
+    if (hp<=amount) {
+        attacker->setAttacking(NULL);
+        deathflag = true;
+    } 
+    else {
+        hp = hp - amount;}
+}
+
 

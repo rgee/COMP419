@@ -26,19 +26,25 @@ bool Muncher::update() {
 		game->addIcing(new Icing(position, game, owner));
 		game->getAI()->updateAI(this);
 	}
+	
     
 	return true;
 }
 void Muncher::attack(){
     Unit* attacking = this->attackTarget;
-    int dmg = getDammage(attacking);
-    attacking->receiveDamage(dmg, this);
+    if((attacking->getPosition()-position).GetLength()>range){
+        pursueTarget = attacking;
+        attackTarget = NULL;
+    }
+    else{
+        int dmg = getDammage(attacking);
+        attacking->receiveDamage(dmg, this);
+    }
 }
 void Muncher::receiveDamage(float amount, Unit* attacker){
     if (hp<=amount) {
         attacker->setAttacking(NULL);
-        //run death animation if we have any on this
-        delete this;
+        deathflag = true;
     } 
     else {
         hp = hp - amount;}

@@ -62,24 +62,18 @@ void Game::addIcing(Icing* i) {
 		
 		if(localIcing.empty()) {
 			localIcing.push_back(i);
-		}
-		else {
+		} else {
 			localIcingBuffer.push_back(i);
 		}
 		
-		localIcingBuffer.sort();
-
-	}
-	else if(i->getOwner() == opponentPlayer) {
+	} else if(i->getOwner() == opponentPlayer) {
 		
 		if(opponentIcing.empty()) {
 			opponentIcing.push_back(i);
-		} 
-		else {
+		} else {
 			opponentIcingBuffer.push_back(i);
 		}
 		
-		opponentIcingBuffer.sort();
 	}
 	
 }
@@ -94,9 +88,7 @@ void Game::addUnit(Unit *u){
 	} else {
 		unitBuffer.push_back(u);
 	}
-    
-    unitBuffer.sort();
-	
+    	
 	if(unitBucket.find(u->getTextureName()) == unitBucket.end())
 		unitBucket[u->getTextureName()] = new std::set<Unit*>();
 	
@@ -108,7 +100,7 @@ void Game::addUnit(Unit *u){
 		newUnit->setOwner(opponentPlayer);
 		newUnit->setPolarPosition(u->getR() - 20.0, u->getTheta() + .75);
 		addUnit(newUnit);
-	}
+    }
 }
 
 void Game::tick(){
@@ -125,8 +117,13 @@ void Game::tick(){
 		(*itr)->update();
 	}
     
+    unitBuffer.sort();
     units.merge(unitBuffer);
+    
+    localIcingBuffer.sort();
 	localIcing.merge(localIcingBuffer);
+    
+    opponentIcingBuffer.sort();
 	opponentIcing.merge(opponentIcingBuffer);
     
     ++timesteps;

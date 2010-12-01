@@ -41,6 +41,8 @@ class Unit : public WorldObject {
 		int spriteSize;
 		int numFrames;
 		int curFrame;
+        
+        bool deathflag;
     
         std::string unitType;
 	

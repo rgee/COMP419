@@ -8,6 +8,7 @@ class Spreader : public Unit {
 	
         int amountSpread;
 		int spreadDelay;
+		CIwFVec2 worldRad;
     
 	public:
 		Spreader(Player* owner, Game* game, float x, float y);
@@ -20,6 +21,7 @@ class Spreader : public Unit {
 	
 		virtual Unit* spawnCopy();
     
+        virtual void receiveDamage(float amount, Unit *attacker); 
         
 };
 

@@ -64,11 +64,26 @@ CIwFVec2 worldify(int32 x, int32 y, float innerRadius, float rotation){
     // Rotates (world_x, world_y) around world origin (w/2 + radii.x - 20, h/2) by theta
     
     return CIwFVec2(world_x * cos(rotation) - world_y * sin(rotation),
-                        world_x * sin(rotation) + world_y * cos(rotation));
+                    world_x * sin(rotation) + world_y * cos(rotation));
     
 }
 
 float angle_diff(const CIwFVec2& pos1, const CIwFVec2&  pos2) {
 	return atan2(pos2.y, pos2.x) - atan2(pos1.y, pos1.x);
+}
+
+
+bool isInWorld(CIwFVec2 position, float innerRad, float outerRad) {
+	polarize(position);
+	return position.x > innerRad &&  position.x < outerRad;
+}
+void polarToXY(CIwFVec2& v) {
+	
+	float r = v.x;
+	float theta = v.y;
+    while(theta > 2 * PI) theta -= 2*PI;
+    
+	v.x = r * cos(theta);
+	v.y = r * sin(theta);
 }
 

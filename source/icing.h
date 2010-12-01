@@ -34,4 +34,4 @@ class Icing : public WorldObject {
 	
 };
 
-#endif _ICING_H_
+#endif
