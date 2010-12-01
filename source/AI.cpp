@@ -8,6 +8,7 @@ void AI::doIdle(Unit* unit) {
     unit->setPursuing(detectEnemy(unit));
     if(unit->pursuing()) {
         unit->setAIState(PURSUING);
+		return;
     }
 
     float rad = unit->getR();
