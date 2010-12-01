@@ -6,7 +6,7 @@ Shooter::Shooter(Player* owner, Game* game, float x, float y)
 	spriteSize = 256;
 	numFrames = 7;
 	curFrame = 0;
-    scale = 0.3;
+    scale = 0.35;
     setPosition(x, y);
 }
 

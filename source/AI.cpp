@@ -38,7 +38,7 @@ void AI::path(Unit* unit){
 
         // We just set the velocity vector to face their target if
         // we're updating a stationary unit, otherwise, move them.
-        if(speed > 0.0f) {
+        if(speed > 0.01f) { // use a small number because floats are imprecise
 		    tempPos = (pursuitVector/speed) + unit->getPosition();
 
             unit->setPosition(tempPos);
@@ -61,8 +61,17 @@ void AI::path(Unit* unit){
 		
 		CIwFVec2 polarVel = unit->getVelocity();
 		polarize(polarVel);
+        
+        Player *p = game->getLocalPlayer();
+        Player *q = &unit->getOwner();
+        float targetTheta = (p == q) ? 0 : PI;
+        
+        int direction = -1;
+        float diff = theta - targetTheta; // so theta or theta - PI
+        
+        if(diff < PI && diff > 0) direction = 1;
 		
-		float thetaChange = speed/rad;
+		float thetaChange = direction*speed/rad;
 		float tempTheta = thetaChange + theta;
         
 		float curR = unit->getR(); 
@@ -150,10 +159,10 @@ Unit* AI::detectEnemy(Unit* unit){
     CIwFVec2 position = unit->getPosition() + unit->getVelocity();
     CIwFVec2 temp_Pos = CIwFVec2::g_Zero;
     
-    float closest_distance = 1000000.0f;
     float aggro_radii = unit->getSight();
     float sq_dist = 0.0f;
     float radii = 0.0f;
+    float closest_distance = SQ(aggro_radii);
     Unit* closest =  NULL;
     
 
@@ -162,17 +171,17 @@ Unit* AI::detectEnemy(Unit* unit){
         if(&(*itr)->getOwner() != &unit->getOwner()) {
 			temp_Pos = (*itr)->getPosition();
 
-			sq_dist = sqrt(SQ(position.x - temp_Pos.x) + SQ(position.y - temp_Pos.y));
+			sq_dist = SQ(position.x - temp_Pos.x) + SQ(position.y - temp_Pos.y);
             radii = aggro_radii;
-			if(sq_dist < 0) sq_dist *= -1;
 
             // Check if we've seen a nearer unit. If so, ignore this one and prefer the closer one.
-			if(sq_dist <= radii && sq_dist <= closest_distance) {
+			if(sq_dist <= closest_distance) {
                 closest_distance = sq_dist;
                 closest = *(itr);
 			}
 		}
 	}
+    
     return closest;
 }
  
