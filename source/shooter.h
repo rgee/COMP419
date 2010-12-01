@@ -14,6 +14,8 @@ class Shooter : public Unit {
 		virtual unit_type getType();
 	
 		virtual Unit* spawnCopy();
+    
+   
 
 };
 

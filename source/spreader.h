@@ -20,6 +20,7 @@ class Spreader : public Unit {
 	
 		virtual Unit* spawnCopy();
     
+        
 };
 
 #endif

@@ -8,7 +8,12 @@ Muncher::Muncher(Player* owner, Game* game, float x, float y)
 	curFrame = 0;
     scale = 0.2f;
     setPosition(x, y);
-    statAttacks = {{"Muncher",0},{"Wrecker",10},{"Thrower",0},{"Shooter",0},{"Invader",0},{"Spreader",0},{"Leader",0}};
+    statAttacks.insert(std::pair<unit_type, int>(MUNCHER,0));
+    statAttacks.insert(std::pair<unit_type, int>(WRECKER,10));
+    statAttacks.insert(std::pair<unit_type, int>(THROWER,0));
+    statAttacks.insert(std::pair<unit_type, int>(SHOOTER,0));
+    statAttacks.insert(std::pair<unit_type, int>(SPREADER,0));
+    statAttacks.insert(std::pair<unit_type, int>(LEADER,0));
 }
 
 Muncher::Muncher(const Muncher& newMuncher) : Unit(newMuncher) { }
@@ -27,7 +32,7 @@ bool Muncher::update() {
 void Muncher::attack(){
     Unit* attacking = this->attackTarget;
     int dmg = getDammage(attacking);
-    attacking.receiveDamage(dmg, this);
+    attacking->receiveDamage(dmg, this);
 }
 void Muncher::receiveDamage(float amount, Unit* attacker){
     if (hp<=amount) {
@@ -37,16 +42,11 @@ void Muncher::receiveDamage(float amount, Unit* attacker){
     } 
     else {
         hp = hp - amount;}
-    }
 }
+
 int Muncher::getDammage(Unit* unit){
-    string type = unit->getType();
-    for(CIwArray::iterator itr = statAttacks->begin(); itr != statAttacks->end(); itr++){
-        if(itr[0] == type){
-            return itr[1]
-        }
-    }
-    return NULL;
+    unit_type type = unit->getType();
+    return statAttacks[type];
 }
 
 const char* Muncher::getTextureName() {

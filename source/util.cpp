@@ -71,3 +71,4 @@ CIwFVec2 worldify(int32 x, int32 y, float innerRadius, float rotation){
 float angle_diff(const CIwFVec2& pos1, const CIwFVec2&  pos2) {
 	return atan2(pos2.y, pos2.x) - atan2(pos1.y, pos1.x);
 }
+

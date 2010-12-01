@@ -8,6 +8,13 @@ Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
 	curFrame = 0;
     scale = 0.2;
     setPosition(x, y);
+    
+    statAttacks.insert(std::pair<unit_type, int>(MUNCHER,10));
+    statAttacks.insert(std::pair<unit_type, int>(WRECKER,10));
+    statAttacks.insert(std::pair<unit_type, int>(THROWER,10));
+    statAttacks.insert(std::pair<unit_type, int>(SHOOTER,0));
+    statAttacks.insert(std::pair<unit_type, int>(SPREADER,0));
+    statAttacks.insert(std::pair<unit_type, int>(LEADER,0));
 }
 
 Wrecker::Wrecker(const Wrecker& newWrecker) : Unit(newWrecker) { }
@@ -30,4 +37,23 @@ unit_type Wrecker::getType() {
 
 Unit* Wrecker::spawnCopy() {
 	return new Wrecker(*this);
+}
+void Wrecker::attack(){
+    Unit* attacking = this->attackTarget;
+    int dmg = getDammage(attacking);
+    attacking->receiveDamage(dmg, this);
+}
+void Wrecker::receiveDamage(float amount, Unit* attacker){
+    if (hp<=amount) {
+        attacker->setAttacking(NULL);
+        //run death animation if we have any on this
+        delete this;
+    } 
+    else {
+        hp = hp - amount;}
+}
+
+int Wrecker::getDammage(Unit* unit){
+    unit_type type = unit->getType();
+    return statAttacks[type];
 }
