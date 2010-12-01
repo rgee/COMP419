@@ -38,7 +38,7 @@ void AI::path(Unit* unit){
 
         // We just set the velocity vector to face their target if
         // we're updating a stationary unit, otherwise, move them.
-        if(speed > 0.0f) {
+        if(speed > 0.01f) { // use a small number because floats are imprecise
 		    tempPos = (pursuitVector/speed) + unit->getPosition();
 
             unit->setPosition(tempPos);
@@ -49,7 +49,7 @@ void AI::path(Unit* unit){
             if (!tempArray.empty()){
                 unit->setPosition(old_position);
 		    } else {
-                unit->setVelocity(old_position - unit->getPosition());
+                unit->setVelocity(unit->getPosition() - old_position);
             }
         } else {
             unit->setVelocity(pursuitVector);
@@ -58,16 +58,31 @@ void AI::path(Unit* unit){
 	// If we are neither attacking, nor pursuing and there is no one to pursue,
 	// head in the direction of the enemy base.
 	else {
-		float thetaChange = speed/rad;
+		
+		CIwFVec2 polarVel = unit->getVelocity();
+		polarize(polarVel);
         
+        Player *p = game->getLocalPlayer();
+        Player *q = &unit->getOwner();
+        float targetTheta = (p == q) ? 0 : PI;
+        
+        int direction = -1;
+        float diff = theta - targetTheta; // so theta or theta - PI
+        
+        if(diff < PI && diff > 0) direction = 1;
+		
+		float thetaChange = direction*speed/rad;
 		float tempTheta = thetaChange + theta;
         
-		float old_theta = unit->getTheta();
-		float old_r = unit->getR();
-        CIwFVec2 tempPos(unit->getX(), unit->getY());
-
+		float curR = unit->getR(); 
+		float curTheta = unit->getTheta();
+		CIwFVec2 curPos = unit->getPosition();
+		
+		CIwFVec2 curPolarPos = curPos;
+		polarize(curPolarPos);
+		
         unit->setPolarPosition(rad, tempTheta);
-        unit->setVelocity(unit->getPosition() - tempPos);
+        unit->setVelocity(unit->getPosition() - curPos);
 
         // Check if we would hit any other unit.
         std::list<Unit*> tempArray; 
@@ -75,7 +90,55 @@ void AI::path(Unit* unit){
 
 		// If we hit something, reset the movement.
         if (!tempArray.empty()) {
-			unit->setPolarPosition(old_r, old_theta);
+			
+			float rIncr;
+			
+			bool foundDir = false;
+			
+			for (rIncr = 0.0; rIncr < 30.0; rIncr += 5) {
+				
+				tempArray.clear();
+				unit->setPolarPosition(rad + rIncr, tempTheta);
+				collide(std::back_inserter(tempArray), unit);
+				
+				if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
+					foundDir = true;
+					break;
+				}
+				else {
+					tempArray.clear();
+					unit->setPolarPosition(rad - rIncr, tempTheta);
+					collide(std::back_inserter(tempArray), unit);
+					
+					if (tempArray.empty() && isInWorld(unit->getPosition(), worldRad.x, worldRad.y)) {
+						foundDir = true;
+						break;
+					}
+				}
+			}
+			
+			if (!foundDir) {
+				
+				float unitSize = unit->getSize();
+				
+				CIwFVec2 nextMoveOut = curPolarPos + CIwFVec2(20.0, 0.0);
+				CIwFVec2 nextMoveIn = curPolarPos + CIwFVec2(-20.0, 0.0);
+
+				polarToXY(nextMoveIn);
+				polarToXY(nextMoveOut);
+				
+				if (isInWorld(nextMoveIn, worldRad.x, worldRad.y)) {
+					unit->setPolarPosition(rad-20.0, theta);
+				}
+				else if (isInWorld(nextMoveOut, worldRad.x, worldRad.y)) {
+					unit->setPolarPosition(rad+20.0, theta);
+				}
+				else {
+					//unit->setPolarPosition(rad, theta-thetaChange);
+				}
+			}
+					
+			unit->setVelocity(unit->getPosition() - curPos);
         }
 	}
 		
@@ -110,8 +173,8 @@ Unit* AI::detectEnemy(Unit* unit){
         if(&(*itr)->getOwner() != &unit->getOwner()) {
 			temp_Pos = (*itr)->getPosition();
 
-			sq_dist = SQ(temp_Pos.x - position.x) + SQ(temp_Pos.y - position.y);
-			radii = SQ(((*itr)->getSize() + aggro_radii));
+			sq_dist = sqrt(SQ(position.x - temp_Pos.x) + SQ(position.y - temp_Pos.y));
+            radii = aggro_radii;
 			if(sq_dist < 0) sq_dist *= -1;
 
             // Check if we've seen a nearer unit. If so, ignore this one and prefer the closer one.
@@ -131,21 +194,33 @@ void AI::updateAI(Unit* unit){
 template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* unit)
 {
 	std::list<Unit*>* units = game->getUnits();
-
-	float sq_dist = 0.0f;
-	float radii = 0.0f;
-	float bounding_radii = unit->getSize();
-	CIwFVec2 position = unit->getPosition() + unit->getVelocity();
-	CIwFVec2 temp_Pos = CIwFVec2::g_Zero;
-
+	
+	CIwFVec2 unitPos = unit->getPosition();
+	
+	Unit* collideUnit; //unit that we're colliding with
+	float collideRad; //radius of circle containing the colliding unit
+	float unitRad = unit->getSize()/2.0;
+    CIwFVec2 collidePos = CIwFVec2::g_Zero;
+    CIwFVec2 collideDir = CIwFVec2::g_Zero;
+    CIwFVec2 collideRadPoint = CIwFVec2::g_Zero;
+    float collideT = 0.0f;
+	
 	for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
+		
 		if(*(itr) != unit) {
-			temp_Pos = (*itr)->getPosition();
-			sq_dist = SQ(temp_Pos.x - position.x) + SQ(temp_Pos.y - position.y);
-			radii = SQ(((*itr)->getSize() + bounding_radii));
-			if(sq_dist < 0) sq_dist *= -1;
-			if(sq_dist <= radii) {
-				*(out++) = *(itr);
+			collideUnit = *(itr);
+			collideRad = collideUnit->getSize()/2.0;
+			
+			collidePos = collideUnit->getPosition(); //position of unit we're colliding with
+			collideDir = (collidePos - unitPos); //normalized vector pointing from the unit toward the one being collided with
+			collideDir.Normalise();
+			
+			collideRadPoint = (-1*collideDir)*collideRad + collidePos; //point on edge of colliding unit's bounding circle closest to our unit
+				
+			collideT = (collideRadPoint.x - unitPos.x)/collideDir.x;
+			
+			if (collideT <= unitRad) {
+				*(out++) = collideUnit;
 			}
 		}
 	}

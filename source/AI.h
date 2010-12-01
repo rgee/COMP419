@@ -1,6 +1,8 @@
 #ifndef _AI_H 
 #define _AI_H
 
+#include "s3eDebug.h"
+#include <stdio.h>
 #include <math.h>
 #include <list>
 #include <vector>

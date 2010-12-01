@@ -77,3 +77,12 @@ bool isInWorld(CIwFVec2 position, float innerRad, float outerRad) {
 	polarize(position);
 	return position.x > innerRad &&  position.x < outerRad;
 }
+void polarToXY(CIwFVec2& v) {
+	
+	float r = v.x;
+	float theta = v.y;
+    while(theta > 2 * PI) theta -= 2*PI;
+    
+	v.x = r * cos(theta);
+	v.y = r * sin(theta);
+}

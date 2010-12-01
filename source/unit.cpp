@@ -29,13 +29,13 @@ void Unit::display(){
 	IwGxSetColStream(owner->getColors(), 4);
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
 
-    /* UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
+    //UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
     CIwMat pMat = CIwMat::g_Identity;
     pMat.SetTrans(CIwVec3(position.x, -position.y, 1));
 
-    IwGxDebugPrimCircle(pMat, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
-    IwGxDebugPrimCircle(pMat, getSize(), 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
-    */
+    //IwGxDebugPrimCircle(pMat, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
+    //IwGxDebugPrimCircle(pMat, getSize()/2.0, 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+    
 }
 
 void Unit::displayOnScreen(int x, int y){    
@@ -100,7 +100,9 @@ void Unit::setHp(float f){
 }
 
 float Unit::getSpeed(){return speed;}
-float Unit::getSize(){return 10.0f;}
+float Unit::getSize() {
+	return ((float)spriteSize)*scale;
+}
 
 void Unit::attack(){}
 

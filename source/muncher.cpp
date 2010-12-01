@@ -20,6 +20,7 @@ bool Muncher::update() {
     if(curFrame == 0) {
 		game->getAI()->updateAI(this);
 	}
+	
     
 	return true;
 }
