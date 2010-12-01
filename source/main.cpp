@@ -24,18 +24,18 @@ CTouch* GetTouch(int32 id) {
 }
 
 bool renderTouches() {
-	bool true_so_far = true;
+	bool successful_so_far = true;
 
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
 			switch(touches[i].gesture_type) {
-				case CREATE_UNIT: //true_so_far &= renderDragUnit(&touches[i]);
+				case CREATE_UNIT: successful_so_far &= renderDragUnit(&touches[i]);
 				default: break;
 			}
 		}
 	}
 
-	return true_so_far;
+	return successful_so_far;
 }
 
 bool renderUnitCreation(CTouch* touch) {
@@ -135,7 +135,7 @@ void MultiTouchMotionCB(s3ePointerTouchMotionEvent* event) {
 		touch->x = event->m_x;
 		touch->y = event->m_y;
         
-        if (touch->gesture_type == DRAG_WORLD) {
+        if (touch->gesture_type == DRAG_WORLD && touch->active) {
             // set new start to the old end, and the new end to the new pos
 			touch->start_x = touch->end_x;
             touch->start_y = touch->end_y;
@@ -219,8 +219,9 @@ void doMain() {
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
         
-		if (worldScrollSpeed > 0) {
-			game->rotate(worldScrollSpeed--);
+		if (worldScrollSpeed > .0005) {
+			game->rotate(worldScrollSpeed);
+			worldScrollSpeed = worldScrollSpeed / 1.25;
 		}
 	
         if(frameCount%FRAMES_PER_UPDATE == 0) {
