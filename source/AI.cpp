@@ -5,11 +5,10 @@ AI::AI(Game* game):game(game){
 }
 
 /*
- The AI state machine for a Unit
- ===============================
+ The AI logic for a Unit
+ =======================
  
- if no target
-    get target
+ get best target
  
  if no target
     move
