@@ -104,11 +104,11 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
             if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
                 
-                int y = touch->y - 110; // Palate offset
+                int y = touch->y - 94; // Palate offset
                 
                 if(y < 0) return;
                 
-                switch (y / 60) { // 60px is size of icons
+                switch (y / 55) {
                     case 0: touch->unit = new Thrower(localPlayer,  game, 0, 0); break;
                     case 1: touch->unit = new Wrecker(localPlayer,  game, 0, 0); break;
                     case 2: touch->unit = new Muncher(localPlayer,  game, 0, 0); break;

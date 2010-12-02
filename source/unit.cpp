@@ -6,7 +6,7 @@ Unit::Unit(const Unit& newUnit)
 	hp(newUnit.hp), cost(newUnit.cost), attackDamage(newUnit.attackDamage), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
-	owner(newUnit.owner), scale(newUnit.scale), target(newUnit.target), 
+	owner(newUnit.owner), scale(newUnit.scale), target(NULL), 
 	curFrame(0), numFrames(newUnit.numFrames), spriteSize(newUnit.spriteSize)
 {
 	

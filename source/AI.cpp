@@ -20,8 +20,7 @@ AI::AI(Game* game):game(game){
 */
 
 void AI::updateAI(Unit* unit){
-    if(!unit->hasTarget())
-        unit->setTarget(detectEnemy(unit));
+    unit->setTarget(detectEnemy(unit));
     
     if(!unit->hasTarget())
         doIdle(unit);
@@ -108,8 +107,7 @@ void AI::doPursue(Unit* unit) {
     pursuitVector *= speed;
     polarize(pursuitVector);
     
-    float rChange = getRChange(unit);    
-    pursuitVector.x += rChange;
+    pursuitVector.x += getRChange(unit);
     
     polarToXY(pursuitVector);
     pursuitVector.Normalise();
@@ -128,7 +126,7 @@ Unit* AI::detectEnemy(Unit* unit){
     
     float sq_dist = 0.0f;
     float closest_distance = SQ(unit->getSight());
-    Unit* closest =  NULL;
+    Unit* closest = unit->getTarget();
     
     // THIS IS TOO SLOW
     
@@ -166,7 +164,7 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 	
 	for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
 		
-		if(*(itr) != unit) {
+		if((*itr) != unit && (*itr)->getHp() >= 0) {
 			collideUnit = *(itr);
 			collideRad = collideUnit->getSize()/2.0;
 			
