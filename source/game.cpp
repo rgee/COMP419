@@ -106,8 +106,16 @@ void Game::addUnit(Unit *u){
 void Game::tick(){
 
 	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
-		(*itr)->update();
-	}
+        Unit* unit= *itr;
+        if (unit->getHp()<=0){
+            delete *itr;
+        }
+        else{
+            unit->update();
+        }
+    }
+            
+            
 	
 	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
 		(*itr)->update();

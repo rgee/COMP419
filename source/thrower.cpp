@@ -54,14 +54,8 @@ void Thrower::attack(){
         attacking->receiveDamage(dmg, this);
     }
 }
-void Thrower::receiveDamage(float amount, Unit* attacker){
-    if (hp<=amount) {
-        attacker->setAttacking(NULL);
-        deathflag=true;
-    } 
-    else {
-        hp = hp - amount;}
-}
+
+
 
 int Thrower::getDammage(Unit* unit){
     unit_type type = unit->getType();

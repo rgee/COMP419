@@ -8,7 +8,7 @@ Unit::Unit(const Unit& newUnit)
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
 	owner(newUnit.owner), scale(newUnit.scale), attackTarget(newUnit.attackTarget), 
 	pursueTarget(newUnit.pursueTarget), curFrame(0), numFrames(newUnit.numFrames), 
-    spriteSize(newUnit.spriteSize), deathflag(false), state(newUnit.state)
+    spriteSize(newUnit.spriteSize), state(newUnit.state)
 {
 	
 }
@@ -21,8 +21,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL),
-          deathflag(false), state(IDLE)
+		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL), state(IDLE)
 {
     
 }
@@ -46,7 +45,6 @@ void Unit::display(){
 
 void Unit::displayOnScreen(int x, int y){    
     
-	if(deathflag == false){
     CIwMaterial *mat = new CIwMaterial();
     mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
     mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
@@ -63,7 +61,6 @@ void Unit::displayOnScreen(int x, int y){
     IwGxDrawRectScreenSpace(&xy, &wh, &uv, &duv);
     
     delete mat;
-    }
 }
 
 
@@ -132,7 +129,7 @@ float Unit::getAngle(){
 }
 
 void Unit::attack(){}
-void Unit::receiveDamage(float amount, Unit *attacker){}
+
 int Unit::getDammage(Unit* unit){
     return 0;
 }
@@ -143,4 +140,13 @@ ai_state Unit::getAIState(){
 
 void Unit::setAIState(ai_state newState){
     state = newState;
+}
+
+void Unit::receiveDamage(float amount, Unit* attacker){
+    if (hp<=amount) {
+        attacker->setAttacking(NULL);
+        hp = hp - amount;
+    } 
+    else {
+        hp = hp - amount;}
 }

@@ -18,7 +18,6 @@ class Wrecker : public Unit {
 		virtual Unit* spawnCopy();
     
         virtual void attack();
-        virtual void receiveDamage(float amount, Unit *attacker); 
         virtual int getDammage(Unit* unit);
 
 };

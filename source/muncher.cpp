@@ -40,14 +40,6 @@ void Muncher::attack(){
         attacking->receiveDamage(dmg, this);
     }
 }
-void Muncher::receiveDamage(float amount, Unit* attacker){
-    if (hp<=amount) {
-        attacker->setAttacking(NULL);
-        deathflag = true;
-    } 
-    else {
-        hp = hp - amount;}
-}
 
 int Muncher::getDammage(Unit* unit){
     unit_type type = unit->getType();

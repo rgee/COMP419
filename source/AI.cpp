@@ -5,7 +5,7 @@ AI::AI(Game* game):game(game){
 }
 
 void AI::doIdle(Unit* unit) {
-    if(detectEnemy(unit)) {
+    if(detectEnemy(unit) != NULL) {
         doPursue(unit);
 		return;
     }

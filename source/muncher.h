@@ -22,7 +22,6 @@ class Muncher : public Unit {
 		virtual bool update();
         
         virtual void attack();
-        virtual void receiveDamage(float amount, Unit *attacker); 
         virtual int getDammage(Unit* unit);
 
 		virtual unit_type getType();

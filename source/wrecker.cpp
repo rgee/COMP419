@@ -1,7 +1,7 @@
 #include "wrecker.h"
 
 Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
-	: Unit(350.0f, 100.0f, 40.0f, 3.0f, 5.0f, 5.0f, 40.0f, 0.0f, 0.0f, owner, game)
+	: Unit(350.0f, 100.0f, 40.0f, 3.0f, 5.0f, 5.0f, 80.0f, 0.0f, 0.0f, owner, game)
 {
 	spriteSize = 256;
 	numFrames = 6;
@@ -56,14 +56,7 @@ void Wrecker::attack(){
         attacking->receiveDamage(dmg, this);
     }
 }
-void Wrecker::receiveDamage(float amount, Unit* attacker){
-    if (hp<=amount) {
-        attacker->setAttacking(NULL);
-        deathflag = true;
-    } 
-    else {
-        hp = hp - amount;}
-}
+
 
 int Wrecker::getDammage(Unit* unit){
     unit_type type = unit->getType();
