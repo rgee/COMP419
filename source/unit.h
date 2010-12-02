@@ -35,6 +35,8 @@ class Unit : public WorldObject {
         float scale;
     
 		Player *owner;
+        bool localPlayedOwnsThis;
+    
 		CIwFVec2 velocity;
 		int uid;
 		
@@ -76,6 +78,7 @@ class Unit : public WorldObject {
         
 		Player& getOwner();
 		void setOwner(Player* p);
+        bool isLocal();
 			
 		Unit* getTarget();
 		void setTarget(Unit* unit);

@@ -6,10 +6,9 @@ Unit::Unit(const Unit& newUnit)
 	hp(newUnit.hp), cost(newUnit.cost), attackDamage(newUnit.attackDamage), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
-	owner(newUnit.owner), scale(newUnit.scale), target(NULL), 
-	curFrame(0), numFrames(newUnit.numFrames), spriteSize(newUnit.spriteSize)
+	scale(newUnit.scale), target(NULL), curFrame(0), numFrames(newUnit.numFrames), spriteSize(newUnit.spriteSize)
 {
-	
+	setOwner(newUnit.owner);
 }
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
@@ -20,9 +19,13 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), curFrame(0), target(NULL)
+		  curFrame(0), target(NULL)
 {
-    
+    setOwner(owner);
+}
+
+bool Unit::isLocal(){
+    return localPlayedOwnsThis;
 }
 
 void Unit::display(){
@@ -89,6 +92,7 @@ bool Unit::hasTarget(){
 
 void Unit::setOwner(Player* p){
 	owner = p;
+    localPlayedOwnsThis = owner == game->getLocalPlayer();
 }
 
 float Unit::getHp(){ return hp; }

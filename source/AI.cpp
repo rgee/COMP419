@@ -32,23 +32,17 @@ void AI::updateAI(Unit* unit){
 
 void AI::doIdle(Unit *unit){
     CIwFVec2 position = unit->getPosition();
-	float r = unit->getR();
+    
+    float r     = unit->getR();
 	float theta = unit->getTheta();
 	float speed = unit->getSpeed();
 	
-	Player *p = game->getLocalPlayer();
-	Player *q = &unit->getOwner();
-	float targetTheta = (p == q) ? 0 : PI;
-	
-	int direction = -1;
-	float diff = theta - targetTheta; // so theta or theta - PI
-	
-	if(diff < PI && diff > 0) direction = 1;
+	float diff = theta - (unit->isLocal() ? 0 : PI);
+	int direction = diff < PI && diff > 0 ? 1 : -1;
     
 	float thetaChange = direction * speed / r; 
-    float rChange = getRChange(unit);
     
-    CIwFVec2 coords(r + rChange, theta + thetaChange);
+    CIwFVec2 coords(r + getRChange(unit), theta + thetaChange);
     polarToXY(coords);
         
     // We want to move along (coords - position) by speed
@@ -67,7 +61,7 @@ float AI::getRChange(Unit* unit) {
 	std::list<Unit*>* units = game->getUnits();
 	float rChange = 0.0;
 	
-    // THIS IS TOO SLOW.
+    // THIS IS TOO SLOW. Also, what are the magic numbers about?
 	for (std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
 		
 		Unit* otherUnit = *(itr);
@@ -81,12 +75,12 @@ float AI::getRChange(Unit* unit) {
 			
 			
 			float rDiff = unitR - otherR;
-			float dir = rDiff > 0 ? 1.0 : -1.0;
+			float dir = rDiff > 0 ? 1 : -1;
 			
 			rChange += dir*15000.0/distSquare;
 		}
 	}
-	
+	    
 	rChange += 5000.0/SQ(worldRad.x - unitR);
 	rChange -= 5000.0/SQ(worldRad.y - unitR); 
 	
@@ -122,9 +116,9 @@ void AI::doPursue(Unit* unit) {
 Unit* AI::detectEnemy(Unit* unit){
     std::list<Unit*>* units = game->getUnits();
     CIwFVec2 position = unit->getPosition() + unit->getVelocity();
-    CIwFVec2 temp_Pos = CIwFVec2::g_Zero;
+    CIwFVec2 otherPos = CIwFVec2::g_Zero;
     
-    float sq_dist = 0.0f;
+    float sq_dist = 0;
     float closest_distance = SQ(unit->getSight());
     Unit* closest = unit->getTarget();
     
@@ -133,10 +127,10 @@ Unit* AI::detectEnemy(Unit* unit){
     // Just treat sight as a radius for now and return the closest enemy unit within it.
     for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
         if(&(*itr)->getOwner() != &unit->getOwner()) {
-			temp_Pos = (*itr)->getPosition();
-			sq_dist = SQ(position.x - temp_Pos.x) + SQ(position.y - temp_Pos.y);
+			otherPos = (*itr)->getPosition();
+			sq_dist = SQ(position.x - otherPos.x) + SQ(position.y - otherPos.y);
             
-            // Check if we've seen a nearer unit. If so, ignore this one and prefer the closer one.
+            // If this unit is closer and alive, it's the best for now
 			if(sq_dist < closest_distance && (*itr)->getHp() > 0) {
                 closest_distance = sq_dist;
                 closest = *(itr);
