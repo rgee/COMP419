@@ -96,6 +96,9 @@ void AI::doPursue(Unit* unit) {
     CIwFVec2 old_position = unit->getPosition();
     CIwFVec2 pursuingPos = pursuing->getPosition();
     
+    // The following logic should probably be altered as to
+    // only do one polar-to-xy conversion, not two.
+    
     CIwFVec2 pursuitVector = pursuingPos - unit->getPosition();
     pursuitVector.Normalise();
     pursuitVector *= speed;
@@ -120,7 +123,7 @@ Unit* AI::detectEnemy(Unit* unit){
     
     float sq_dist = 0;
     float closest_distance = SQ(unit->getSight());
-    Unit* closest = unit->getTarget();
+    Unit* closest = unit->getTarget(); // Chase em down
     
     // THIS IS TOO SLOW
     
