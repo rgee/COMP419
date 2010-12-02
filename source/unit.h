@@ -127,7 +127,7 @@ class Unit : public WorldObject {
         void displayOnScreen(int x, int y);
 		
 		virtual void attack();
-		virtual void receiveDamage(float amount, Unit* attacker); 
+        void receiveDamage(float amount, Unit* attacker); 
         virtual int getDammage(Unit* unit);
         
     
