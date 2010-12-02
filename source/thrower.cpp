@@ -38,9 +38,7 @@ unit_type Thrower::getType() {
 }
 
 Unit* Thrower::spawnCopy() {
-
     return new Thrower(*this);
-	//return new Thrower(*this);
 } 
 
 void Thrower::attack(){
