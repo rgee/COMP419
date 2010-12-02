@@ -6,9 +6,8 @@ Unit::Unit(const Unit& newUnit)
 	hp(newUnit.hp), cost(newUnit.cost), attackDamage(newUnit.attackDamage), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
-	owner(newUnit.owner), scale(newUnit.scale), attackTarget(newUnit.attackTarget), 
-	pursueTarget(newUnit.pursueTarget), curFrame(0), numFrames(newUnit.numFrames), 
-    spriteSize(newUnit.spriteSize), state(newUnit.state)
+	owner(newUnit.owner), scale(newUnit.scale), target(newUnit.target), 
+	curFrame(0), numFrames(newUnit.numFrames), spriteSize(newUnit.spriteSize)
 {
 	
 }
@@ -21,7 +20,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  owner(owner), curFrame(0), attackTarget(NULL), pursueTarget(NULL), state(IDLE)
+		  owner(owner), curFrame(0), target(NULL)
 {
     
 }
@@ -76,18 +75,13 @@ Player& Unit::getOwner(){
 	return *owner;
 }
 
-Unit* Unit::getAttacking(){ return attackTarget; }
-void Unit::setAttacking(Unit* unit){ attackTarget = unit; }
-
-Unit* Unit::getPursuing(){ return pursueTarget; }
-void Unit::setPursuing(Unit* unit){ pursueTarget = unit; }
-
-bool Unit::attacking(){
-    return attackTarget != NULL;
+Unit* Unit::getTarget(){ return target; }
+void Unit::setTarget(Unit* unit){
+    target = unit; 
 }
 
-bool Unit::pursuing(){
-    return pursueTarget != NULL;
+bool Unit::hasTarget(){
+    return target != NULL;
 }
 
 
@@ -95,9 +89,7 @@ void Unit::setOwner(Player* p){
 	owner = p;
 }
 
-float Unit::getHp(){
-	return hp;
-}
+float Unit::getHp(){ return hp; }
 float Unit::getRange(){return range;}
 
 void Unit::setHp(float f){
@@ -105,9 +97,7 @@ void Unit::setHp(float f){
 }
 
 float Unit::getSpeed(){return speed;}
-float Unit::getSize() {
-	return ((float)spriteSize)*scale;
-}
+float Unit::getSize(){ return spriteSize*scale; }
 
 
 void Unit::setVelocity(const CIwFVec2& vel){
@@ -130,23 +120,21 @@ float Unit::getAngle(){
 
 void Unit::attack(){}
 
-int Unit::getDammage(Unit* unit){
+int Unit::getDamage(Unit* unit){
     return 0;
 }
 
-ai_state Unit::getAIState(){
-    return state;
-}
-
-void Unit::setAIState(ai_state newState){
-    state = newState;
-}
 
 void Unit::receiveDamage(float amount, Unit* attacker){
-    if (hp<=amount) {
-        attacker->setAttacking(NULL);
-        hp = hp - amount;
-    } 
-    else {
-        hp = hp - amount;}
+    if(hp <= amount){
+        attacker->setTarget(NULL);
+    }
+    
+    hp -= amount;
+}
+
+float Unit::distToTarget(){
+    if(!hasTarget()) return -1;
+    
+    return (getTarget()->getPosition() - getPosition()).GetLength();
 }

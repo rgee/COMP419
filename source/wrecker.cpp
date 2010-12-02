@@ -21,14 +21,12 @@ Wrecker::Wrecker(const Wrecker& newWrecker) : Unit(newWrecker) { }
 
 bool Wrecker::update(){
     curFrame = (curFrame + 1) % numFrames;
-    
 	game->getAI()->updateAI(this);
-    
     return true;
 }
 
 const char* Wrecker::getTextureName(){
-    if (attackTarget == NULL) {
+    if (!hasTarget()) {
         numFrames = 6;
         return "wrecker_walk_sprite_sheet";
     }else{
@@ -46,19 +44,12 @@ Unit* Wrecker::spawnCopy() {
 }
 
 void Wrecker::attack(){
-    Unit* attacking = this->attackTarget;
-    if((attacking->getPosition()-position).GetLength()>range){
-        pursueTarget = attacking;
-        attackTarget = NULL;
-    }
-    else{
-        int dmg = getDammage(attacking);
-        attacking->receiveDamage(dmg, this);
+    if((target->getPosition()-position).GetLength() <= range){
+        target->receiveDamage(getDamage(target), this);
     }
 }
 
-
-int Wrecker::getDammage(Unit* unit){
+int Wrecker::getDamage(Unit* unit){
     unit_type type = unit->getType();
     return statAttacks[type];
 }

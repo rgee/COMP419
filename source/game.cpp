@@ -105,17 +105,16 @@ void Game::addUnit(Unit *u){
 
 void Game::tick(){
 
-	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
-        Unit* unit= *itr;
-        if (unit->getHp()<=0){
+	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
+        (*itr)->update();
+    }
+    
+    for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
+        if((*itr)->getHp() < 0){
+            units.erase(itr);
             delete *itr;
         }
-        else{
-            unit->update();
-        }
-    }
-            
-            
+    }   
 	
 	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
 		(*itr)->update();
@@ -152,6 +151,7 @@ void Game::renderSprites() {
 	CIwMaterial* mat = new CIwMaterial();
 	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
+        
 		if (strcmp((*itr).first, curTexture) != 0) {
 			curTexture = (*itr).first;
 			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
@@ -163,6 +163,10 @@ void Game::renderSprites() {
 		std::set<Unit*>* renderUnits = (*itr).second;
 		
 		for (std::set<Unit*>::iterator u_it = renderUnits->begin(); u_it != renderUnits->end(); ++u_it) {
+            if((*u_it)->getHp() <= 0){
+                renderUnits->erase(u_it);
+            }
+            
 			(*u_it)->display();
 		}
 	}

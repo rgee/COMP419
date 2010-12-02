@@ -42,20 +42,13 @@ Unit* Thrower::spawnCopy() {
 } 
 
 void Thrower::attack(){
-    Unit* attacking = this->attackTarget;
-    if((attacking->getPosition()-position).GetLength()>range){
-        pursueTarget = attacking;
-        attackTarget = NULL;
-    }
-    else{
-        int dmg = getDammage(attacking);
-        attacking->receiveDamage(dmg, this);
+    if((target->getPosition()-position).GetLength() <= range){
+        target->receiveDamage(getDamage(target), this);
     }
 }
 
 
-
-int Thrower::getDammage(Unit* unit){
+int Thrower::getDamage(Unit* unit){
     unit_type type = unit->getType();
     return statAttacks[type];
 

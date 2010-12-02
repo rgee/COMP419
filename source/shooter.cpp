@@ -15,7 +15,7 @@ Shooter::Shooter(const Shooter& newShooter) : Unit(newShooter) { }
 bool Shooter::update(){
     curFrame = (curFrame + 1) % numFrames;
     
-    if(attackTarget == NULL){
+    if(target == NULL){
         curFrame = 0;
     }
     
@@ -26,6 +26,7 @@ bool Shooter::update(){
 }
 
 const char* Shooter::getTextureName() {
+
 	return "shooter_sprite_sheet";
 }
 
@@ -38,18 +39,13 @@ Unit* Shooter::spawnCopy() {
 }
 
 void Shooter::attack(){
-    Unit* attacking = this->attackTarget;
-    if((attacking->getPosition()-position).GetLength()>range){
-        attackTarget = NULL;
-    }
-    else{
-        int dmg = getDammage(attacking);
-        attacking->receiveDamage(dmg, this);
+    if((target->getPosition()-position).GetLength() <= range){
+        target->receiveDamage(getDamage(target), this);
     }
 }
 
 
-int Shooter::getDammage(Unit* unit){
+int Shooter::getDamage(Unit* unit){
     unit_type type = unit->getType();
     return statAttacks[type];
 }

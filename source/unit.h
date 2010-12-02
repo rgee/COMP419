@@ -19,11 +19,6 @@ enum unit_type {
 	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER, LEADER
 };
 
-typedef enum ai_state {
-    ATTACKING, IDLE, PURSUING
-};
-
-
 class Unit : public WorldObject {
     
 	protected:    
@@ -38,8 +33,6 @@ class Unit : public WorldObject {
 		float spread_speed;
 		float spread_radius;
         float scale;
-
-        ai_state state;
     
 		Player *owner;
 		CIwFVec2 velocity;
@@ -49,16 +42,10 @@ class Unit : public WorldObject {
 		int spriteSize;
 		int numFrames;
 		int curFrame;
-        
-        bool deathflag;
-    
+            
         std::string unitType;
 	
-		// The unit this unit is attacking.
-		Unit *attackTarget;
-
-		// The unit this unit is pursuing.
-		Unit *pursueTarget;
+		Unit *target;
 	
 		/**
 		Utility method that subclasses will use to render their sprites. Assumes that 
@@ -100,14 +87,10 @@ class Unit : public WorldObject {
 		Player& getOwner();
 		void setOwner(Player* p);
 			
-		Unit* getAttacking();
-		void setAttacking(Unit* unit);
+		Unit* getTarget();
+		void setTarget(Unit* unit);
 		
-		Unit* getPursuing();
-		void setPursuing(Unit* unit);
-	
-		bool attacking();
-		bool pursuing();
+        bool hasTarget();
         
 		float getHp();
 		void setHp(float f);
@@ -128,14 +111,13 @@ class Unit : public WorldObject {
 		
 		virtual void attack();
         void receiveDamage(float amount, Unit* attacker); 
-        virtual int getDammage(Unit* unit);
+        virtual int getDamage(Unit* unit);
         
     
         float getSight();
         float getAngle();
     
-        void setAIState(ai_state newState);
-        ai_state getAIState();
+        float distToTarget();
 };
 
 #endif

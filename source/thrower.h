@@ -20,7 +20,7 @@ class Thrower : public Unit {
         std::map<unit_type, int> statAttacks;
     
         virtual void attack();
-        virtual int getDammage(Unit* unit);
+        virtual int getDamage(Unit* unit);
 
         virtual const char* getTextureName();
 };

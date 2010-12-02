@@ -198,21 +198,14 @@ void doMain() {
     
     CIwResGroup* palateGroup = IwGetResManager()->GetGroupNamed("Palate");
     
-    CIwMaterial* palate = new CIwMaterial();
-    palate->SetTexture((CIwTexture*)palateGroup->GetResNamed("palate", IW_GX_RESTYPE_TEXTURE));
-    palate->SetModulateMode(CIwMaterial::MODULATE_NONE);
-    palate->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
-    
     CIwMaterial* background = new CIwMaterial();
     background->SetTexture((CIwTexture*)palateGroup->GetResNamed("background", IW_GX_RESTYPE_TEXTURE));
     background->SetModulateMode(CIwMaterial::MODULATE_NONE);
     background->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     
-	static CIwSVec2 palate_xy(245, 0);
-	static CIwSVec2 palate_wh(75, 480);
-    static CIwSVec2 bg_wh(320, 480);
-	static CIwSVec2 uv(0, 0);
-	static CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
+    CIwSVec2 bg_wh(320, 480);
+	CIwSVec2 uv(0, 0);
+	CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
 
     init();
     
@@ -241,10 +234,6 @@ void doMain() {
         IwGxSetMaterial(background);
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&CIwSVec2::g_Zero, &bg_wh, &uv, &duv);
-                
-        IwGxSetMaterial(palate);
-        IwGxSetScreenSpaceSlot(-2);
-        IwGxDrawRectScreenSpace(&palate_xy, &palate_wh, &uv, &duv);
         
 		if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {
 			game->rotate(worldScrollSpeed);
@@ -282,7 +271,6 @@ void doMain() {
 	delete game;
 	delete localPlayer;
 	delete opponentPlayer;
-	delete palate;
     delete background;
     palateGroup->Finalise();
     

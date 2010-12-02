@@ -23,6 +23,8 @@ class AI{
         CIwFVec2 worldRad;
         Game* game;
 
+        float getRChange(Unit *unit);
+    
         /**
          * Path toward the enemy base.
          */
@@ -32,11 +34,6 @@ class AI{
          * Pursue a target.
          */
         void doPursue(Unit* unit);
-
-        /**
-         * Attack a target.
-         */
-        void doAttack(Unit* unit);
 
 
 		/**
