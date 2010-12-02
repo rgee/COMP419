@@ -1,7 +1,7 @@
 #include "wrecker.h"
 
 Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
-	: Unit(350.0f, 100.0f, 40.0f, 3.0f, 5.0f, 5.0f, 80.0f, 0.0f, 0.0f, owner, game)
+	: Unit(350.0f, 100.0f, 40.0f, 3.0f, 5.0f, 15.0f, 80.0f, 0.0f, 0.0f, owner, game)
 {
 	spriteSize = 256;
 	numFrames = 6;
@@ -10,7 +10,7 @@ Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
     setPosition(x, y);
     
     statAttacks.insert(std::pair<unit_type, int>(MUNCHER,10));
-    statAttacks.insert(std::pair<unit_type, int>(WRECKER,10));
+    statAttacks.insert(std::pair<unit_type, int>(WRECKER,40));
     statAttacks.insert(std::pair<unit_type, int>(THROWER,10));
     statAttacks.insert(std::pair<unit_type, int>(SHOOTER,10));
     statAttacks.insert(std::pair<unit_type, int>(SPREADER,10));

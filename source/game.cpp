@@ -113,6 +113,7 @@ void Game::tick(){
         if((*itr)->getHp() < 0){
             units.erase(itr);
             delete *itr;
+            itr--;
         }
     }   
 	

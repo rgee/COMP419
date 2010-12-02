@@ -78,6 +78,8 @@ Player& Unit::getOwner(){
 Unit* Unit::getTarget(){ return target; }
 void Unit::setTarget(Unit* unit){
     target = unit; 
+    if(target != NULL && target->getHp() <= 0)
+        target = NULL;
 }
 
 bool Unit::hasTarget(){
