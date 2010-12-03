@@ -218,7 +218,7 @@ void doMain() {
         
 		if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {
 			game->rotate(worldScrollSpeed);
-			worldScrollSpeed = worldScrollSpeed / 1.25;
+			worldScrollSpeed = worldScrollSpeed / SCROLLING_FRICTION_COEFFICIENT;
 		}
 	
         if(frameCount%FRAMES_PER_UPDATE == 0) {
