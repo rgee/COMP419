@@ -1,8 +1,8 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-#define TO_RADIANS(X) (X * (PI / 180.0f))
-#define SQ(x) (x*x)
+#define TO_RADIANS(X) ((X) * (PI / 180.0f))
+#define SQ(x) ((x)*(x))
 
 #include "IwGx.h"
 #include "IwGeom.h"
@@ -15,6 +15,9 @@ void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor, i
  * The y component represents the theta.
  */
 void polarize(CIwFVec2& v);
+
+void polarToXY(CIwFVec2& v);
+
 CIwFVec2 worldify(int32 x, int32 y, float innerRadius, float rotation);
 float angle_diff(const CIwFVec2& pos1, const CIwFVec2& pos2);
 

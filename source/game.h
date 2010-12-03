@@ -106,6 +106,8 @@ class Game {
         CIwResGroup* getSprites();
 	
 		void render();
+    
+        Player *getLocalPlayer();
 
 };
 

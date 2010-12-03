@@ -45,15 +45,15 @@ subprojects
 assets
 {
 	(data/images)
-	pacman.png
-	world.png
+	paper-world.png
 	muncher_sprite_sheet.png
 	spreader_sprite_sheet.png
 	wrecker_walk_sprite_sheet.png
 	wrecker_attack_sprite_sheet.png
 	shooter_sprite_sheet.png
-	palate.png
+	thrower_walk_sprite_sheet.png
 	icing.png
+	background.png
 	
 	(data/resource_groups)
 	game.group

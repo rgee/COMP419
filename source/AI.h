@@ -1,16 +1,21 @@
 #ifndef _AI_H 
 #define _AI_H
 
+#include "s3eDebug.h"
+#include <stdio.h>
 #include <math.h>
 #include <list>
 #include <vector>
 #include <iterator>
 #include <algorithm>
 
-class AI;
 
+class AI;
+#include "game.h"
 #include "util.h"
 #include "unit.h"
+#include "IwDebug.h"
+
 
 
 class AI{
@@ -18,10 +23,18 @@ class AI{
         CIwFVec2 worldRad;
         Game* game;
 
-		
-        void path(Unit* unit);
-        
-        bool attack(Unit* unit);
+        float getRChange(Unit *unit);
+    
+        /**
+         * Path toward the enemy base.
+         */
+		void doIdle(Unit* unit);
+
+        /**
+         * Pursue a target.
+         */
+        void doPursue(Unit* unit);
+
 
 		/**
 		 * Detects the nearest enemy unit to the specified unit.
