@@ -2,6 +2,7 @@
 #define _LEADER_H
 
 #include "unit.h"
+#include "IwRandom.h"
 
 class Leader : public Unit {
 	public:
@@ -10,7 +11,7 @@ class Leader : public Unit {
 
 		virtual bool update();
 		virtual void display();
-
+		virtual char* getTextureName();
 };
 
 #endif

@@ -107,10 +107,7 @@ void Game::addUnit(Unit *u){
 void Game::tick(){
 
 	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
-        (*itr)->update();
-        if((*itr)->shouldAIUpdate()) {
-            ai->updateAI(itr);
-        }
+        (*itr)->update(itr);
     }
     
     for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
@@ -119,14 +116,14 @@ void Game::tick(){
             delete *itr;
             itr--;
         }
-    }   
+    }  
 	
 	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
 		(*itr)->update();
         
         //if(itr != localIcing.begin() &&
-         //       ((*itr)->getPosition() + (*(itr-1))->getPosition())->GetLengthSquared() < 15)
-          //  localIcing->erase(itr);
+		//       ((*itr)->getPosition() + (*(itr-1))->getPosition())->GetLengthSquared() < 15)
+		//  localIcing->erase(itr);
 	}
 	
 	for(std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {

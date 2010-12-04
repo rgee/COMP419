@@ -144,3 +144,42 @@ float Unit::distToTarget(){
     
     return (getTarget()->getPosition() - getPosition()).GetLength();
 }
+
+void path(std::list<Unit*>::iterator itr) {
+	
+	CIwFVec2 force = CIwFVec2::g_Zero;
+	
+	/*std::list<Unit*>::iterator end = game->getUnits()->end();
+	std::list<Unit*>::iterator begin = game->getUnits()->begin();
+	std::list<Unit*>::rev_itr = itr;*/
+	
+	std::list<Unit*> units = game->getUnits();
+	float theta = getTheta();
+	
+	CIwFVec2 dirToward = CIwFVec2::g_Zero;
+	Unit* curUnit;
+	
+	//BRUTE FORCE
+	for (itr = units->begin() ; itr != units->end(); ++itr) {
+		curUnit = *(itr);
+		
+		if (THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
+			dirToward = curUnit->getPosition() - position;
+			float distSquared = dirToward.GetLengthSquared();
+			force += dirToward.GetNormalised() * (curUnit->getSize())*REPEL_FACTOR / distSquared);			
+		}
+	}
+	
+	/*for ( ; itr != begin; --itr) {
+		curUnit = (*itr);
+		
+		if (THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
+			dirToward = curUnit->getPosition() - position;
+			float distSquared = dirToward.GetLengthSquared();
+			force += dirToward.GetNormalised() * (curUnit->getSize())*REPEL_FACTOR / distSquared);
+		}	
+	}*/
+	
+	velocity = speed*force->GetNormalised();
+}
+

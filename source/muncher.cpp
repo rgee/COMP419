@@ -8,12 +8,12 @@ Muncher::Muncher(Player* owner, Game* game, float x, float y)
 	curFrame = 0;
     scale = 0.2f;
     setPosition(x, y);
-    statAttacks.insert(std::pair<unit_type, int>(MUNCHER,0));
+    /*statAttacks.insert(std::pair<unit_type, int>(MUNCHER,0));
     statAttacks.insert(std::pair<unit_type, int>(WRECKER,10));
     statAttacks.insert(std::pair<unit_type, int>(THROWER,0));
     statAttacks.insert(std::pair<unit_type, int>(SHOOTER,0));
     statAttacks.insert(std::pair<unit_type, int>(SPREADER,0));
-    statAttacks.insert(std::pair<unit_type, int>(LEADER,0));
+    statAttacks.insert(std::pair<unit_type, int>(LEADER,0));*/
 }
 
 Muncher::Muncher(const Muncher& newMuncher) : Unit(newMuncher) { }

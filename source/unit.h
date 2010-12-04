@@ -3,14 +3,19 @@
 
 class Unit;
 
+#include <string>
+
 #include "worldobject.h"
 #include "game.h"
 #include "player.h"
 #include "player.h"
 #include "IwDebugPrim.h"
-#include <string>
 #include "AI.h"
 
+//range in which we will consider repulsion/attraction for pathing
+#define PATH_THETA_RANGE PI
+#define THETA_DIFF(X, Y) (min(abs((X)-(Y), 2*PI - abs((X) - (Y)))))
+#define REPEL_FACTOR 400
 
 /**
 This lets us quickly determine a unit's type at run time.
@@ -112,6 +117,8 @@ class Unit : public WorldObject {
         float getAngle();
     
         float distToTarget();
+	
+		void path(std::list<Unit*>::iterator itr);
 };
 
 #endif
