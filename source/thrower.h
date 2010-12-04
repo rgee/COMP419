@@ -11,18 +11,18 @@ class Thrower : public Unit {
 		Thrower(const Thrower& newThrower);
 		~Thrower(){};
 
-		virtual bool update();
+
+        std::map<unit_type, int> statAttacks;
+        
+        virtual bool shouldAIUpdate();
+        virtual void attack();
+        virtual int getDamage(Unit* unit);
+        virtual const char* getTextureName();
+        virtual bool update();
 		virtual unit_type getType();
-	
 		virtual Unit* spawnCopy();
     
 
-        std::map<unit_type, int> statAttacks;
-    
-        virtual void attack();
-        virtual int getDamage(Unit* unit);
-
-        virtual const char* getTextureName();
 };
 
 #endif

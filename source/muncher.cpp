@@ -18,15 +18,12 @@ Muncher::Muncher(Player* owner, Game* game, float x, float y)
 
 Muncher::Muncher(const Muncher& newMuncher) : Unit(newMuncher) { }
 
+bool Muncher::shouldAIUpdate() {
+    return curFrame >= 8;
+}
+
 bool Muncher::update() {
-	
-    curFrame = (curFrame + 1) % numFrames;
-   
-    if(curFrame >= 8) {
-		game->getAI()->updateAI(this);
-	}
-	
-    
+    curFrame = (curFrame + 1) % numFrames;    
 	return true;
 }
 void Muncher::attack(){

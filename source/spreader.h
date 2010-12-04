@@ -18,11 +18,8 @@ class Spreader : public Unit {
 		virtual bool update();
         virtual const char* getTextureName();
 		virtual unit_type getType();
-	
 		virtual Unit* spawnCopy();
-    
-
-        
+        virtual bool shouldAIUpdate();
 };
 
 #endif
