@@ -10,6 +10,7 @@ Spreader::Spreader(Player* owner, Game* game, float x, float y)
 	spreadDelay = 0;
     setPosition(x, y);
 	worldRad = game->getWorldRadius();
+	texture_names.push_back(IwHashString("spreader_sprite_sheet"));
 }
 
 Spreader::Spreader(const Spreader& newSpreader) : Unit(newSpreader) {
@@ -53,10 +54,6 @@ bool Spreader::update(){
 	spreadDelay++;
 	curFrame = (curFrame + 1) % numFrames;
     return true;
-}
-
-const char* Spreader::getTextureName(){
-    return "spreader_sprite_sheet";
 }
 
 unit_type Spreader::getType() {

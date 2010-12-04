@@ -10,7 +10,6 @@ class Shooter : public Unit {
 		~Shooter(){};
 
 		virtual bool update();
-		virtual const char* getTextureName();
 		virtual unit_type getType();
 	
 		virtual Unit* spawnCopy();

@@ -18,7 +18,6 @@ class Muncher : public Unit {
     
         std::map<unit_type, int> statAttacks;
 
-		virtual const char* getTextureName();
 		virtual bool update();
         
         virtual void attack();

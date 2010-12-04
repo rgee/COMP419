@@ -17,7 +17,6 @@ class Thrower : public Unit {
         virtual bool shouldAIUpdate();
         virtual void attack();
         virtual int getDamage(Unit* unit);
-        virtual const char* getTextureName();
         virtual bool update();
 		virtual unit_type getType();
 		virtual Unit* spawnCopy();

@@ -48,7 +48,7 @@ void Unit::display(){
 void Unit::displayOnScreen(int x, int y){    
     
     CIwMaterial *mat = new CIwMaterial();
-    mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
+	mat->SetTexture((CIwTexture*)game->getSprites()->GetResHashed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
     mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     IwGxSetMaterial(mat);
@@ -80,9 +80,14 @@ Player& Unit::getOwner(){
 
 Unit* Unit::getTarget(){ return target; }
 void Unit::setTarget(Unit* unit){
-    target = unit; 
-    if(target != NULL && target->getHp() <= 0)
+    if(unit != NULL && unit->getHp() <= 0) {
         target = NULL;
+	} else {
+		target = unit;
+	}
+	if(target == NULL) {
+		setIdleSprite();
+	}
 }
 
 bool Unit::hasTarget(){

@@ -14,6 +14,8 @@ Muncher::Muncher(Player* owner, Game* game, float x, float y)
     statAttacks.insert(std::pair<unit_type, int>(SHOOTER,0));
     statAttacks.insert(std::pair<unit_type, int>(SPREADER,0));
     statAttacks.insert(std::pair<unit_type, int>(LEADER,0));
+
+	texture_names.push_back(IwHashString("muncher_sprite_sheet"));
 }
 
 Muncher::Muncher(const Muncher& newMuncher) : Unit(newMuncher) { }
@@ -35,10 +37,6 @@ void Muncher::attack(){
 int Muncher::getDamage(Unit* unit){
     unit_type type = unit->getType();
     return statAttacks[type];
-}
-
-const char* Muncher::getTextureName() {
-	return "muncher_sprite_sheet";
 }
 
 Unit* Muncher::spawnCopy() {

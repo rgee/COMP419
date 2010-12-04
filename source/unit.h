@@ -6,9 +6,9 @@ class Unit;
 #include "worldobject.h"
 #include "game.h"
 #include "player.h"
-#include "player.h"
 #include "IwDebugPrim.h"
 #include <string>
+#include <vector>
 #include "AI.h"
 
 
@@ -94,8 +94,6 @@ class Unit : public WorldObject {
 		 in the future. 
 		 */
 		virtual Unit* spawnCopy() { return NULL; };
-		
-		virtual const char* getTextureName() = 0;
 	
 		virtual bool update() = 0;
 	
@@ -107,6 +105,18 @@ class Unit : public WorldObject {
         virtual int getDamage(Unit* unit);
         
         virtual bool shouldAIUpdate() = 0;
+
+
+		// Set the new sprite for this state
+		// and move the unit to the correct bucket in
+		// the render-ordering structure.
+		//
+		// We make this a separate function so it can be called
+		// from base-class code. We want to do this as little as
+		// possible and immediately after knowing we need to. it's
+		// an expensive operation.
+		virtual void setAttackSprite(){}
+		virtual void setIdleSprite(){}
     
         float getSight();
         float getAngle();

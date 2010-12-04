@@ -27,11 +27,7 @@ class Icing : public WorldObject {
 	
 		void update();
 	
-		virtual void display();
-	
-		virtual const char* getTextureName();
-
-	
+		virtual void display();	
 };
 
 #endif

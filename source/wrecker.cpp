@@ -15,6 +15,9 @@ Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
     statAttacks.insert(std::pair<unit_type, int>(SHOOTER,10));
     statAttacks.insert(std::pair<unit_type, int>(SPREADER,10));
     statAttacks.insert(std::pair<unit_type, int>(LEADER,10));
+
+	texture_names.push_back(IwHashString("wrecker_walk_sprite_sheet"));
+	texture_names.push_back(IwHashString("wrecker_attack_sprite_sheet"));
 }
  
 Wrecker::Wrecker(const Wrecker& newWrecker) : Unit(newWrecker) { }
@@ -23,19 +26,32 @@ bool Wrecker::shouldAIUpdate() {
     return true;
 }
 
-bool Wrecker::update(){
-    curFrame = (curFrame + 1) % numFrames;
-    return true;
+void Wrecker::setAttackSprite() {
+	if(current_texture_index != 1) {
+		UnitBucket buckets = *game->getUnitBucket();
+		std::set<Unit*>* ourPool = buckets[texture_names[current_texture_index]];
+		ourPool->erase(ourPool->find(this));
+		buckets[texture_names[1]]->insert(this);
+		numFrames = 8;
+		current_texture_index = 1;
+	}
 }
 
-const char* Wrecker::getTextureName(){
-    if (!hasTarget()) {
-        numFrames = 6;
-        return "wrecker_walk_sprite_sheet";
-    }else{
-        numFrames = 8;
-        return "wrecker_attack_sprite_sheet";
-    }
+void Wrecker::setIdleSprite() {
+	if(current_texture_index != 0) {
+		UnitBucket buckets = *game->getUnitBucket();
+		std::set<Unit*>* ourPool = buckets[texture_names[current_texture_index]];
+		ourPool->erase(ourPool->find(this));
+		buckets[texture_names[0]]->insert(this);
+		numFrames = 6;
+		current_texture_index = 0;
+	}
+}
+
+bool Wrecker::update(){
+    curFrame = (curFrame + 1) % numFrames;
+
+	return true;
 }
 
 unit_type Wrecker::getType() {
@@ -48,6 +64,7 @@ Unit* Wrecker::spawnCopy() {
 
 void Wrecker::attack(){
     if((target->getPosition()-position).GetLength() <= range){
+		setAttackSprite();
         target->receiveDamage(getDamage(target), this);
     }
 }
