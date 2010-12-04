@@ -72,7 +72,6 @@ float AI::getRChange(Unit* unit) {
 			float otherTheta = otherUnit->getTheta();
 			float distSquare = abs((otherPos-position).GetLengthSquared());
 			
-			
 			float rDiff = unitR - otherR;
 			float dir = rDiff > 0 ? 1 : -1;
 			
