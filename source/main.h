@@ -42,7 +42,6 @@ Player* opponentPlayer = NULL;
 #define MAX_TOUCHES 10
 CTouch touches[MAX_TOUCHES];
 
-#define SCROLLING_FRICTION_COEFFICIENT 1.15
 float worldScrollSpeed = 0;
 
 float getAngleDiff(int32 x0, int32 y0, int32 x1, int32 y1);
