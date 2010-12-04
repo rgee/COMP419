@@ -1,5 +1,5 @@
 #include "AI.h"
-  
+ /* 
 Unit* AI::detectEnemy(std::list<Unit*>::iterator unit_itr) {
     std::list<Unit*>* units = game->getUnits();
     CIwFVec2 position = (*unit_itr)->getPosition() + (*unit_itr)->getVelocity();
@@ -10,7 +10,7 @@ Unit* AI::detectEnemy(std::list<Unit*>::iterator unit_itr) {
     float max_dist = closest_distance;
     Unit* closest = (*unit_itr)->getTarget();
     
-    /**
+    / **
      * In order to avoid brute-force distance calculations, we take advantage of
      * the fact that the units are sorted by their theta values. We begin our distance
      * checking at the given unit's position in the sorted container, then at each
@@ -18,7 +18,7 @@ Unit* AI::detectEnemy(std::list<Unit*>::iterator unit_itr) {
      * 
      * We stop once we've reached a unit that is completely outside the sight range,
      * We do the same thing in both directions to find the closest unit.
-     */
+     * /
     std::list<Unit*>::iterator incr_theta_itr = unit_itr;
     std::list<Unit*>::iterator decr_theta_itr = unit_itr;
     while(incr_theta_itr != units->end() && sq_dist <= max_dist) {
@@ -90,3 +90,4 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 		}
 	}
 }
+*/

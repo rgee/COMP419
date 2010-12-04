@@ -20,8 +20,6 @@ class Game;
 #include "icing.h"
 #include "player.h"
 
-#include "AI.h"
-
 typedef std::map<const char*, std::set<Unit*>* > UnitBucket;
 
 class Game {
@@ -33,7 +31,6 @@ class Game {
 	
         int numPlayers;
 
-		AI *ai;
         std::list<Unit*> units;
         int numUnits;
 
@@ -96,8 +93,6 @@ class Game {
 		void tick();
 
         long getTimesteps();
-
-        AI *getAI();
     
         CIwMat* getViewMatrix();
         float getRotation();

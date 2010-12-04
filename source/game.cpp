@@ -4,7 +4,6 @@
  
 Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
         innerRadius(72), outerRadius(288), timesteps(0) {
-	ai = new AI(this);
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
@@ -30,7 +29,6 @@ Game::~Game(){
 		delete *itr;
 	}
 	
-	delete ai;
  	units.clear();
 	unitBuffer.clear();
     unitBucket.clear();
@@ -219,8 +217,6 @@ std::list<Icing*>* Game::getOpponentIcing() {
 CIwFVec2 Game::getWorldRadius() {
 	return CIwFVec2(innerRadius, outerRadius);
 }
-
-AI *Game::getAI(){ return ai; }
 
 CIwMat* Game::getViewMatrix(){
     return &view;

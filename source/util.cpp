@@ -1,5 +1,9 @@
 #include "util.h"
 
+float min(float x, float y){
+	return x > y ? y : x;
+}
+
 void renderImageWorldSpace(CIwFVec2& position, float angle, float scaleFactor,
                         int textureSize, float worldRot, int frameNumber, int numFrames, float z) {
 	

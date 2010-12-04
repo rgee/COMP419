@@ -10,11 +10,11 @@ class Unit;
 #include "player.h"
 #include "player.h"
 #include "IwDebugPrim.h"
-#include "AI.h"
+
 
 //range in which we will consider repulsion/attraction for pathing
 #define PATH_THETA_RANGE PI
-#define THETA_DIFF(X, Y) (min(abs((X)-(Y), 2*PI - abs((X) - (Y)))))
+#define THETA_DIFF(X, Y) (min(abs((X)-(Y)), 2*PI - abs((X) - (Y))))
 #define REPEL_FACTOR 400
 
 /**
@@ -100,19 +100,18 @@ class Unit : public WorldObject {
 		 */
 		virtual Unit* spawnCopy() { return NULL; };
 		
-		virtual const char* getTextureName() = 0;
+		virtual const char* getTextureName();
 	
-		virtual bool update() = 0;
+		virtual bool update(std::list<Unit*>::iterator itr) = 0;
 	
         virtual void display();
         void displayOnScreen(int x, int y);
 		
 		virtual void attack();
+	
         void receiveDamage(float amount, Unit* attacker); 
         virtual int getDamage(Unit* unit);
-        
-        virtual bool shouldAIUpdate() = 0;
-    
+            
         float getSight();
         float getAngle();
     

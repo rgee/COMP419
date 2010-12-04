@@ -9,7 +9,7 @@ class Shooter : public Unit {
 		Shooter(const Shooter& newShooter);
 		~Shooter(){};
 
-		virtual bool update();
+		virtual bool update(std::list<Unit*>::iterator itr);
 		virtual const char* getTextureName();
 		virtual unit_type getType();
 	

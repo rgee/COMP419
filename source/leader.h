@@ -6,12 +6,12 @@
 
 class Leader : public Unit {
 	public:
-		Leader(Player* owner, Game* game, CIwFVec2 position);
+		Leader(Player* owner, Game* game, float x, float y);
 		~Leader(){};
 
-		virtual bool update();
-		virtual void display();
-		virtual char* getTextureName();
+		virtual bool update(std::list<Unit*>::iterator itr);
+		virtual const char* getTextureName();
+		virtual unit_type getType();
 };
 
 #endif

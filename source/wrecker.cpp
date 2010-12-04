@@ -19,11 +19,7 @@ Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
  
 Wrecker::Wrecker(const Wrecker& newWrecker) : Unit(newWrecker) { }
 
-bool Wrecker::shouldAIUpdate() {
-    return true;
-}
-
-bool Wrecker::update(){
+bool Wrecker::update(std::list<Unit*>::iterator itr){
     curFrame = (curFrame + 1) % numFrames;
     return true;
 }
