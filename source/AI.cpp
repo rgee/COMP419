@@ -162,6 +162,7 @@ Unit* AI::detectEnemy(std::list<Unit*>::iterator unit_itr) {
         }
         --decr_theta_itr;
     }
+
     return closest;
 }
 
