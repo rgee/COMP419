@@ -84,7 +84,7 @@ class Game {
 		std::list<Icing*>* getLocalIcing();
 	
 		std::list<Icing*>* getOpponentIcing();
-
+    
 		/**
 		 * Gets the inner and outer radii of the world donut.
 		 *
@@ -94,8 +94,8 @@ class Game {
 		CIwFVec2 getWorldRadius();
         	
 		void tick();
-			
-		long getTimesteps();
+
+        long getTimesteps();
 
         AI *getAI();
     
