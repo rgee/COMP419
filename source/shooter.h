@@ -1,7 +1,7 @@
 #ifndef _SHOOTER_H
 #define _SHOOTER_H
 
-#include "unit.h"
+#include "unit.h" 
 
 class Shooter : public Unit {
 	public:
@@ -14,6 +14,13 @@ class Shooter : public Unit {
 		virtual unit_type getType();
 	
 		virtual Unit* spawnCopy();
+        
+    
+        std::map<unit_type, int> statAttacks;
+    
+        virtual void attack();
+        virtual int getDamage(Unit* unit);
+        virtual bool shouldAIUpdate();
 
 };
 

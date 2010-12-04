@@ -8,13 +8,15 @@ class Unit;
 #include "player.h"
 #include "player.h"
 #include "IwDebugPrim.h"
+#include <string>
+#include "AI.h"
 
 
 /**
 This lets us quickly determine a unit's type at run time.
 */
 enum unit_type {
-	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER
+	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER, LEADER
 };
 
 class Unit : public WorldObject {
@@ -31,31 +33,21 @@ class Unit : public WorldObject {
 		float spread_speed;
 		float spread_radius;
         float scale;
-
+    
 		Player *owner;
+        bool localPlayedOwnsThis;
+    
 		CIwFVec2 velocity;
 		int uid;
-	
+		
 		//info for sprite animation
 		int spriteSize;
 		int numFrames;
 		int curFrame;
+            
+        std::string unitType;
 	
-		// The unit this unit is attacking.
-		Unit *attackTarget;
-
-		// The unit this unit is pursuing.
-		Unit *pursueTarget;
-	
-		/**
-		Utility method that subclasses will use to render their sprites. Assumes that 
-		current material has already been set to the sprite image.
-		 
-		@param frameNumber which frame of the sprite sheet to display (indexed from 0)
-		@param angle angle to rotate the sprite by
-		@param scaleFactor factor to scale the sprite by
-		*/
-		void renderSprite(int frameNumber, float angle, float scaleFactor, float worldRot);
+		Unit *target;
         
     public:
 	
@@ -86,15 +78,12 @@ class Unit : public WorldObject {
         
 		Player& getOwner();
 		void setOwner(Player* p);
+        bool isLocal();
 			
-		Unit* getAttacking();
-		void setAttacking(Unit* unit);
+		Unit* getTarget();
+		void setTarget(Unit* unit);
 		
-		Unit* getPursuing();
-		void setPursuing(Unit* unit);
-	
-		bool attacking();
-		bool pursuing();
+        bool hasTarget();
         
 		float getHp();
 		void setHp(float f);
@@ -113,11 +102,16 @@ class Unit : public WorldObject {
         virtual void display();
         void displayOnScreen(int x, int y);
 		
-		void attack();
-		void receiveDamage(float amount, Unit *attacker); 
+		virtual void attack();
+        void receiveDamage(float amount, Unit* attacker); 
+        virtual int getDamage(Unit* unit);
+        
+        virtual bool shouldAIUpdate() = 0;
     
         float getSight();
         float getAngle();
+    
+        float distToTarget();
 };
 
 #endif

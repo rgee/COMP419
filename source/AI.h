@@ -1,16 +1,21 @@
 #ifndef _AI_H 
 #define _AI_H
 
+#include "s3eDebug.h"
+#include <stdio.h>
 #include <math.h>
 #include <list>
 #include <vector>
 #include <iterator>
 #include <algorithm>
 
-class AI;
 
+class AI;
+#include "game.h"
 #include "util.h"
 #include "unit.h"
+#include "IwDebug.h"
+
 
 
 class AI{
@@ -18,18 +23,26 @@ class AI{
         CIwFVec2 worldRad;
         Game* game;
 
-		
-        void path(Unit* unit);
-        
-        bool attack(Unit* unit);
+        float getRChange(Unit *unit);
+    
+        /**
+         * Path toward the enemy base.
+         */
+		void doIdle(Unit* unit);
 
-		/**
-		 * Detects the nearest enemy unit to the specified unit.
-		 *
-		 * @param unit The unit seeking an enemy.
-		 * @return The nearest enemy.
-		 */
-        Unit* detectEnemy(Unit* unit);
+        /**
+         * Pursue a target.
+         */
+        void doPursue(Unit* unit);
+
+        /**
+         * Detects the nearest enemy unit to the specified unit.
+         *
+         * @param unit_itr An iteratot to the unit in the sorted unit
+         *                 data structure.
+         * @return The nearest enemy.
+         */
+        Unit* detectEnemy(std::list<Unit*>::iterator unit_itr);
         
 		/**
 		 * Checks for collisions of a given unit with other units in the world.
@@ -70,7 +83,7 @@ class AI{
 		 *
 		 * @param unit The unit to update.
 		 */
-        void updateAI(Unit* unit);
+        void updateAI(std::list<Unit*>::iterator unit_itr);
         
 };
 

@@ -6,22 +6,28 @@ Shooter::Shooter(Player* owner, Game* game, float x, float y)
 	spriteSize = 256;
 	numFrames = 7;
 	curFrame = 0;
-    scale = 0.3;
+    scale = 0.35;
     setPosition(x, y);
 }
 
 Shooter::Shooter(const Shooter& newShooter) : Unit(newShooter) { }
 
+bool Shooter::shouldAIUpdate() {
+    return curFrame == 0;
+}
+
 bool Shooter::update(){
     curFrame = (curFrame + 1) % numFrames;
     
-    if(curFrame == 0)
-        game->getAI()->updateAI(this);
+    if(target == NULL){
+        curFrame = 0;
+    }
     
     return true;
 }
 
 const char* Shooter::getTextureName() {
+
 	return "shooter_sprite_sheet";
 }
 
@@ -32,3 +38,16 @@ unit_type Shooter::getType() {
 Unit* Shooter::spawnCopy() {
 	return new Shooter(*this);
 }
+
+void Shooter::attack(){
+    if((target->getPosition()-position).GetLength() <= range){
+        target->receiveDamage(getDamage(target), this);
+    }
+}
+
+
+int Shooter::getDamage(Unit* unit){
+    unit_type type = unit->getType();
+    return statAttacks[type];
+}
+

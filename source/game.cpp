@@ -2,7 +2,8 @@
 #include "unit.h"
 
  
-Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0), innerRadius(72), outerRadius(288) {
+Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
+        innerRadius(72), outerRadius(288), timesteps(0) {
 	ai = new AI(this);
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
@@ -62,24 +63,18 @@ void Game::addIcing(Icing* i) {
 		
 		if(localIcing.empty()) {
 			localIcing.push_back(i);
-		}
-		else {
+		} else {
 			localIcingBuffer.push_back(i);
 		}
 		
-		localIcingBuffer.sort();
-
-	}
-	else if(i->getOwner() == opponentPlayer) {
+	} else if(i->getOwner() == opponentPlayer) {
 		
 		if(opponentIcing.empty()) {
 			opponentIcing.push_back(i);
-		} 
-		else {
+		} else {
 			opponentIcingBuffer.push_back(i);
 		}
 		
-		opponentIcingBuffer.sort();
 	}
 	
 }
@@ -94,9 +89,7 @@ void Game::addUnit(Unit *u){
 	} else {
 		unitBuffer.push_back(u);
 	}
-    
-    unitBuffer.sort();
-	
+    	
 	if(unitBucket.find(u->getTextureName()) == unitBucket.end())
 		unitBucket[u->getTextureName()] = new std::set<Unit*>();
 	
@@ -106,27 +99,47 @@ void Game::addUnit(Unit *u){
 	if(&(u->getOwner()) == localPlayer) {
 		Unit* newUnit = u->spawnCopy();
 		newUnit->setOwner(opponentPlayer);
-		newUnit->setPolarPosition(u->getR() - 20.0, u->getTheta() + .75);
+		newUnit->setPolarPosition(u->getR() + 1, PI - u->getTheta());
 		addUnit(newUnit);
-	}
+    }
 }
 
 void Game::tick(){
 
-	for(std::list<Unit*>::iterator itr = units.begin(); itr !=units.end(); ++itr) {
-		(*itr)->update();
-	}
+	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
+        (*itr)->update();
+        if((*itr)->shouldAIUpdate()) {
+            ai->updateAI(itr);
+        }
+    }
+    
+    for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
+        if((*itr)->getHp() < 0){
+            units.erase(itr);
+            delete *itr;
+            itr--;
+        }
+    }   
 	
 	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
-		 (*itr)->update();
+		(*itr)->update();
+        
+        //if(itr != localIcing.begin() &&
+         //       ((*itr)->getPosition() + (*(itr-1))->getPosition())->GetLengthSquared() < 15)
+          //  localIcing->erase(itr);
 	}
 	
 	for(std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {
 		(*itr)->update();
 	}
     
+    unitBuffer.sort();
     units.merge(unitBuffer);
+    
+    localIcingBuffer.sort();
 	localIcing.merge(localIcingBuffer);
+    
+    opponentIcingBuffer.sort();
 	opponentIcing.merge(opponentIcingBuffer);
     
     ++timesteps;
@@ -143,6 +156,7 @@ void Game::renderSprites() {
 	CIwMaterial* mat = new CIwMaterial();
 	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
+        
 		if (strcmp((*itr).first, curTexture) != 0) {
 			curTexture = (*itr).first;
 			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
@@ -154,6 +168,10 @@ void Game::renderSprites() {
 		std::set<Unit*>* renderUnits = (*itr).second;
 		
 		for (std::set<Unit*>::iterator u_it = renderUnits->begin(); u_it != renderUnits->end(); ++u_it) {
+            if((*u_it)->getHp() <= 0){
+                renderUnits->erase(u_it);
+            }
+            
 			(*u_it)->display();
 		}
 	}
@@ -221,4 +239,8 @@ float Game::rotate(float rot) {
 
 CIwResGroup* Game::getSprites(){
     return sprites;
+}
+
+Player *Game::getLocalPlayer(){
+    return localPlayer;
 }

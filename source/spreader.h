@@ -8,6 +8,7 @@ class Spreader : public Unit {
 	
         int amountSpread;
 		int spreadDelay;
+		CIwFVec2 worldRad;
     
 	public:
 		Spreader(Player* owner, Game* game, float x, float y);
@@ -17,9 +18,8 @@ class Spreader : public Unit {
 		virtual bool update();
         virtual const char* getTextureName();
 		virtual unit_type getType();
-	
 		virtual Unit* spawnCopy();
-    
+        virtual bool shouldAIUpdate();
 };
 
 #endif
