@@ -19,9 +19,12 @@ Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
  
 Wrecker::Wrecker(const Wrecker& newWrecker) : Unit(newWrecker) { }
 
+bool Wrecker::shouldAIUpdate() {
+    return true;
+}
+
 bool Wrecker::update(){
     curFrame = (curFrame + 1) % numFrames;
-	game->getAI()->updateAI(this);
     return true;
 }
 

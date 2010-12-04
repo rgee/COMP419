@@ -23,12 +23,12 @@ Thrower::Thrower(Player* owner, Game* game, float x, float y)
 
 Thrower::Thrower(const Thrower& newThrower) : Unit(newThrower) { }
 
+bool Thrower::shouldAIUpdate() {
+    return curFrame >= 4;
+}
+
 bool Thrower::update(){   
     curFrame = (curFrame + 1) % numFrames;
-
-
-    if(curFrame >= 4)
-        game->getAI()->updateAI(this);
     
 	return true;
 }

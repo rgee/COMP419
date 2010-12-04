@@ -27,7 +27,7 @@ class Muncher : public Unit {
 		virtual unit_type getType();
 	
 		virtual Unit* spawnCopy();
-
+        virtual bool shouldAIUpdate();
 };
 
 #endif

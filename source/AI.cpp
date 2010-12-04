@@ -18,15 +18,15 @@ AI::AI(Game* game):game(game){
     pursue
 */
 
-void AI::updateAI(Unit* unit){
-    unit->setTarget(detectEnemy(unit));
+void AI::updateAI(std::list<Unit*>::iterator unit_itr){
+    (*unit_itr)->setTarget(detectEnemy(unit_itr));
     
-    if(!unit->hasTarget())
-        doIdle(unit);
-    else if(unit->getRange() >= unit->distToTarget())
-        unit->attack();
+    if(!(*unit_itr)->hasTarget())
+        doIdle((*unit_itr));
+    else if((*unit_itr)->getRange() >= (*unit_itr)->distToTarget())
+        (*unit_itr)->attack();
     else
-        doPursue(unit);
+        doPursue((*unit_itr));
 }
 
 void AI::doIdle(Unit *unit){
@@ -113,35 +113,59 @@ void AI::doPursue(Unit* unit) {
 	unit->setVelocity(pursuitVector);
 }
 
-
-
-Unit* AI::detectEnemy(Unit* unit){
+Unit* AI::detectEnemy(std::list<Unit*>::iterator unit_itr) {
     std::list<Unit*>* units = game->getUnits();
-    CIwFVec2 position = unit->getPosition() + unit->getVelocity();
+    CIwFVec2 position = (*unit_itr)->getPosition() + (*unit_itr)->getVelocity();
     CIwFVec2 otherPos = CIwFVec2::g_Zero;
     
     float sq_dist = 0;
-    float closest_distance = SQ(unit->getSight());
-    Unit* closest = unit->getTarget(); // Chase em down
+    float closest_distance = SQ((*unit_itr)->getSight());
+    float max_dist = closest_distance;
+    Unit* closest = (*unit_itr)->getTarget();
     
-    // THIS IS TOO SLOW
-    
-    // Just treat sight as a radius for now and return the closest enemy unit within it.
-    for(std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
-        if(&(*itr)->getOwner() != &unit->getOwner()) {
-			otherPos = (*itr)->getPosition();
-			sq_dist = SQ(position.x - otherPos.x) + SQ(position.y - otherPos.y);
+    /**
+     * In order to avoid brute-force distance calculations, we take advantage of
+     * the fact that the units are sorted by their theta values. We begin our distance
+     * checking at the given unit's position in the sorted container, then at each
+     * step, check the unit with the next nearest theta, and see if it's close enough.
+     * 
+     * We stop once we've reached a unit that is completely outside the sight range,
+     * We do the same thing in both directions to find the closest unit.
+     */
+    std::list<Unit*>::iterator incr_theta_itr = unit_itr;
+    std::list<Unit*>::iterator decr_theta_itr = unit_itr;
+    while(incr_theta_itr != units->end() && sq_dist <= max_dist) {
+        // Look up theta, which means we're moving to the BACK of the container
+        if(&(*incr_theta_itr)->getOwner() != &(*unit_itr)->getOwner()) {
+            otherPos = (*incr_theta_itr)->getPosition();
+            sq_dist = SQ(position.x - otherPos.x) + SQ(position.y - otherPos.y);
             
-            // If this unit is closer and alive, it's the best for now
-			if(sq_dist < closest_distance && (*itr)->getHp() > 0) {
+            if(sq_dist < closest_distance && (*incr_theta_itr)->getHp() > 0) {
                 closest_distance = sq_dist;
-                closest = *(itr);
+                closest = *(incr_theta_itr);
 			}
-		}
-	}
-    
+        }
+        ++incr_theta_itr;
+    }
+
+    // Must reset the distance here since we're switching directions.
+    sq_dist = 0.0f;
+    while(decr_theta_itr != units->begin() && sq_dist <= max_dist) {
+        // Look down theta, which means we're moving to the FRONT of the container. 
+        if(&(*decr_theta_itr)->getOwner() != &(*unit_itr)->getOwner()) {
+            otherPos = (*decr_theta_itr)->getPosition();
+            sq_dist = SQ(position.x - otherPos.x) + SQ(position.y - otherPos.y);
+            
+            if(sq_dist < closest_distance && (*decr_theta_itr)->getHp() > 0) {
+                closest_distance = sq_dist;
+                closest = *(decr_theta_itr);
+			}
+        }
+        --decr_theta_itr;
+    }
     return closest;
 }
+
 
 // THIS NEEDS TO BE FASTER
 template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* unit)

@@ -106,6 +106,7 @@ class Unit : public WorldObject {
         void receiveDamage(float amount, Unit* attacker); 
         virtual int getDamage(Unit* unit);
         
+        virtual bool shouldAIUpdate() = 0;
     
         float getSight();
         float getAngle();

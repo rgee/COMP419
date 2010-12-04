@@ -18,6 +18,10 @@ Spreader::Spreader(const Spreader& newSpreader) : Unit(newSpreader) {
 	worldRad = game->getWorldRadius();
 }
 
+bool Spreader::shouldAIUpdate() {
+    return false;
+}
+
 bool Spreader::update(){
 	
 	//This is just using magic numbers right now - we need to discuss
