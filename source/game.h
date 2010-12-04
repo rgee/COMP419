@@ -4,7 +4,7 @@
 #include <map>
 #include <set>
 #include <list>
-#include <deque>
+#include <algorithm>
 
 #include "string.h"
 #include "IwResManager.h"
