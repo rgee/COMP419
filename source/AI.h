@@ -35,14 +35,14 @@ class AI{
          */
         void doPursue(Unit* unit);
 
-
-		/**
-		 * Detects the nearest enemy unit to the specified unit.
-		 *
-		 * @param unit The unit seeking an enemy.
-		 * @return The nearest enemy.
-		 */
-        Unit* detectEnemy(Unit* unit);
+        /**
+         * Detects the nearest enemy unit to the specified unit.
+         *
+         * @param unit_itr An iteratot to the unit in the sorted unit
+         *                 data structure.
+         * @return The nearest enemy.
+         */
+        Unit* detectEnemy(std::list<Unit*>::iterator unit_itr);
         
 		/**
 		 * Checks for collisions of a given unit with other units in the world.
@@ -83,7 +83,7 @@ class AI{
 		 *
 		 * @param unit The unit to update.
 		 */
-        void updateAI(Unit* unit);
+        void updateAI(std::list<Unit*>::iterator unit_itr);
         
 };
 

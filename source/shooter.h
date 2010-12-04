@@ -20,7 +20,7 @@ class Shooter : public Unit {
     
         virtual void attack();
         virtual int getDamage(Unit* unit);
-   
+        virtual bool shouldAIUpdate();
 
 };
 

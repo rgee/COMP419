@@ -12,15 +12,16 @@ Shooter::Shooter(Player* owner, Game* game, float x, float y)
 
 Shooter::Shooter(const Shooter& newShooter) : Unit(newShooter) { }
 
+bool Shooter::shouldAIUpdate() {
+    return curFrame == 0;
+}
+
 bool Shooter::update(){
     curFrame = (curFrame + 1) % numFrames;
     
     if(target == NULL){
         curFrame = 0;
     }
-    
-    if(curFrame == 0)
-        game->getAI()->updateAI(this);
     
     return true;
 }
