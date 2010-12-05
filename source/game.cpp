@@ -206,7 +206,7 @@ void Game::renderWorld() {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation, 0, 1, 0.0f);
+	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.85, 960, rotation, 0, 1, 0.0f);
 	
 	delete mat;
 }
