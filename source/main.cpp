@@ -183,10 +183,10 @@ void init(){
     game = new Game(localPlayer, opponentPlayer);
 	
 	Leader* localLeader = new Leader(localPlayer, game, 0, 0);
-	Leader* opponentLeader = new Leader(localPlayer, game, 0, 0);
+	Leader* opponentLeader = new Leader(opponentPlayer, game, 0, 0);
 
-	localLeader->setPolarPosition((game->getWorldRadius()).y, 0);
-	opponentLeader->setPolarPosition((game->getWorldRadius()).y, PI);
+	localLeader->setPolarPosition((game->getWorldRadius()).y + 20, 0);
+	opponentLeader->setPolarPosition((game->getWorldRadius()).y + 20, PI);
 	
 	game->addUnit(localLeader);
 	game->addUnit(opponentLeader);

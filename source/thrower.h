@@ -16,8 +16,9 @@ class Thrower : public Unit {
         
         virtual void attack();
         virtual int getDamage(Unit* unit);
-        virtual const char* getTextureName();
+
         virtual bool update(std::list<Unit*>::iterator itr);
+
 		virtual unit_type getType();
 		virtual Unit* spawnCopy();
     

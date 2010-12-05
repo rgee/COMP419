@@ -20,7 +20,7 @@ class Game;
 #include "icing.h"
 #include "player.h"
 
-typedef std::map<const char*, std::set<Unit*>* > UnitBucket;
+typedef std::map<unsigned int, std::set<Unit*>* > UnitBucket;
 
 class Game {
 	
@@ -46,6 +46,7 @@ class Game {
 
 		CIwResGroup* sprites;
 		CIwResGroup* game;
+
 		
 		// Map from texture name to sets of unit pointers.
 		// Used to optimize rendering by grouping units with the same textures
@@ -81,7 +82,7 @@ class Game {
 		std::list<Icing*>* getLocalIcing();
 	
 		std::list<Icing*>* getOpponentIcing();
-    
+		UnitBucket* getUnitBucket();
 		/**
 		 * Gets the inner and outer radii of the world donut.
 		 *
@@ -103,6 +104,7 @@ class Game {
 		void render();
     
         Player *getLocalPlayer();
+		Player *getOpponentPlayer();
 
 };
 

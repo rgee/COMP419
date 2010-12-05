@@ -8,6 +8,8 @@ Shooter::Shooter(Player* owner, Game* game, float x, float y)
 	curFrame = 0;
     scale = 0.35;
     setPosition(x, y);
+
+	texture_names.push_back(IwHashString("shooter_sprite_sheet"));
 }
 
 Shooter::Shooter(const Shooter& newShooter) : Unit(newShooter) { }
@@ -24,11 +26,6 @@ bool Shooter::update(std::list<Unit*>::iterator itr){
     }
     
     return true;
-}
-
-const char* Shooter::getTextureName() {
-
-	return "shooter_sprite_sheet";
 }
 
 unit_type Shooter::getType() {

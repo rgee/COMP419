@@ -1,13 +1,24 @@
 #include "worldobject.h"
 
-WorldObject::WorldObject(Game* game) : game(game){}
+WorldObject::WorldObject(Game* game) :
+game(game), current_texture_index(0)
+{}
 
-WorldObject::WorldObject(CIwFVec2 position, Game* game) : game(game) { 
+WorldObject::WorldObject(CIwFVec2 position, Game* game) 
+	: game(game), current_texture_index(0)
+{ 
     setPosition(position);
 }
 
-WorldObject::WorldObject(const WorldObject& newObj) : game(newObj.game), r(newObj.r), theta(newObj.theta) {
+WorldObject::WorldObject(const WorldObject& newObj) 
+	: game(newObj.game), r(newObj.r), theta(newObj.theta), current_texture_index(newObj.current_texture_index),
+	texture_names(newObj.texture_names)
+{
     setPosition(newObj.position);
+}
+
+unsigned int WorldObject::getTextureName() {
+	return texture_names[current_texture_index];
 }
 
 void WorldObject::setPosition(float x, float y) {

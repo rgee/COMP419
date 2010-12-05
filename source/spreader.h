@@ -16,7 +16,7 @@ class Spreader : public Unit {
 		~Spreader(){};
 
 		virtual bool update(std::list<Unit*>::iterator itr);
-        virtual const char* getTextureName();
+
 		virtual unit_type getType();
 		virtual Unit* spawnCopy();
         virtual bool shouldAIUpdate();

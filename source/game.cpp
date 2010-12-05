@@ -8,6 +8,11 @@ Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlay
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
 	initRenderState();
+
+	CIwResList* resources = sprites->GetListHashed(IwHashString("CIwTexture"));
+	for(CIwManaged** itr = resources->m_Resources.GetBegin(); itr != resources->m_Resources.GetEnd(); ++itr) {
+		unitBucket[(*itr)->m_Hash] = new std::set<Unit*>();
+	}
 }  
 
 Game::~Game(){
@@ -38,6 +43,10 @@ Game::~Game(){
     
     sprites->Finalise();
     game->Finalise();
+}
+
+UnitBucket* Game::getUnitBucket() {
+	return &unitBucket;
 }
 
 void Game::initRenderState() {
@@ -79,7 +88,7 @@ void Game::addIcing(Icing* i) {
 
 
 void Game::addUnit(Unit *u){
-	
+
     u->setId(numUnits++);
 
 	if(units.empty()) {
@@ -93,13 +102,6 @@ void Game::addUnit(Unit *u){
 	
 	(unitBucket[u->getTextureName()])->insert(u);
 
-	//have the opponent mirror the local player
-	if(&(u->getOwner()) == localPlayer) {
-		Unit* newUnit = u->spawnCopy();
-		newUnit->setOwner(opponentPlayer);
-		newUnit->setPolarPosition(u->getR() + 1, PI - u->getTheta());
-		addUnit(newUnit);
-    }
 }
 
 void Game::tick(){
@@ -147,14 +149,14 @@ void Game::render() {
 }
 
 void Game::renderSprites() {
-	const char* curTexture = "";
+	unsigned int curTexture = IwHashString("");
 	CIwMaterial* mat = new CIwMaterial();
 	
 	for (UnitBucket::iterator itr = unitBucket.begin(); itr != unitBucket.end(); ++itr) {
         
-		if (strcmp((*itr).first, curTexture) != 0) {
+		if (curTexture != (*itr).first != 0) {
 			curTexture = (*itr).first;
-			mat->SetTexture((CIwTexture*)sprites->GetResNamed(curTexture, IW_GX_RESTYPE_TEXTURE));
+			mat->SetTexture((CIwTexture*)sprites->GetResHashed(curTexture, IW_GX_RESTYPE_TEXTURE));
 			mat->SetModulateMode(CIwMaterial::MODULATE_RGB);
 			mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 			IwGxSetMaterial(mat);
@@ -236,4 +238,8 @@ CIwResGroup* Game::getSprites(){
 
 Player *Game::getLocalPlayer(){
     return localPlayer;
+}
+
+Player *Game::getOpponentPlayer(){
+    return opponentPlayer;
 }

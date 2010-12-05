@@ -6,7 +6,8 @@ Unit::Unit(const Unit& newUnit)
 	hp(newUnit.hp), cost(newUnit.cost), attackDamage(newUnit.attackDamage), speed(newUnit.speed),
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
-	scale(newUnit.scale), target(NULL), curFrame(0), numFrames(newUnit.numFrames), spriteSize(newUnit.spriteSize)
+	scale(newUnit.scale), target(NULL), curFrame(0), numFrames(newUnit.numFrames), spriteSize(newUnit.spriteSize),
+	navTarget(CIwFVec2(0, 0))
 {
 	setOwner(newUnit.owner);
 }
@@ -19,7 +20,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  curFrame(0), target(NULL)
+		  curFrame(0), target(NULL), navTarget(CIwFVec2(0, 0))
 {
     setOwner(owner);
 }
@@ -48,7 +49,7 @@ void Unit::display(){
 void Unit::displayOnScreen(int x, int y){    
     
     CIwMaterial *mat = new CIwMaterial();
-    mat->SetTexture((CIwTexture*)game->getSprites()->GetResNamed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
+	mat->SetTexture((CIwTexture*)game->getSprites()->GetResHashed(getTextureName(), IW_GX_RESTYPE_TEXTURE));
     mat->SetModulateMode(CIwMaterial::MODULATE_NONE);
     mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     IwGxSetMaterial(mat);
@@ -80,9 +81,14 @@ Player& Unit::getOwner(){
 
 Unit* Unit::getTarget(){ return target; }
 void Unit::setTarget(Unit* unit){
-    target = unit; 
-    if(target != NULL && target->getHp() <= 0)
+    if(unit != NULL && unit->getHp() <= 0) {
         target = NULL;
+	} else {
+		target = unit;
+	}
+	if(target == NULL) {
+		setIdleSprite();
+	}
 }
 
 bool Unit::hasTarget(){
@@ -149,37 +155,35 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	
 	CIwFVec2 force = CIwFVec2::g_Zero;
 	
-	/*std::list<Unit*>::iterator end = game->getUnits()->end();
-	std::list<Unit*>::iterator begin = game->getUnits()->begin();
-	std::list<Unit*>::rev_itr = itr;*/
-	
 	std::list<Unit*>* units = game->getUnits();
 	float theta = getTheta();
 	
 	CIwFVec2 dirToward = CIwFVec2::g_Zero;
 	Unit* curUnit;
 	
-	//BRUTE FORCE
+	//brute force - need to take advantage of theta sorting
 	for (itr = units->begin() ; itr != units->end(); ++itr) {
 		curUnit = *(itr);
 		
-		if (THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
-			dirToward = curUnit->getPosition() - position;
-			float distSquared = dirToward.GetLengthSquared();
-			force += dirToward.GetNormalised() * (curUnit->getSize()*REPEL_FACTOR / distSquared);			
+		if ((*itr) != this && THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
+			dirToward = position - curUnit->getPosition();
+			float dist = dirToward.GetLength(); //square root! we should try to get rid of this
+			force += dirToward.GetNormalised() * (curUnit->getSize()*REPEL_FACTOR / (pow(dist, 3)));			
 		}
 	}
-	
-	/*for ( ; itr != begin; --itr) {
-		curUnit = (*itr);
 		
-		if (THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
-			dirToward = curUnit->getPosition() - position;
-			float distSquared = dirToward.GetLengthSquared();
-			force += dirToward.GetNormalised() * (curUnit->getSize())*REPEL_FACTOR / distSquared);
-		}	
-	}*/
+	//attractive force for opponent leader
+	Player* opponent = game->getLocalPlayer() != owner ? owner : game->getOpponentPlayer();
+	dirToward = ((Unit*)(opponent->getLeader()))->getPosition() - position;
+	float dist = dirToward.GetLength();
+	force += dirToward.GetNormalised() * (LEADER_ATTRACTION / dist);	
 	
+	//"spring" force to motivate circular pathing
+	float centerR = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0;
+	float rDiff = centerR - r;
+	force += (rDiff/fabs(rDiff)) * WALL_REPEL * position * SQ(rDiff);
+			
 	velocity = speed*force.GetNormalised();
+	setPosition(position + velocity);
 }
 
