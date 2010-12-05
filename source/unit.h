@@ -89,7 +89,6 @@ class Unit : public WorldObject {
         
 		Player& getOwner();
 		void setOwner(Player* p);
-        bool isLocal();
 			
 		Unit* getTarget();
 		void setTarget(Unit* unit);

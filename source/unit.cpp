@@ -25,25 +25,20 @@ Unit::Unit(float hp, float cost, float attack, float speed,
     setOwner(owner);
 }
 
-bool Unit::isLocal(){
-    return localPlayedOwnsThis;
-}
-
 void Unit::display(){
 	IwGxSetColStream(owner->getColors(), 4);
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
 
-
     //UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
+    /*
     CIwMat pMat = CIwMat::g_Identity;
     pMat.SetTrans(CIwVec3(position.x, -position.y, 1));
     CIwMat rot = CIwMat::g_Identity;
     rot.SetRotZ(IW_ANGLE_FROM_RADIANS(game->getRotation()));
 
-    //IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
-    //IwGxDebugPrimCircle(pMat*rot, getSize()/2.0, 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
-
-    
+    IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
+    IwGxDebugPrimCircle(pMat*rot, getSize()/2.0, 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+     */
 }
 
 void Unit::displayOnScreen(int x, int y){    
@@ -167,8 +162,9 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		
 		if ((*itr) != this && THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
 			dirToward = position - curUnit->getPosition();
-			float dist = dirToward.GetLength(); //square root! we should try to get rid of this
-			force += dirToward.GetNormalised() * (curUnit->getSize()*REPEL_FACTOR / (pow(dist, 3)));			
+			float dist = dirToward.GetLengthSquared();
+			force += dirToward.GetNormalised() * (curUnit->getSize()*REPEL_FACTOR / SQ(dist));
+            // We can tweak bottom factor later, this seems to work fine:           ^
 		}
 	}
 		
@@ -176,12 +172,14 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	Player* opponent = game->getLocalPlayer() != owner ? owner : game->getOpponentPlayer();
 	dirToward = ((Unit*)(opponent->getLeader()))->getPosition() - position;
 	float dist = dirToward.GetLength();
-	force += dirToward.GetNormalised() * (LEADER_ATTRACTION / dist);	
+
+    if(dist > 0)
+        force += dirToward.GetNormalised() * (LEADER_ATTRACTION / dist);	
 	
 	//"spring" force to motivate circular pathing
 	float centerR = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0;
 	float rDiff = centerR - r;
-	force += (rDiff/fabs(rDiff)) * WALL_REPEL * position * SQ(rDiff);
+	force += position * ((rDiff < 0 ? -1 : 1) * WALL_REPEL * SQ(rDiff)); // Ternary is experimentally faster
 			
 	velocity = speed*force.GetNormalised();
 	setPosition(position + velocity);
