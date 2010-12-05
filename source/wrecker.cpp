@@ -22,7 +22,9 @@ Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
  
 Wrecker::Wrecker(const Wrecker& newWrecker) : Unit(newWrecker) { }
 
-bool Wrecker::shouldAIUpdate() {
+bool Wrecker::update(std::list<Unit*>::iterator itr){
+	curFrame = (curFrame + 1) % numFrames;
+	path(itr);
     return true;
 }
 
@@ -46,12 +48,6 @@ void Wrecker::setIdleSprite() {
 		numFrames = 6;
 		current_texture_index = 0;
 	}
-}
-
-bool Wrecker::update(){
-    curFrame = (curFrame + 1) % numFrames;
-
-	return true;
 }
 
 unit_type Wrecker::getType() {

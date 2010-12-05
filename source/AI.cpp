@@ -1,117 +1,5 @@
 #include "AI.h"
-  
-AI::AI(Game* game):game(game){
-    worldRad = game->getWorldRadius();
-}
-
-/*
- The AI logic for a Unit
- =======================
- 
- get best target
- 
- if no target
-    move
- else if can attack
-    attack
- else
-    pursue
-*/
-
-void AI::updateAI(std::list<Unit*>::iterator unit_itr){
-    (*unit_itr)->setTarget(detectEnemy(unit_itr));
-    
-    if(!(*unit_itr)->hasTarget())
-        doIdle((*unit_itr));
-    else if((*unit_itr)->getRange() >= (*unit_itr)->distToTarget())
-        (*unit_itr)->attack();
-    else
-        doPursue((*unit_itr));
-}
-
-void AI::doIdle(Unit *unit){
-    CIwFVec2 position = unit->getPosition();
-    
-    float r     = unit->getR();
-	float theta = unit->getTheta();
-	float speed = unit->getSpeed();
-	
-	float diff = theta - (unit->isLocal() ? 0 : PI);
-	int direction = diff < PI && diff > 0 ? 1 : -1;
-    
-	float thetaChange = direction * speed / r; 
-    
-    CIwFVec2 coords(r + getRChange(unit), theta + thetaChange);
-    polarToXY(coords);
-        
-    // We want to move along (coords - position) by speed
-    coords -= position;
-    coords.Normalise();
-    coords *= speed;
-        
-    unit->setPosition(position + coords);
-	unit->setVelocity(coords);
-}
-
-float AI::getRChange(Unit* unit) {
-    CIwFVec2 position = unit->getPosition();
-    float unitR = unit->getR();
-    
-	std::list<Unit*>* units = game->getUnits();
-	float rChange = 0.0;
-	
-    // THIS IS TOO SLOW. Also, what are the magic numbers about?
-	for (std::list<Unit*>::iterator itr = units->begin(); itr != units->end(); ++itr) {
-		
-		Unit* otherUnit = *(itr);
-		
-		if(otherUnit != unit) {
-			
-			CIwFVec2 otherPos = otherUnit->getPosition();
-			float otherR = otherUnit->getR();
-			float otherTheta = otherUnit->getTheta();
-			float distSquare = abs((otherPos-position).GetLengthSquared());
-			
-			float rDiff = unitR - otherR;
-			float dir = rDiff > 0 ? 1 : -1;
-			
-			rChange += dir*15000.0/distSquare;
-		}
-	}
-	    
-	rChange += 5000.0/SQ(worldRad.x - unitR);
-	rChange -= 5000.0/SQ(worldRad.y - unitR); 
-	
-    return rChange;
-}
-
-void AI::doPursue(Unit* unit) {
-    CIwFVec2 position = unit->getPosition();
-    float speed = unit->getSpeed();
-    float range = unit->getRange();
-    
-    Unit *pursuing = unit->getTarget();
-    CIwFVec2 old_position = unit->getPosition();
-    CIwFVec2 pursuingPos = pursuing->getPosition();
-    
-    // The following logic should probably be altered as to
-    // only do one polar-to-xy conversion, not two.
-    
-    CIwFVec2 pursuitVector = pursuingPos - unit->getPosition();
-    pursuitVector.Normalise();
-    pursuitVector *= speed;
-    polarize(pursuitVector);
-    
-    pursuitVector.x += getRChange(unit);
-    
-    polarToXY(pursuitVector);
-    pursuitVector.Normalise();
-    pursuitVector *= speed;
-    
-    unit->setPosition(position + pursuitVector);
-	unit->setVelocity(pursuitVector);
-}
-
+ /* 
 Unit* AI::detectEnemy(std::list<Unit*>::iterator unit_itr) {
     std::list<Unit*>* units = game->getUnits();
     CIwFVec2 position = (*unit_itr)->getPosition() + (*unit_itr)->getVelocity();
@@ -122,7 +10,7 @@ Unit* AI::detectEnemy(std::list<Unit*>::iterator unit_itr) {
     float max_dist = closest_distance;
     Unit* closest = (*unit_itr)->getTarget();
     
-    /**
+    / **
      * In order to avoid brute-force distance calculations, we take advantage of
      * the fact that the units are sorted by their theta values. We begin our distance
      * checking at the given unit's position in the sorted container, then at each
@@ -130,7 +18,7 @@ Unit* AI::detectEnemy(std::list<Unit*>::iterator unit_itr) {
      * 
      * We stop once we've reached a unit that is completely outside the sight range,
      * We do the same thing in both directions to find the closest unit.
-     */
+     * /
     std::list<Unit*>::iterator incr_theta_itr = unit_itr;
     std::list<Unit*>::iterator decr_theta_itr = unit_itr;
     while(incr_theta_itr != units->end() && sq_dist <= max_dist) {
@@ -202,3 +90,4 @@ template<typename OutputIterator> void AI::collide(OutputIterator out, Unit* uni
 		}
 	}
 }
+*/

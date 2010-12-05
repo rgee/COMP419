@@ -23,7 +23,7 @@ bool Spreader::shouldAIUpdate() {
     return false;
 }
 
-bool Spreader::update(){
+bool Spreader::update(std::list<Unit*>::iterator itr){
 	
 	//This is just using magic numbers right now - we need to discuss
 	//how to interpret the units stats/do some refactoring.

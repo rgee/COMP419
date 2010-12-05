@@ -4,7 +4,6 @@
  
 Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
         innerRadius(72), outerRadius(288), timesteps(0) {
-	ai = new AI(this);
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
@@ -35,7 +34,6 @@ Game::~Game(){
 		delete *itr;
 	}
 	
-	delete ai;
  	units.clear();
 	unitBuffer.clear();
     unitBucket.clear();
@@ -104,22 +102,12 @@ void Game::addUnit(Unit *u){
 	
 	(unitBucket[u->getTextureName()])->insert(u);
 
-	//have the opponent mirror the local player
-	if(&(u->getOwner()) == localPlayer) {
-		Unit* newUnit = u->spawnCopy();
-		newUnit->setOwner(opponentPlayer);
-		newUnit->setPolarPosition(u->getR() + 1, PI - u->getTheta());
-		addUnit(newUnit);
-    }
 }
 
 void Game::tick(){
 
 	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
-        (*itr)->update();
-        if((*itr)->shouldAIUpdate()) {
-            ai->updateAI(itr);
-        }
+        (*itr)->update(itr);
     }
     
     for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
@@ -131,14 +119,14 @@ void Game::tick(){
             itr = units.erase(itr);
 
         }
-    }   
+    }  
 	
 	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
 		(*itr)->update();
         
         //if(itr != localIcing.begin() &&
-         //       ((*itr)->getPosition() + (*(itr-1))->getPosition())->GetLengthSquared() < 15)
-          //  localIcing->erase(itr);
+		//       ((*itr)->getPosition() + (*(itr-1))->getPosition())->GetLengthSquared() < 15)
+		//  localIcing->erase(itr);
 	}
 	
 	for(std::list<Icing*>::iterator itr = opponentIcing.begin(); itr != opponentIcing.end(); ++itr) {
@@ -235,8 +223,6 @@ CIwFVec2 Game::getWorldRadius() {
 	return CIwFVec2(innerRadius, outerRadius);
 }
 
-AI *Game::getAI(){ return ai; }
-
 CIwMat* Game::getViewMatrix(){
     return &view;
 }
@@ -255,4 +241,8 @@ CIwResGroup* Game::getSprites(){
 
 Player *Game::getLocalPlayer(){
     return localPlayer;
+}
+
+Player *Game::getOpponentPlayer(){
+    return opponentPlayer;
 }

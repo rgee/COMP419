@@ -29,6 +29,8 @@ files
 	worldobject.cpp
 	icing.h
 	icing.cpp
+	leader.h
+	leader.cpp
 	
 	(data/resource_groups)
 	game.group

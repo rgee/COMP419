@@ -18,7 +18,7 @@ class Muncher : public Unit {
     
         std::map<unit_type, int> statAttacks;
 
-		virtual bool update();
+		virtual bool update(std::list<Unit*>::iterator itr);
         
         virtual void attack();
         virtual int getDamage(Unit* unit);
@@ -26,7 +26,6 @@ class Muncher : public Unit {
 		virtual unit_type getType();
 	
 		virtual Unit* spawnCopy();
-        virtual bool shouldAIUpdate();
 };
 
 #endif
