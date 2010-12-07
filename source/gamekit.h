@@ -1,30 +1,58 @@
 #ifndef _GAME_KIT_H
 #define _GAME_KIT_H
 
+#include <list>
+#include <string.h>
+
 #include "s3e.h"
 #include "s3eExt_OSReadString.h"
 #include "s3eExt_IPhoneGameKit.h"
-#include "s3eExt_EMail.h"
-#include "s3eExt_BackgroundMusic.h"
-#include "s3eExt_BackgroundAudio.h"
 #include "s3eExt_IPhone.h"
-#include <set>
-#include <string.h>
+
+#include "muncher.h"
+#include "shooter.h"
+#include "wrecker.h"
+#include "spreader.h"
+#include "thrower.h"
+#include "leader.h"
+
+class GameKitPlayer;
+#include "game.h"
 
 #define SESSION_ID_STRING "_s3echatexample._tcp"
-#define S3E_DEVICE_NOTIFY_PUSH_NOTIFICATION S3E_DEVICE_PUSH_NOTIFICATION
 
+struct gk_data_t {
+    unit_type type;
+    float x, y;    
+};
 
-void GKSessionConnectionCallback(s3eGKSession* session, s3eGKSessionConnectResult* result, void* userData);
-void GKSessionPeerAttemptedToConnectCallback(s3eGKSession* session, s3eGKSessionPeerConnectAttempt* result, void* userData);
-void GKSessionRecieveDataCallback(s3eGKSession* session, s3eGKSessionRecievedData* result, void* userData);
-void GKSessionDisconnectionCallback(s3eGKSession* session, s3eGKSessionDisconnectInfo* result, void* userData);
-int32 PushNotificationRecieved(void* systemData, void* userData);
-
-void ProcessCommand(char* data);
-
-void ExampleInit();
-
-bool ExampleUpdate();
+class GameKitPlayer : public RemotePlayer {
+    private:
+        Game *game;
+        bool sychronized;
+    
+        // GameKit data
+        static bool connected;
+        static s3eGKPeer* peer;
+        static s3eGKSession *session;
+        static std::list<gk_data_t *> queued_units;
+        
+        // Callbacks
+        static void sendData(const gk_data_t*);
+        static void sessConnected(s3eGKSession*,       s3eGKSessionConnectResult*,         void*);
+        static void peerConnected(s3eGKSession*,       s3eGKSessionPeerConnectAttempt*,    void*);
+        static void receivedData(s3eGKSession*,        s3eGKSessionRecievedData*,          void*);
+        static void sessDisconnected(s3eGKSession*,    s3eGKSessionDisconnectInfo*,        void*);
+        
+    public:
+        GameKitPlayer(Game*, CIwColour& col);
+        virtual bool connect();
+        
+        virtual void sendUpdate(Unit *);
+        virtual void applyUpdates();
+        
+        virtual void sendSync();
+        virtual void receiveSync();
+};
 
 #endif

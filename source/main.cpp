@@ -234,6 +234,12 @@ void doMain() {
     }
 
 	while (1) {
+        
+        // Connect to bluetooth... TODO: we gotta show the loading screen first
+        //while(!updateGamekit(game)){
+         //   s3eDeviceYield(100);
+        //}
+        
         int64 start = s3eTimerGetMs();
 	
 		s3eDeviceYield(0);
@@ -296,9 +302,7 @@ void doMain() {
 }
 
 int main() {
-    while(ExampleUpdate()){
-        s3eDebugTracePrintf("ExampleUpdate returned false, exiting..\n");
-    }
+    
 	IwGxInit();
 	IwResManagerInit();
  
