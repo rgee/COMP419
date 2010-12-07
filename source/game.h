@@ -4,7 +4,7 @@
 #include <map>
 #include <set>
 #include <list>
-#include <deque>
+#include <algorithm>
 
 #include "string.h"
 #include "IwResManager.h"
@@ -20,9 +20,7 @@ class Game;
 #include "icing.h"
 #include "player.h"
 
-#include "AI.h"
-
-typedef std::map<const char*, std::set<Unit*>* > UnitBucket;
+typedef std::map<unsigned int, std::set<Unit*>* > UnitBucket;
 
 class Game {
 	
@@ -33,7 +31,6 @@ class Game {
 	
         int numPlayers;
 
-		AI *ai;
         std::list<Unit*> units;
         int numUnits;
 
@@ -49,6 +46,7 @@ class Game {
 
 		CIwResGroup* sprites;
 		CIwResGroup* game;
+
 		
 		// Map from texture name to sets of unit pointers.
 		// Used to optimize rendering by grouping units with the same textures
@@ -84,7 +82,7 @@ class Game {
 		std::list<Icing*>* getLocalIcing();
 	
 		std::list<Icing*>* getOpponentIcing();
-    
+		UnitBucket* getUnitBucket();
 		/**
 		 * Gets the inner and outer radii of the world donut.
 		 *
@@ -96,8 +94,6 @@ class Game {
 		void tick();
 
         long getTimesteps();
-
-        AI *getAI();
     
         CIwMat* getViewMatrix();
         float getRotation();
@@ -108,6 +104,7 @@ class Game {
 		void render();
     
         Player *getLocalPlayer();
+		Player *getOpponentPlayer();
 
 };
 

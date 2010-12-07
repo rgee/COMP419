@@ -11,14 +11,14 @@ class Wrecker : public Unit {
 		Wrecker(const Wrecker& wrecker);
 		~Wrecker(){};
 
-		virtual bool update();
-        virtual const char* getTextureName();
+		virtual bool update(std::list<Unit*>::iterator itr);
 		virtual unit_type getType();
 		virtual Unit* spawnCopy();
         virtual void attack();
         virtual int getDamage(Unit* unit);
-        virtual bool shouldAIUpdate();
 
+		virtual void setAttackSprite();
+		virtual void setIdleSprite();
 };
 
 #endif

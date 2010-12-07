@@ -4,6 +4,8 @@
 #include "IwGx.h"
 #include "IwGeom.h"
 #include "IwGeomCore.h"
+#include <string>
+#include <vector>
 
 class Game;
 
@@ -44,7 +46,7 @@ class WorldObject {
 	
 		virtual void display() = 0;
 
-		virtual const char* getTextureName() = 0;
+		virtual unsigned int getTextureName();
 
 
 	protected:
@@ -54,6 +56,13 @@ class WorldObject {
 		CIwFVec2 position;
 		
 		float r, theta;
+
+		// A vector of hashes of texture names for this unit
+		std::vector<unsigned int> texture_names;
+
+		// Index into the texture container representing the current active texture
+		// 0 is the default
+		int current_texture_index;
 	
 };
 

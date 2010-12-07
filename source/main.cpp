@@ -177,10 +177,23 @@ void init(){
     
     CIwColour localCol = {255, 180, 180, 255};
 	CIwColour opponentCol = {180, 255, 160, 255};
+	
 	localPlayer = new Player(localCol);
 	opponentPlayer = new Player(opponentCol);
     game = new Game(localPlayer, opponentPlayer);
-    
+	
+	Leader* localLeader = new Leader(localPlayer, game, 0, 0);
+	Leader* opponentLeader = new Leader(opponentPlayer, game, 0, 0);
+
+	localLeader->setPolarPosition((game->getWorldRadius()).y + 20, 0);
+	opponentLeader->setPolarPosition((game->getWorldRadius()).y + 20, PI);
+	
+	game->addUnit(localLeader);
+	game->addUnit(opponentLeader);
+	
+	localPlayer->setLeader(localLeader);
+	opponentPlayer->setLeader(opponentLeader);
+	
     frameCount = 0;
 }
 

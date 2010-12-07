@@ -3,14 +3,22 @@
 
 class Unit;
 
+#include <string>
+
 #include "worldobject.h"
 #include "game.h"
 #include "player.h"
-#include "player.h"
 #include "IwDebugPrim.h"
 #include <string>
-#include "AI.h"
+#include <vector>
+#include <math.h>
 
+//range in which we will consider repulsion/attraction for pathing
+#define PATH_THETA_RANGE PI
+#define THETA_DIFF(X, Y) (min(abs((X)-(Y)), 2*PI - abs((X) - (Y))))
+#define REPEL_FACTOR 6000000
+#define LEADER_ATTRACTION 400000
+#define WALL_REPEL .0015f
 
 /**
 This lets us quickly determine a unit's type at run time.
@@ -44,10 +52,13 @@ class Unit : public WorldObject {
 		int spriteSize;
 		int numFrames;
 		int curFrame;
-            
-        std::string unitType;
+        
+		std::string unitType;
+
+		CIwFVec2 navTarget;	//a target the unit will move toward when it's stuck
 	
 		Unit *target;
+	
         
     public:
 	
@@ -78,7 +89,6 @@ class Unit : public WorldObject {
         
 		Player& getOwner();
 		void setOwner(Player* p);
-        bool isLocal();
 			
 		Unit* getTarget();
 		void setTarget(Unit* unit);
@@ -94,24 +104,35 @@ class Unit : public WorldObject {
 		 in the future. 
 		 */
 		virtual Unit* spawnCopy() { return NULL; };
-		
-		virtual const char* getTextureName() = 0;
 	
-		virtual bool update() = 0;
+		virtual bool update(std::list<Unit*>::iterator itr) = 0;
 	
         virtual void display();
         void displayOnScreen(int x, int y);
 		
 		virtual void attack();
+	
         void receiveDamage(float amount, Unit* attacker); 
         virtual int getDamage(Unit* unit);
-        
-        virtual bool shouldAIUpdate() = 0;
+
+
+		// Set the new sprite for this state
+		// and move the unit to the correct bucket in
+		// the render-ordering structure.
+		//
+		// We make this a separate function so it can be called
+		// from base-class code. We want to do this as little as
+		// possible and immediately after knowing we need to. it's
+		// an expensive operation.
+		virtual void setAttackSprite(){}
+		virtual void setIdleSprite(){}
     
         float getSight();
-        float getAngle();
+        virtual float getAngle();
     
         float distToTarget();
+	
+		void path(std::list<Unit*>::iterator itr);
 };
 
 #endif

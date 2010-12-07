@@ -9,8 +9,8 @@ class Shooter : public Unit {
 		Shooter(const Shooter& newShooter);
 		~Shooter(){};
 
-		virtual bool update();
-		virtual const char* getTextureName();
+		virtual bool update(std::list<Unit*>::iterator itr);
+
 		virtual unit_type getType();
 	
 		virtual Unit* spawnCopy();
