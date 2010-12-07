@@ -10,7 +10,7 @@ Unit::Unit(const Unit& newUnit)
 	navTarget(CIwFVec2(0, 0)), repulsion_factor(1)
 {
 	setOwner(newUnit.owner);
-	velocity = CIwFVec2(.01, .01);
+	isDodgePathing = false;
 }
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
@@ -24,7 +24,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  curFrame(0), target(NULL), navTarget(CIwFVec2(0, 0)), repulsion_factor(1)
 {
     setOwner(owner);
-	velocity = CIwFVec2(.01, .01);
+	isDodgePathing = false;
 }
 
 void Unit::display(){
@@ -32,15 +32,22 @@ void Unit::display(){
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
 
     //UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
-    /*
+    
+	CIwFVec2 circle = navTarget;
+	polarize(circle);
+	circle.y *= -1;
+	polarToXY(circle);
+	
     CIwMat pMat = CIwMat::g_Identity;
-    pMat.SetTrans(CIwVec3(position.x, -position.y, 1));
+    pMat.SetTrans(CIwVec3(circle.x, circle.y, 1));
     CIwMat rot = CIwMat::g_Identity;
     rot.SetRotZ(IW_ANGLE_FROM_RADIANS(game->getRotation()));
 
-    IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
-    IwGxDebugPrimCircle(pMat*rot, getSize()/2.0, 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
-     */
+	if (getType() == MUNCHER) {
+		IwGxDebugPrimCircle(pMat*rot, 20, 2, IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+	}
+    //IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
+     
 }
 
 void Unit::displayOnScreen(int x, int y){    
@@ -184,11 +191,43 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	force += (rDiff/fabs(rDiff)) * WALL_REPEL * position * SQ(rDiff);
 		
 	force += position * ((rDiff < 0 ? -1 : 1) * WALL_REPEL * SQ(rDiff)); // Ternary is experimentally faster
+	
+	if (!isDodgePathing && force.GetLengthSquared() < FORCE_THRESHOLD) {
+		
+		s3eDebugOutputString("stuck!");
+		
+		CIwFVec2 tempForce = CIwFVec2::g_Zero;
+		CIwFVec2 polarTarget = CIwFVec2(game->getWorldRadius().y, getTheta() + .1);
+		navTarget = CIwFVec2::g_Zero;
+		CIwFVec2 navDir = CIwFVec2::g_Zero;
+		
+		navTarget = polarTarget;
+		polarToXY(navTarget);
+		navDir = navTarget - position;
 			
+		tempForce = force + NAV_ATTRACT_FACTOR * (navDir.GetNormalised());
+		
+		isDodgePathing = true;
+	}
 	
-	CIwFVec2 prevVelocity = velocity.GetNormalised();
-	velocity = speed*((force.GetNormalised() + prevVelocity)/2);
+	if (isDodgePathing) {
+		CIwFVec2 navDir = navTarget - position;
+		
+		//if we've reached navTarget, turn the off the attractive force
+		if (navDir.GetLengthSquared() < 1000 || force.GetLengthSquared() > LEADER_ATTRACTION) {
+			s3eDebugOutputString("made it!");
+			isDodgePathing = false;
+		}
+		else {
+			force += NAV_ATTRACT_FACTOR * (navDir.GetNormalised());
+		}
+		
+	}
+	else {
+		navTarget = position;
+	}
 	
+	velocity = speed * force.GetNormalised();
 	setPosition(position + velocity);
 }
 

@@ -19,6 +19,8 @@ class Unit;
 #define REPEL_FACTOR 8000000
 #define LEADER_ATTRACTION 400000
 #define WALL_REPEL .0015f
+#define FORCE_THRESHOLD 80000
+#define NAV_ATTRACT_FACTOR 4000
 
 /**
 This lets us quickly determine a unit's type at run time.
@@ -58,6 +60,7 @@ class Unit : public WorldObject {
 		std::string unitType;
 
 		CIwFVec2 navTarget;	//a target the unit will move toward when it's stuck
+		bool isDodgePathing; //whether we're moving somewhere to get unstuck
 	
 		Unit *target;
 	
