@@ -112,9 +112,12 @@ void Game::tick(){
     
     for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
         if((*itr)->getHp() < 0){
-            units.erase(itr);
-            delete *itr;
-            itr--;
+			// Remove the unit from all data structures
+			unitBucket[(*itr)->getTextureName()]->erase(unitBucket[(*itr)->getTextureName()]->find((*itr)));
+			
+			delete (*itr);
+            itr = units.erase(itr);
+
         }
     }  
 	

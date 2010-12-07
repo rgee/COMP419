@@ -16,7 +16,7 @@ class Unit;
 //range in which we will consider repulsion/attraction for pathing
 #define PATH_THETA_RANGE PI
 #define THETA_DIFF(X, Y) (min(abs((X)-(Y)), 2*PI - abs((X) - (Y))))
-#define REPEL_FACTOR 3000000
+#define REPEL_FACTOR 6000000
 #define LEADER_ATTRACTION 400000
 #define WALL_REPEL .0015f
 
@@ -89,7 +89,6 @@ class Unit : public WorldObject {
         
 		Player& getOwner();
 		void setOwner(Player* p);
-        bool isLocal();
 			
 		Unit* getTarget();
 		void setTarget(Unit* unit);
