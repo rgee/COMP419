@@ -1,5 +1,6 @@
 #include "main.h"
 
+bool ExampleUpdate();
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id) {
 	CTouch* inactive = NULL;
@@ -280,7 +281,10 @@ void doMain() {
 }
 
 int main() {
-	
+    while(ExampleUpdate())
+    {
+        s3eDebugTracePrintf("ExampleUpdate returned false, exiting..");
+    }
 	IwGxInit();
 	IwResManagerInit();
  

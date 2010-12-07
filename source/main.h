@@ -8,6 +8,7 @@
 #include "IwGeomMat.h"
 
 #include "game.h"
+#include "GameKit.h"
 
 #include "muncher.h"
 #include "shooter.h"
