@@ -10,6 +10,7 @@ Unit::Unit(const Unit& newUnit)
 	navTarget(CIwFVec2(0, 0))
 {
 	setOwner(newUnit.owner);
+	velocity = CIwFVec2(.01, .01);
 }
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
@@ -23,6 +24,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  curFrame(0), target(NULL), navTarget(CIwFVec2(0, 0))
 {
     setOwner(owner);
+	velocity = CIwFVec2(.01, .01);
 }
 
 void Unit::display(){
@@ -180,16 +182,13 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	float centerR = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0;
 	float rDiff = centerR - r;
 	force += (rDiff/fabs(rDiff)) * WALL_REPEL * position * SQ(rDiff);
-	
-	//only move if there's an appreciable force the unit
-	if (force.GetLengthSquared() > 4000) {
-		velocity = speed*force.GetNormalised();
-		setPosition(position + velocity);
-	}
-	
+		
 	force += position * ((rDiff < 0 ? -1 : 1) * WALL_REPEL * SQ(rDiff)); // Ternary is experimentally faster
 			
-	velocity = speed*force.GetNormalised();
+	
+	CIwFVec2 prevVelocity = velocity.GetNormalised();
+	velocity = speed*((force.GetNormalised() + prevVelocity)/2);
+	
 	setPosition(position + velocity);
 }
 
