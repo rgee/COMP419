@@ -20,6 +20,7 @@ class Unit;
 #define LEADER_ATTRACTION 400000
 #define WALL_REPEL .0015f
 
+
 /**
 This lets us quickly determine a unit's type at run time.
 */
