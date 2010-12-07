@@ -182,8 +182,12 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	float centerR = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0;
 	float rDiff = centerR - r;
 	force += (rDiff/fabs(rDiff)) * WALL_REPEL * position * SQ(rDiff);
-			
-	velocity = speed*force.GetNormalised();
-	setPosition(position + velocity);
+	
+	//only move if there's an appreciable force the unit
+	if (force.GetLengthSquared() > 4000) {
+		velocity = speed*force.GetNormalised();
+		setPosition(position + velocity);
+	}
+	
 }
 
