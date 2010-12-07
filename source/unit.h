@@ -73,9 +73,7 @@ class Unit : public WorldObject {
 		Unit(const Unit& newUnit);
 
 		virtual ~Unit() {};
-    
-		bool operator<(const Unit& u) const;
-	
+    	
 		virtual unit_type getType() = 0;
 
         void setVelocity(const CIwFVec2& velocity);

@@ -8,6 +8,9 @@ Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlay
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
 	initRenderState();
+            
+    localIcing.clear();
+    opponentIcing.clear();
 
 	CIwResList* resources = sprites->GetListHashed(IwHashString("CIwTexture"));
 	for(CIwManaged** itr = resources->m_Resources.GetBegin(); itr != resources->m_Resources.GetEnd(); ++itr) {
@@ -74,7 +77,7 @@ void Game::addIcing(Icing* i) {
 			localIcingBuffer.push_back(i);
 		}
 		
-	} else if(i->getOwner() == opponentPlayer) {
+	} else {
 		
 		if(opponentIcing.empty()) {
 			opponentIcing.push_back(i);
@@ -87,7 +90,26 @@ void Game::addIcing(Icing* i) {
 }
 
 
-void Game::addUnit(Unit *u){
+void Game::addUnit(Unit *u, bool pay){
+    
+    CIwFVec2 pos = u->getPosition();
+    std::list<Icing*> *icing = &localIcing;
+    
+    if(&u->getOwner() == opponentPlayer)
+        icing = &opponentIcing;
+        
+    bool paid_for = !pay;
+    if(!paid_for && icing->size() > 0)
+        for(std::list<Icing*>::iterator itr = icing->begin(); itr != icing->end(); ++itr){
+            if(((*itr)->getPosition() - pos).GetLengthSquared() < 200){
+                icing->erase(itr);
+                paid_for = true;
+                break;
+            }
+        }
+        
+    if(!paid_for)
+        return;
 
     u->setId(numUnits++);
 
@@ -122,6 +144,7 @@ void Game::tick(){
     }  
 	
 	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
+        Icing* foo = *itr;
 		(*itr)->update();
         
         //if(itr != localIcing.begin() &&

@@ -30,6 +30,10 @@ void WorldObject::setPosition(float x, float y) {
 	theta = polar.y;
 }
 
+bool WorldObject::operator<(const WorldObject& u) const{
+	return theta < u.theta;
+}
+
 void WorldObject::setPosition(const CIwFVec2& newPosition) {
     setPosition(newPosition.x, newPosition.y);
 }

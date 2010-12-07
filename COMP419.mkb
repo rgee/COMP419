@@ -5,6 +5,8 @@ files
     (source)
     game.h
     game.cpp
+	gamekit.h
+	gamekit.cpp
     unit.h
     unit.cpp
     muncher.h

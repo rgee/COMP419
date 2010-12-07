@@ -74,7 +74,7 @@ class Game {
         Game(Player* _local, Player* _opponent);
 		~Game();
         
-        void addUnit(Unit *u);
+        void addUnit(Unit *u, bool pay = false);
 		std::list<Unit*>* getUnits();
 	
 		void addIcing(Icing* i);

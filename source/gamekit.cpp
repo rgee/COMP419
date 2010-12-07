@@ -1,12 +1,12 @@
+#include "gamekit.h"
 
-#include "GameKit.h"
+bool connected = false;
+static std::set<s3eGKPeer*> gConnectingSet;
+s3eGKPeer* peer;
+bool session = false;
+static s3eGKSession* g_GKSession = 0;
 
-
- 
-
-int32 PushNotificationRecieved(void* systemData, void* userData);
-
-void GKSessionConnectionCallback(struct s3eGKSession* session, s3eGKSessionConnectResult* result, void* userData)
+void GKSessionConnectionCallback(s3eGKSession* session, s3eGKSessionConnectResult* result, void* userData)
 {
     const char *pPeerName = s3eGKPeerGetString(result->m_peer, S3E_GKPEER_DISPLAY_NAME);    
     
@@ -19,7 +19,7 @@ void GKSessionConnectionCallback(struct s3eGKSession* session, s3eGKSessionConne
     }
     
 }
-void GKSessionPeerAttemptedToConnectCallback(struct s3eGKSession* session, s3eGKSessionPeerConnectAttempt* connectInfo, void* userData)
+void GKSessionPeerAttemptedToConnectCallback(s3eGKSession* session, s3eGKSessionPeerConnectAttempt* connectInfo, void* userData)
 {   
     const char *pPeerName = s3eGKPeerGetString(connectInfo->m_peer, S3E_GKPEER_DISPLAY_NAME);   
     
@@ -27,7 +27,7 @@ void GKSessionPeerAttemptedToConnectCallback(struct s3eGKSession* session, s3eGK
     
     printf("`x6666ee'%s' `x66ee66Connected"/*pPeerName*/);    
 }
-void GKSessionRecieveDataCallback(struct s3eGKSession* session, s3eGKSessionRecievedData* data, void* userData)
+void GKSessionRecieveDataCallback(s3eGKSession* session, s3eGKSessionRecievedData* data, void* userData)
 {
     const char *pPeerName = s3eGKPeerGetString(data->m_peer, S3E_GKPEER_DISPLAY_NAME);
     
@@ -35,7 +35,7 @@ void GKSessionRecieveDataCallback(struct s3eGKSession* session, s3eGKSessionReci
     //ProcessCommand((char*)data->m_data);
 }
 
-void GKSessionDisconnectionCallback(struct s3eGKSession* session, s3eGKSessionDisconnectInfo* info, void* userData)
+void GKSessionDisconnectionCallback(s3eGKSession* session, s3eGKSessionDisconnectInfo* info, void* userData)
 {
     if (info->m_peer)
     {
@@ -67,16 +67,16 @@ void ProcessCommand(char* data){
 void ExampleInit()
 {
     if (!s3eExtIPhoneGameKitAvailable())
-    {
-        s3eDebugErrorShow(S3E_MESSAGE_CONTINUE, "IPhoneGameKit extension not found");
-        s3eDeviceExit(1);
-    }
+        return;
     
     s3eDeviceRegister(S3E_DEVICE_NOTIFY_PUSH_NOTIFICATION, PushNotificationRecieved, 0);
     
 }
 
 bool ExampleUpdate(){
+    
+    if(!s3eExtIPhoneGameKitAvailable())
+        return false;
     
     if(!session){
         g_GKSession = s3eIPhoneGameKitStartSession(SESSION_ID_STRING, 
@@ -88,12 +88,12 @@ bool ExampleUpdate(){
                                                    GKSessionDisconnectionCallback,
                                                    0);
     }
+    
     if(!connected){
-        uint32 s3eGKSessionGetPeersWithConnectionState(	struct s3eGKSession * 	session,
-                                                       s3eGKPeerConnectionState 	state,
-                                                       struct s3eGKPeer ** 	peers,
-                                                       uint32 	maxPeers	 
-                                                       );
+        uint32 s3eGKSessionGetPeersWithConnectionState(s3eGKSession *session,
+                                                       s3eGKPeerConnectionState state,
+                                                       s3eGKPeer ** 	peers,
+                                                       uint32 	maxPeers);
         connected = true;
         session = true;
     }
