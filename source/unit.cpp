@@ -74,10 +74,6 @@ void Unit::displayOnScreen(int x, int y){
 int Unit::getId(){ return uid; }
 void Unit::setId(int uid){ this->uid = uid; }
 
-bool Unit::operator<(const Unit& u) const{
-	return theta < u.theta;
-}
-
 
 Player& Unit::getOwner(){
 	return *owner;
@@ -172,7 +168,7 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		if ((*itr) != this && THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
 			dirToward = position - curUnit->getPosition();
 			float dist = dirToward.GetLengthSquared();
-			force += dirToward.GetNormalised() * (curUnit->getSize()*REPEL_FACTOR / pow(dist, 1.875));
+			force += dirToward.GetNormalised() * (repulsion_factor * curUnit->getSize()*REPEL_FACTOR / pow(dist, 1.875));
             // We can tweak bottom factor later, this seems to work fine:           ^
 		}
 	}

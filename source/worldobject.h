@@ -37,6 +37,8 @@ class WorldObject {
 		float getY();
 	
 		void setPolarPosition(float _r, float _theta);
+    
+        bool operator<(const WorldObject& u) const;
 
 		float getR();
 	

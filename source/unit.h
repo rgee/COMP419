@@ -22,6 +22,7 @@ class Unit;
 #define FORCE_THRESHOLD 80000
 #define NAV_ATTRACT_FACTOR 4000
 
+
 /**
 This lets us quickly determine a unit's type at run time.
 */
@@ -75,9 +76,7 @@ class Unit : public WorldObject {
 		Unit(const Unit& newUnit);
 
 		virtual ~Unit() {};
-    
-		bool operator<(const Unit& u) const;
-	
+    	
 		virtual unit_type getType() = 0;
 
         void setVelocity(const CIwFVec2& velocity);

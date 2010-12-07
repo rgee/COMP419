@@ -1,5 +1,6 @@
 #include "main.h"
 
+//bool ExampleUpdate();
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id) {
 	CTouch* inactive = NULL;
@@ -59,7 +60,7 @@ bool renderUnitCreation(CTouch* touch) {
     }
     
     touch->unit->setPosition(modelCoords);
-	game->addUnit(touch->unit);
+	game->addUnit(touch->unit, true);
     
     touch->unit = NULL;
     touch->active = false;
@@ -182,12 +183,14 @@ void init(){
 	opponentPlayer = new Player(opponentCol);
     game = new Game(localPlayer, opponentPlayer);
 	
-	Leader* localLeader = new Leader(localPlayer, game, 0, 0);
-	Leader* opponentLeader = new Leader(opponentPlayer, game, 0, 0);
-
-	localLeader->setPolarPosition((game->getWorldRadius()).y + 20, 0);
-	opponentLeader->setPolarPosition((game->getWorldRadius()).y + 20, PI);
-	
+    CIwFVec2 pos(game->getWorldRadius().y + 20, 0);
+    polarToXY(pos);
+	Leader* localLeader = new Leader(localPlayer, game, pos.x, pos.y);
+    pos.x = game->getWorldRadius().y + 20;
+    pos.y = PI;
+    polarToXY(pos);
+	Leader* opponentLeader = new Leader(opponentPlayer, game, pos.x, pos.y);
+    
 	game->addUnit(localLeader);
 	game->addUnit(opponentLeader);
 	
@@ -293,7 +296,9 @@ void doMain() {
 }
 
 int main() {
-	
+    while(ExampleUpdate()){
+        s3eDebugTracePrintf("ExampleUpdate returned false, exiting..\n");
+    }
 	IwGxInit();
 	IwResManagerInit();
  
