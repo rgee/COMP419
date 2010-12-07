@@ -70,7 +70,7 @@ bool renderUnitCreation(CTouch* touch) {
 bool renderDragUnit(CTouch* touch){
 	if (!touch->unit) return false;
 	else {
-        //UNCOMMENT touch->unit->displayOnScreen(touch->x, touch->y);
+        touch->unit->displayOnScreen(touch->x, touch->y);
 		return true;
 	}
 }
