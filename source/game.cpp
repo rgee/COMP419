@@ -3,7 +3,7 @@
 
  
 Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
-        innerRadius(72), outerRadius(288), timesteps(0) {
+        innerRadius(172), outerRadius(358), timesteps(0) {
 	ai = new AI(this);
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
@@ -49,7 +49,7 @@ void Game::initRenderState() {
 	IwGxSetPerspMul(9);
 	IwGxSetFarZNearZ(12, 8);
 	view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3(w/2 + innerRadius - 10, 0, -9));
+	view.SetTrans(CIwVec3(innerRadius+w/2-10, 0, -9));
 	IwGxSetViewMatrix(&view);
 }
 
