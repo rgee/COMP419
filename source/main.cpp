@@ -206,17 +206,32 @@ void doMain() {
         s3ePointerRegister(S3E_POINTER_MOTION_EVENT, (s3eCallback)SingleTouchMotionCB, NULL);
     }
 
-    
+
     IwGetResManager()->LoadGroup("resource_groups/palate.group");
     
     CIwResGroup* palateGroup = IwGetResManager()->GetGroupNamed("Palate");
+
+    std::vector<int> ui_texture_hashes;
+	int background_hash = IwHashString("background_clean");
+	CIwResList* resources = palateGroup->GetListHashed(IwHashString("CIwTexture"));
+	for(CIwManaged** itr = resources->m_Resources.GetBegin(); itr != resources->m_Resources.GetEnd(); ++itr) {
+		if(background_hash != (*itr)->m_Hash) {
+			ui_texture_hashes.push_back((*itr)->m_Hash);
+		}
+	}
     
     CIwMaterial* background = new CIwMaterial();
-    background->SetTexture((CIwTexture*)palateGroup->GetResNamed("background", IW_GX_RESTYPE_TEXTURE));
+    background->SetTexture((CIwTexture*)palateGroup->GetResNamed("background_clean", IW_GX_RESTYPE_TEXTURE));
     background->SetModulateMode(CIwMaterial::MODULATE_NONE);
     background->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+
+	CIwMaterial* unit_ui = new CIwMaterial();
+    unit_ui->SetModulateMode(CIwMaterial::MODULATE_NONE);
+    unit_ui->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
     
     CIwSVec2 bg_wh(320, 480);
+	CIwSVec2 ui_wh(85, 480);
+	CIwSVec2 ui_offset(235, 0);
 	CIwSVec2 uv(0, 0);
 	CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
 
@@ -247,6 +262,11 @@ void doMain() {
         IwGxSetMaterial(background);
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&CIwSVec2::g_Zero, &bg_wh, &uv, &duv);
+
+		unit_ui->SetTexture((CIwTexture*)palateGroup->GetResHashed(ui_texture_hashes[ui_texture_index], IW_GX_RESTYPE_TEXTURE));
+		IwGxSetMaterial(unit_ui);
+        IwGxSetScreenSpaceSlot(-1); 
+        IwGxDrawRectScreenSpace(&ui_offset, &ui_wh, &uv, &duv);
         
 		if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {
 			game->rotate(worldScrollSpeed);
@@ -256,7 +276,8 @@ void doMain() {
         if(frameCount % FRAMES_PER_UPDATE == 0) {
 			game->tick();
 		}
-        
+
+        //unit_ui->SetTexture((CIwTexture*)palateGroup->GetResHashed(ui_texture_hashes[ui_texture_index], IW_GX_RESTYPE_TEXTURE));
 		game->render();
 		if(!renderTouches()) break;
 		
@@ -285,6 +306,7 @@ void doMain() {
 	delete localPlayer;
 	delete opponentPlayer;
     delete background;
+	delete unit_ui;
     palateGroup->Finalise();
     
     for(int i = 0; i < MAX_TOUCHES; ++i)

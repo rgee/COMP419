@@ -51,6 +51,8 @@ float getAngleDiff(CTouch* touch);
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id);
 
+int ui_texture_index = 0;
+
 bool renderTouches(CTouch touches[]);
 bool renderUnitCreation(CTouch* touch);
 bool renderDragUnit(CTouch* touch);
