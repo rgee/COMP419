@@ -7,7 +7,7 @@ Unit::Unit(const Unit& newUnit)
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
 	scale(newUnit.scale), target(NULL), curFrame(0), numFrames(newUnit.numFrames), spriteSize(newUnit.spriteSize),
-	navTarget(CIwFVec2(0, 0))
+	navTarget(CIwFVec2(0, 0)), repulsion_factor(1)
 {
 	setOwner(newUnit.owner);
 	velocity = CIwFVec2(.01, .01);
@@ -21,7 +21,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  curFrame(0), target(NULL), navTarget(CIwFVec2(0, 0))
+		  curFrame(0), target(NULL), navTarget(CIwFVec2(0, 0)), repulsion_factor(1)
 {
     setOwner(owner);
 	velocity = CIwFVec2(.01, .01);
@@ -165,7 +165,7 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		if ((*itr) != this && THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
 			dirToward = position - curUnit->getPosition();
 			float dist = dirToward.GetLengthSquared();
-			force += dirToward.GetNormalised() * (curUnit->getSize()*REPEL_FACTOR / SQ(dist));
+			force += dirToward.GetNormalised() * (curUnit->getSize()*REPEL_FACTOR / pow(dist, 1.875));
             // We can tweak bottom factor later, this seems to work fine:           ^
 		}
 	}
