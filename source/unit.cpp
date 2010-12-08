@@ -217,11 +217,11 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		
 		force += NAV_ATTRACT_FACTOR * (navTarget-position).GetNormalised();
 		
-		CIwFVec2 navDir = (navTarget - position).GetNormalised();
+		CIwFVec2 navVec = (navTarget - position);
 		CIwFVec2 enemyLeaderDir = (enemyLeaderPos - position).GetNormalised();
 		float dot = (force.GetNormalised()).Dot(enemyLeaderDir);
 		
-		if (dot > cos(PI/4)) {
+		if (dot > cos(PI/4) || navVec.GetLengthSquared() < 1000) {
 			isDodgePathing = false;
 		}
 		else {
