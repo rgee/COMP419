@@ -17,9 +17,9 @@ class Unit;
 #define PATH_THETA_RANGE PI
 #define THETA_DIFF(X, Y) (min(abs((X)-(Y)), 2*PI - abs((X) - (Y))))
 #define REPEL_FACTOR 8000000
-#define LEADER_ATTRACTION 400000
+#define LEADER_ATTRACTION 1000
 #define WALL_REPEL .0015f
-#define FORCE_THRESHOLD 80000
+#define FORCE_THRESHOLD 12000
 #define NAV_ATTRACT_FACTOR 4000
 
 
@@ -60,7 +60,10 @@ class Unit : public WorldObject {
         
 		std::string unitType;
 
+		CIwFVec2 enemyLeaderPos;
+	
 		CIwFVec2 navTarget;	//a target the unit will move toward when it's stuck
+		CIwFVec2 navTargetPolar; //polar navigation target
 		bool isDodgePathing; //whether we're moving somewhere to get unstuck
 	
 		Unit *target;
