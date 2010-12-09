@@ -60,7 +60,7 @@ bool renderUnitCreation(CTouch* touch) {
     }
     
     touch->unit->setPosition(modelCoords);
-	game->addUnit(touch->unit, true);
+	game->addUnit(touch->unit, false);
     
     touch->unit = NULL;
     touch->active = false;

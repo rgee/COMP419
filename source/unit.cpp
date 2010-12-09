@@ -10,6 +10,8 @@ Unit::Unit(const Unit& newUnit)
 	navTarget(CIwFVec2(0, 0)), repulsion_factor(1)
 {
 	setOwner(newUnit.owner);
+	navTarget = CIwFVec2::g_Zero;
+	enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
 	isDodgePathing = false;
 }
 
@@ -24,6 +26,8 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  curFrame(0), target(NULL), navTarget(CIwFVec2(0, 0)), repulsion_factor(1)
 {
     setOwner(owner);
+	navTarget = CIwFVec2::g_Zero;
+	enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
 	isDodgePathing = false;
 }
 
@@ -33,7 +37,7 @@ void Unit::display(){
 
     //UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
     
-	CIwFVec2 circle = navTarget;
+	/*CIwFVec2 circle = navTarget;
 	polarize(circle);
 	circle.y *= -1;
 	polarToXY(circle);
@@ -46,7 +50,7 @@ void Unit::display(){
 	if (getType() == MUNCHER) {
 		IwGxDebugPrimCircle(pMat*rot, 20, 2, IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
 	}
-    //IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
+    //IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);*/
      
 }
 
@@ -153,15 +157,14 @@ float Unit::distToTarget(){
 
 void Unit::path(std::list<Unit*>::iterator itr) {
 	
-	CIwFVec2 force = CIwFVec2::g_Zero;
-	
 	std::list<Unit*>* units = game->getUnits();
-	float theta = getTheta();
 	
-	CIwFVec2 dirToward = CIwFVec2::g_Zero;
-	Unit* curUnit;
+	CIwFVec2 force = CIwFVec2::g_Zero; //sum of all forces on this unit
 	
-	//brute force - need to take advantage of theta sorting
+	CIwFVec2 dirToward = CIwFVec2::g_Zero; //vector from repelling unit to this unit
+	Unit* curUnit; //current repelling unit
+	
+	//sum up all of the repulsive forces on this unit
 	for (itr = units->begin() ; itr != units->end(); ++itr) {
 		curUnit = *(itr);
 		
@@ -172,55 +175,60 @@ void Unit::path(std::list<Unit*>::iterator itr) {
             // We can tweak bottom factor later, this seems to work fine:           ^
 		}
 	}
-		
-	//attractive force for opponent leader
-	Player* opponent = game->getLocalPlayer() != owner ? owner : game->getOpponentPlayer();
-	dirToward = ((Unit*)(opponent->getLeader()))->getPosition() - position;
-	float dist = dirToward.GetLength();
-
-    if(dist > 0)
-        force += dirToward.GetNormalised() * (LEADER_ATTRACTION / dist);	
 	
-	//"spring" force to motivate circular pathing
-	float centerR = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0;
-	float rDiff = centerR - r;
-	force += (rDiff/fabs(rDiff)) * WALL_REPEL * position * SQ(rDiff);
-		
-	force += position * ((rDiff < 0 ? -1 : 1) * WALL_REPEL * SQ(rDiff)); // Ternary is experimentally faster
+	CIwFVec2 toLeader = (enemyLeaderPos-position).GetNormalised();
+	CIwFVec2 toLeaderPolar = toLeader;
+	polarize(toLeaderPolar);
+	float dodgeThetaIncr = toLeaderPolar.y < 0 ? .3 : -.3;
+	
+	//if not dodge pathing, add circular pathing force
+	if(!isDodgePathing) {
+		float centerR = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0;
+		float rDiff = centerR - r;
+		force += position * ((rDiff < 0 ? -1 : 1) * WALL_REPEL * SQ(rDiff)); // Ternary is experimentally faster
+		force += LEADER_ATTRACTION * toLeader;
+	}
 	
 	if (!isDodgePathing && force.GetLengthSquared() < FORCE_THRESHOLD) {
+		CIwFVec2 worldRad = game->getWorldRadius();
+		float innerDist = getR() - worldRad.x;
+		float outerDist = worldRad.y - getR();
+	
+		float targetR;
 		
-		s3eDebugOutputString("stuck!");
+		if (innerDist > outerDist) {
+			targetR = worldRad.x + getSize()/2;
+		}
+		else {
+			targetR = worldRad.y - getSize()/2;
+		}
 		
-		CIwFVec2 tempForce = CIwFVec2::g_Zero;
-		CIwFVec2 polarTarget = CIwFVec2(game->getWorldRadius().y, getTheta() + .1);
-		navTarget = CIwFVec2::g_Zero;
-		CIwFVec2 navDir = CIwFVec2::g_Zero;
-		
-		navTarget = polarTarget;
-		polarToXY(navTarget);
-		navDir = navTarget - position;
-			
-		tempForce = force + NAV_ATTRACT_FACTOR * (navDir.GetNormalised());
-		
+		navTargetPolar = CIwFVec2(targetR, getTheta() + dodgeThetaIncr);
+		navTarget = navTargetPolar;
+		polarToXY(navTarget);					
 		isDodgePathing = true;
 	}
 	
 	if (isDodgePathing) {
-		CIwFVec2 navDir = navTarget - position;
+		/*char* str = (char*)malloc(sizeof(char)*100);
+		sprintf(str, "%f", force.GetLengthSquared());
+		s3eDebugOutputString(str);
+		free(str);*/
 		
-		//if we've reached navTarget, turn the off the attractive force
-		if (navDir.GetLengthSquared() < 1000 || force.GetLengthSquared() > LEADER_ATTRACTION) {
-			s3eDebugOutputString("made it!");
+		force += NAV_ATTRACT_FACTOR * (navTarget-position).GetNormalised();
+		
+		CIwFVec2 navVec = (navTarget - position);
+		CIwFVec2 enemyLeaderDir = (enemyLeaderPos - position).GetNormalised();
+		float dot = (force.GetNormalised()).Dot(enemyLeaderDir);
+		
+		if (dot > cos(PI/4) || navVec.GetLengthSquared() < 1000) {
 			isDodgePathing = false;
 		}
 		else {
-			force += NAV_ATTRACT_FACTOR * (navDir.GetNormalised());
+			navTargetPolar.y = getTheta() + dodgeThetaIncr;
+			navTarget = navTargetPolar;
+			polarToXY(navTarget);
 		}
-		
-	}
-	else {
-		navTarget = position;
 	}
 	
 	velocity = speed * force.GetNormalised();
