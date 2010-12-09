@@ -26,13 +26,13 @@ RETURNS TRUE BEFORE USING gkp.
  */
 
 
-GameKitPlayer::GameKitPlayer(CIwColour& col) : RemotePlayer(col), sychronized(false) {
+GameKitPlayer::GameKitPlayer(CIwColour& col) : RemotePlayer(col), sychronized(true) {
     if(s3eExtIPhoneGameKitAvailable())
         session = s3eIPhoneGameKitStartSession(SESSION_ID_STRING, 0, S3E_GKSESSION_MODE_PEER,
-                                           sessConnected,
-                                           peerConnected,
-                                           receivedData,
-                                           sessDisconnected, this);
+                                               sessConnected,
+                                               peerConnected,
+                                               receivedData,
+                                               sessDisconnected, this);
 }
 
 bool GameKitPlayer::connect(){
@@ -53,6 +53,8 @@ bool GameKitPlayer::connect(){
 }
 
 void GameKitPlayer::sendUpdate(Unit *u){
+    if(!session) return;
+
     gk_data_t *data = (gk_data_t *) malloc(sizeof(gk_data_t));
     data->type = u->getType();
     data->x = u->getPosition().x;
@@ -62,6 +64,8 @@ void GameKitPlayer::sendUpdate(Unit *u){
 }
 
 void GameKitPlayer::sendSync(){
+    if(!session) return;
+
     sendData(NULL);
 }
 
@@ -70,6 +74,7 @@ void GameKitPlayer::receiveSync(){
 }
 
 void GameKitPlayer::applyUpdates(){
+    if(!session) return;
     
     while(queued_units.empty() && !sychronized){
         s3eDeviceYield();
@@ -88,8 +93,10 @@ void GameKitPlayer::applyUpdates(){
         }
         
         if(u != NULL)
-            game->addUnit(u);
+            game->addUnit(u, false);
     }
+    
+    sychronized = false;
 }
 
 // CALLBACKS
@@ -110,10 +117,10 @@ void GameKitPlayer::peerConnected(s3eGKSession* sess, s3eGKSessionPeerConnectAtt
 
 void GameKitPlayer::receivedData(s3eGKSession* sess, s3eGKSessionRecievedData* data, void* userData){
 
-    if(data->m_dataSize == 0)
+    if(data->m_dataSize < sizeof(gk_data_t))
         ((GameKitPlayer *)userData)->receiveSync();
     
-    queued_units.push_back((gk_data_t *) data->m_data);
+    //queued_units.push_back((gk_data_t *) data->m_data);
 }
 
 void GameKitPlayer::sessDisconnected(s3eGKSession* sess, s3eGKSessionDisconnectInfo* info, void* userData){}

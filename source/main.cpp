@@ -185,8 +185,11 @@ void init(){
     game = new Game(localPlayer, opponentPlayer);
     
     opponentPlayer->setGame(game);
-    while(!opponentPlayer->connect()){
-        s3eDeviceYield(100);
+    
+    // Presumably, draw something before doing this
+    while(s3eExtIPhoneGameKitAvailable() && !opponentPlayer->connect()){
+        // Draw a loading thing in here
+        s3eDeviceYield();
     }
 	
     CIwFVec2 pos(game->getWorldRadius().y + 20, 0);
@@ -232,6 +235,7 @@ void doMain() {
     init();
     
 	IwGxLightingOff();
+    IwGxSetColClear(255, 255, 255, 255);
     
     float worldScrollMultiplier = 0.75;
     
@@ -240,11 +244,6 @@ void doMain() {
     }
 
 	while (1) {
-        
-        // Connect to bluetooth... TODO: we gotta show the loading screen first
-        //while(!updateGamekit(game)){
-         //   s3eDeviceYield(100);
-        //}
         
         int64 start = s3eTimerGetMs();
 	
@@ -274,7 +273,7 @@ void doMain() {
         
 		game->render();
 		if(!renderTouches()) break;
-		
+        		
         IwGxFlush();
         
         IwGxSwapBuffers();
@@ -292,7 +291,6 @@ void doMain() {
 		frameCount++;
 
         
-        IwGxSetColClear(255, 255, 255, 255);
         IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	}
     

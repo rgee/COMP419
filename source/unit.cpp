@@ -11,7 +11,8 @@ Unit::Unit(const Unit& newUnit)
 {
 	setOwner(newUnit.owner);
 	navTarget = CIwFVec2::g_Zero;
-	enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+    if(speed > 0.00001f)
+        enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
 	isDodgePathing = false;
 }
 
@@ -27,7 +28,8 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 {
     setOwner(owner);
 	navTarget = CIwFVec2::g_Zero;
-	enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+    if(speed > 0.00001f)
+        enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
 	isDodgePathing = false;
 }
 
