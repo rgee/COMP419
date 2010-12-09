@@ -7,9 +7,13 @@ Unit::Unit(const Unit& newUnit)
 	munch_speed(newUnit.munch_speed), range(newUnit.range), sight(newUnit.sight),
 	spread_speed(newUnit.spread_speed), spread_radius(newUnit.spread_radius),
 	scale(newUnit.scale), target(NULL), curFrame(0), numFrames(newUnit.numFrames), spriteSize(newUnit.spriteSize),
-	navTarget(CIwFVec2(0, 0))
+	navTarget(CIwFVec2(0, 0)), repulsion_factor(1)
 {
 	setOwner(newUnit.owner);
+	navTarget = CIwFVec2::g_Zero;
+    if(speed > 0.00001f)
+        enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+	isDodgePathing = false;
 }
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
@@ -20,9 +24,13 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  hp(hp), cost(cost), attackDamage(attack), speed(speed),
 		  munch_speed(munch_speed), range(range), sight(sight),
 		  spread_speed(spread_speed), spread_radius(spread_radius),
-		  curFrame(0), target(NULL), navTarget(CIwFVec2(0, 0))
+		  curFrame(0), target(NULL), navTarget(CIwFVec2(0, 0)), repulsion_factor(1)
 {
     setOwner(owner);
+	navTarget = CIwFVec2::g_Zero;
+    if(speed > 0.00001f)
+        enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+	isDodgePathing = false;
 }
 
 void Unit::display(){
@@ -30,15 +38,22 @@ void Unit::display(){
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
 
     //UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
-    /*
+    
+	/*CIwFVec2 circle = navTarget;
+	polarize(circle);
+	circle.y *= -1;
+	polarToXY(circle);
+	
     CIwMat pMat = CIwMat::g_Identity;
-    pMat.SetTrans(CIwVec3(position.x, -position.y, 1));
+    pMat.SetTrans(CIwVec3(circle.x, circle.y, 1));
     CIwMat rot = CIwMat::g_Identity;
     rot.SetRotZ(IW_ANGLE_FROM_RADIANS(game->getRotation()));
 
-    IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
-    IwGxDebugPrimCircle(pMat*rot, getSize()/2.0, 2,IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
-     */
+	if (getType() == MUNCHER) {
+		IwGxDebugPrimCircle(pMat*rot, 20, 2, IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+	}
+    //IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);*/
+     
 }
 
 void Unit::displayOnScreen(int x, int y){    
@@ -64,10 +79,6 @@ void Unit::displayOnScreen(int x, int y){
 
 int Unit::getId(){ return uid; }
 void Unit::setId(int uid){ this->uid = uid; }
-
-bool Unit::operator<(const Unit& u) const{
-	return theta < u.theta;
-}
 
 
 Player& Unit::getOwner(){
@@ -148,40 +159,83 @@ float Unit::distToTarget(){
 
 void Unit::path(std::list<Unit*>::iterator itr) {
 	
-	CIwFVec2 force = CIwFVec2::g_Zero;
-	
 	std::list<Unit*>* units = game->getUnits();
-	float theta = getTheta();
 	
-	CIwFVec2 dirToward = CIwFVec2::g_Zero;
-	Unit* curUnit;
+	CIwFVec2 force = CIwFVec2::g_Zero; //sum of all forces on this unit
 	
-	//brute force - need to take advantage of theta sorting
+	CIwFVec2 dirToward = CIwFVec2::g_Zero; //vector from repelling unit to this unit
+	Unit* curUnit; //current repelling unit
+	
+	//sum up all of the repulsive forces on this unit
 	for (itr = units->begin() ; itr != units->end(); ++itr) {
 		curUnit = *(itr);
 		
 		if ((*itr) != this && THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
 			dirToward = position - curUnit->getPosition();
 			float dist = dirToward.GetLengthSquared();
-			force += dirToward.GetNormalised() * (curUnit->getSize()*REPEL_FACTOR / SQ(dist));
+			force += dirToward.GetNormalised() * (repulsion_factor * curUnit->getSize()*REPEL_FACTOR / pow(dist, 1.875));
             // We can tweak bottom factor later, this seems to work fine:           ^
 		}
 	}
-		
-	//attractive force for opponent leader
-	Player* opponent = game->getLocalPlayer() != owner ? owner : game->getOpponentPlayer();
-	dirToward = ((Unit*)(opponent->getLeader()))->getPosition() - position;
-	float dist = dirToward.GetLength();
-
-    if(dist > 0)
-        force += dirToward.GetNormalised() * (LEADER_ATTRACTION / dist);	
 	
-	//"spring" force to motivate circular pathing
-	float centerR = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0;
-	float rDiff = centerR - r;
-	force += position * ((rDiff < 0 ? -1 : 1) * WALL_REPEL * SQ(rDiff)); // Ternary is experimentally faster
-			
-	velocity = speed*force.GetNormalised();
+	CIwFVec2 toLeader = (enemyLeaderPos-position).GetNormalised();
+	CIwFVec2 toLeaderPolar = toLeader;
+	polarize(toLeaderPolar);
+	float dodgeThetaIncr = toLeaderPolar.y < 0 ? .3 : -.3;
+	
+	// if not dodge pathing, add circular pathing force and leader attraction
+	if(!isDodgePathing) {
+		
+		// "spring" force to motivate circular pathing
+		float rDiff = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0 - r;
+		force += position * ((rDiff < 0 ? -1 : 1) * CIRCLE_SPRING * SQ(rDiff)); // Ternary is experimentally faster
+		force += LEADER_ATTRACTION * toLeader;
+	}
+	
+	if (!isDodgePathing && force.GetLengthSquared() < FORCE_THRESHOLD) {
+		CIwFVec2 worldRad = game->getWorldRadius();
+		float innerDist = getR() - worldRad.x;
+		float outerDist = worldRad.y - getR();
+	
+		float targetR;
+		
+		if (innerDist > outerDist) {
+			targetR = worldRad.x + getSize()/2;
+		}
+		else {
+			targetR = worldRad.y - getSize()/2;
+		}
+		
+		navTargetPolar = CIwFVec2(targetR, getTheta() + dodgeThetaIncr);
+		navTarget = navTargetPolar;
+		polarToXY(navTarget);					
+		isDodgePathing = true;
+	}
+	
+	if (isDodgePathing) {
+		force += NAV_ATTRACT_FACTOR * (navTarget-position).GetNormalised();
+		
+		CIwFVec2 navVec = (navTarget - position);
+		CIwFVec2 enemyLeaderDir = (enemyLeaderPos - position).GetNormalised();
+		float dot = (force.GetNormalised()).Dot(enemyLeaderDir);
+		
+		if (dot > cos(PI/4) || navVec.GetLengthSquared() < 1000) {
+			isDodgePathing = false;
+		}
+		else {
+			navTargetPolar.y = getTheta() + dodgeThetaIncr;
+			navTarget = navTargetPolar;
+			polarToXY(navTarget);
+		}
+	}
+	
+	/*char* str = (char*)malloc(sizeof(char)*100);
+	sprintf(str, "%f", getR() - inner);
+	s3eDebugOutputString(str);
+	free(str);*/
+
+	velocity = speed * force.GetNormalised();
+
 	setPosition(position + velocity);
 }
 

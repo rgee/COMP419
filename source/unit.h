@@ -16,9 +16,13 @@ class Unit;
 //range in which we will consider repulsion/attraction for pathing
 #define PATH_THETA_RANGE PI
 #define THETA_DIFF(X, Y) (min(abs((X)-(Y)), 2*PI - abs((X) - (Y))))
-#define REPEL_FACTOR 6000000
-#define LEADER_ATTRACTION 400000
-#define WALL_REPEL .0015f
+#define REPEL_FACTOR 8000000
+#define LEADER_ATTRACTION 1000
+#define CIRCLE_SPRING .0015f
+#define WALL_REPEL 2000
+#define FORCE_THRESHOLD 70000
+#define NAV_ATTRACT_FACTOR 4000
+
 
 /**
 This lets us quickly determine a unit's type at run time.
@@ -42,6 +46,8 @@ class Unit : public WorldObject {
 		float spread_radius;
         float scale;
     
+        float repulsion_factor;
+    
 		Player *owner;
         bool localPlayedOwnsThis;
     
@@ -55,7 +61,11 @@ class Unit : public WorldObject {
         
 		std::string unitType;
 
+		CIwFVec2 enemyLeaderPos;
+	
 		CIwFVec2 navTarget;	//a target the unit will move toward when it's stuck
+		CIwFVec2 navTargetPolar; //polar navigation target
+		bool isDodgePathing; //whether we're moving somewhere to get unstuck
 	
 		Unit *target;
 	
@@ -70,9 +80,7 @@ class Unit : public WorldObject {
 		Unit(const Unit& newUnit);
 
 		virtual ~Unit() {};
-    
-		bool operator<(const Unit& u) const;
-	
+    	
 		virtual unit_type getType() = 0;
 
         void setVelocity(const CIwFVec2& velocity);

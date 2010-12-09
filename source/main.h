@@ -8,6 +8,7 @@
 #include "IwGeomMat.h"
 
 #include "game.h"
+#include "gamekit.h"
 
 #include "muncher.h"
 #include "shooter.h"
@@ -38,7 +39,7 @@ struct CTouch {
 
 Game* game = NULL;
 Player* localPlayer = NULL;
-Player* opponentPlayer = NULL;
+RemotePlayer* opponentPlayer = NULL;
 
 #define MAX_TOUCHES 10
 CTouch touches[MAX_TOUCHES];

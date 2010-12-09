@@ -9,6 +9,12 @@ Leader::Leader(Player* owner, Game* game, float x, float y)
 	framesUntilUpdate = 0;
     setPosition(x, y);
 	texture_names.push_back(IwHashString("leader_sprite_sheet"));
+    
+    CIwFVec2 icePos(r, theta);
+    icePos.x -= 30;
+    polarToXY(icePos);
+    Icing* ice = new Icing(icePos, game, owner);
+    game->addIcing(ice);
 }
 
 bool Leader::update(std::list<Unit*>::iterator itr){

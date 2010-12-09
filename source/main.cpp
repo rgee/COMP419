@@ -1,5 +1,6 @@
 #include "main.h"
 
+//bool ExampleUpdate();
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id) {
 	CTouch* inactive = NULL;
@@ -59,7 +60,7 @@ bool renderUnitCreation(CTouch* touch) {
     }
     
     touch->unit->setPosition(modelCoords);
-	game->addUnit(touch->unit);
+	game->addUnit(touch->unit, false);
     
     touch->unit = NULL;
     touch->active = false;
@@ -179,15 +180,26 @@ void init(){
 	CIwColour opponentCol = {180, 255, 160, 255};
 	
 	localPlayer = new Player(localCol);
-	opponentPlayer = new Player(opponentCol);
+	opponentPlayer = new GameKitPlayer(opponentCol);
+    
     game = new Game(localPlayer, opponentPlayer);
+    
+    opponentPlayer->setGame(game);
+    
+    // Presumably, draw something before doing this
+    while(s3eExtIPhoneGameKitAvailable() && !opponentPlayer->connect()){
+        // Draw a loading thing in here
+        s3eDeviceYield();
+    }
 	
-	Leader* localLeader = new Leader(localPlayer, game, 0, 0);
-	Leader* opponentLeader = new Leader(opponentPlayer, game, 0, 0);
-
-	localLeader->setPolarPosition((game->getWorldRadius()).y + 20, 0);
-	opponentLeader->setPolarPosition((game->getWorldRadius()).y + 20, PI);
-	
+    CIwFVec2 pos(game->getWorldRadius().y + 20, 0);
+    polarToXY(pos);
+	Leader* localLeader = new Leader(localPlayer, game, pos.x, pos.y);
+    pos.x = game->getWorldRadius().y + 20;
+    pos.y = PI;
+    polarToXY(pos);
+	Leader* opponentLeader = new Leader(opponentPlayer, game, pos.x, pos.y);
+    
 	game->addUnit(localLeader);
 	game->addUnit(opponentLeader);
 	
@@ -238,6 +250,7 @@ void doMain() {
     init();
     
 	IwGxLightingOff();
+    IwGxSetColClear(255, 255, 255, 255);
     
     float worldScrollMultiplier = 0.75;
     
@@ -246,6 +259,7 @@ void doMain() {
     }
 
 	while (1) {
+        
         int64 start = s3eTimerGetMs();
 	
 		s3eDeviceYield(0);
@@ -280,7 +294,7 @@ void doMain() {
         //unit_ui->SetTexture((CIwTexture*)palateGroup->GetResHashed(ui_texture_hashes[ui_texture_index], IW_GX_RESTYPE_TEXTURE));
 		game->render();
 		if(!renderTouches()) break;
-		
+        		
         IwGxFlush();
         
         IwGxSwapBuffers();
@@ -298,7 +312,6 @@ void doMain() {
 		frameCount++;
 
         
-        IwGxSetColClear(255, 255, 255, 255);
         IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	}
     
@@ -315,7 +328,7 @@ void doMain() {
 }
 
 int main() {
-	
+    
 	IwGxInit();
 	IwResManagerInit();
  
