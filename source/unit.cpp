@@ -233,7 +233,6 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	free(str);*/
 
 	velocity = speed * force.GetNormalised();
-
 	setPosition(position + velocity);
 }
 
