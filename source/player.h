@@ -27,11 +27,12 @@ class RemotePlayer : public Player {
     protected:
         Game* game;
     public:
-        RemotePlayer(Game *_game, CIwColour& col) : Player(col), game(game){}
+        RemotePlayer(CIwColour& col) : Player(col){}
         virtual bool connect() = 0;
         virtual void sendUpdate(Unit *) = 0;
         virtual void applyUpdates() = 0;
         virtual void sendSync() = 0;
+        void setGame(Game *g){game = g;}
 };
 
 #endif

@@ -26,7 +26,7 @@ RETURNS TRUE BEFORE USING gkp.
  */
 
 
-GameKitPlayer::GameKitPlayer(Game *_game, CIwColour& col) : RemotePlayer(_game, col), sychronized(false) {
+GameKitPlayer::GameKitPlayer(CIwColour& col) : RemotePlayer(col), sychronized(false) {
     if(s3eExtIPhoneGameKitAvailable())
         session = s3eIPhoneGameKitStartSession(SESSION_ID_STRING, 0, S3E_GKSESSION_MODE_PEER,
                                            sessConnected,
@@ -36,8 +36,7 @@ GameKitPlayer::GameKitPlayer(Game *_game, CIwColour& col) : RemotePlayer(_game, 
 }
 
 bool GameKitPlayer::connect(){
-    if(!s3eExtIPhoneGameKitAvailable())
-        return false;
+    if(!session) return false;
 
     
     s3eGKPeer* peers[1]; 
@@ -95,6 +94,8 @@ void GameKitPlayer::applyUpdates(){
 
 // CALLBACKS
 void GameKitPlayer::sendData(const gk_data_t *data){
+    if(!session) return;
+    
     if(data == NULL)
         s3eGKSessionSendDataToAllPeers(session, 0, 0, S3E_GK_SEND_DATA_RELIABLE);
     else
