@@ -1,10 +1,10 @@
 #include "game.h"
 #include "unit.h"
 
- 
 Game::Game(Player* _local, RemotePlayer* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
-        innerRadius(72), outerRadius(288), timesteps(0) {
-	IwGetResManager()->LoadGroup("resource_groups/game.group");
+        innerRadius(112*.85), outerRadius(358*.85), timesteps(0) {
+
+    IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
 	initRenderState();
@@ -59,7 +59,7 @@ void Game::initRenderState() {
 	IwGxSetPerspMul(9);
 	IwGxSetFarZNearZ(12, 8);
 	view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3(w/2 + innerRadius - 10, 0, -9));
+	view.SetTrans(CIwVec3(innerRadius+w/2-30, 0, -9));
 	IwGxSetViewMatrix(&view);
 }
 
@@ -238,7 +238,7 @@ void Game::renderWorld() {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation, 0, 1, 0.0f);
+	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.85, 960, rotation, 0, 1, 0.0f);
 	
 	delete mat;
 }

@@ -110,11 +110,26 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
                 if(y < 0) return;
                 
                 switch (y / 55) {
-                    case 0: touch->unit = new Thrower(localPlayer,  game, 0, 0); break;
-                    case 1: touch->unit = new Wrecker(localPlayer,  game, 0, 0); break;
-                    case 2: touch->unit = new Muncher(localPlayer,  game, 0, 0); break;
-                    case 3: touch->unit = new Shooter(localPlayer,  game, 0, 0); break;
-                    case 4: touch->unit = new Spreader(localPlayer, game, 0, 0); break;
+                    case 0: 
+						touch->unit = new Thrower(localPlayer,  game, 0, 0);
+						/* set palate texture */
+						break;
+                    case 1: 
+						touch->unit = new Wrecker(localPlayer,  game, 0, 0); 
+						/* set palate texture */
+						break;
+                    case 2: 
+						touch->unit = new Muncher(localPlayer,  game, 0, 0); 
+						/* set palate texture */
+						break;
+                    case 3: 
+						touch->unit = new Shooter(localPlayer,  game, 0, 0); 
+						/* set palate texture */
+						break;
+                    case 4: 
+						touch->unit = new Spreader(localPlayer, game, 0, 0);
+						/* set palate texture */
+						break;
                     default: break;
                 }
                    
@@ -264,7 +279,7 @@ void doMain() {
         
 		if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {
 			game->rotate(worldScrollSpeed);
-            worldScrollSpeed *= worldScrollMultiplier;
+			worldScrollSpeed *= worldScrollMultiplier;
 		}
 	
         if(frameCount % FRAMES_PER_UPDATE == 0) {
