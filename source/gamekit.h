@@ -28,7 +28,7 @@ struct gk_data_t {
 
 // GameKit data -- move me into class plz
 static bool connected;
-static s3eGKPeer* peer;
+static s3eGKPeer* peers[2];
 static s3eGKSession *session;
 static std::list<gk_data_t *> queued_units;
 

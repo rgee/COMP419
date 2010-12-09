@@ -37,16 +37,16 @@ GameKitPlayer::GameKitPlayer(CIwColour& col) : RemotePlayer(col), sychronized(tr
 
 bool GameKitPlayer::connect(){
     if(!session) return false;
-
     
-    s3eGKPeer* peers[1]; 
-    uint32 num = s3eGKSessionGetPeersWithConnectionState(session, S3E_GKPEER_STATE_AVAILABLE, peers, 1);
+    uint32 num = s3eGKSessionGetPeersWithConnectionState(session, S3E_GKPEER_STATE_AVAILABLE, peers, 2);
     
     s3eDeviceYield(500);
     
     if(num){
-        peer = peers[0];
-        return S3E_RESULT_SUCCESS == s3eGKConnectToPeer(session, peer, 10);
+        if(num >= 2)
+             if(S3E_RESULT_SUCCESS != s3eGKConnectToPeer(session, peers[1], 10))
+                 return false;
+        return S3E_RESULT_SUCCESS == s3eGKConnectToPeer(session, peers[0], 10);
     } else {
         return false;
     }
@@ -77,7 +77,7 @@ void GameKitPlayer::applyUpdates(){
     if(!session) return;
     
     while(queued_units.empty() && !sychronized){
-        s3eDeviceYield();
+        s3eDeviceYield(0);
     }
     
     for(std::list<gk_data_t *>::iterator itr = queued_units.begin(); itr != queued_units.end(); ++itr){
@@ -102,25 +102,34 @@ void GameKitPlayer::applyUpdates(){
 // CALLBACKS
 void GameKitPlayer::sendData(const gk_data_t *data){
     if(!session) return;
-    
+        
     if(data == NULL)
-        s3eGKSessionSendDataToAllPeers(session, 0, 0, S3E_GK_SEND_DATA_RELIABLE);
+        s3eGKSessionSendDataToAllPeers(session, 0, 1, S3E_GK_SEND_DATA_RELIABLE);
     else
         s3eGKSessionSendDataToAllPeers(session, (void *) data, sizeof(gk_data_t), S3E_GK_SEND_DATA_RELIABLE);
 }
 
 void GameKitPlayer::sessConnected(s3eGKSession* sess, s3eGKSessionConnectResult* result, void* userData){}
+void GameKitPlayer::sessDisconnected(s3eGKSession* sess, s3eGKSessionDisconnectInfo* info, void* userData){}
 
 void GameKitPlayer::peerConnected(s3eGKSession* sess, s3eGKSessionPeerConnectAttempt* connectInfo, void* userData){   
+    const char *pPeerName = s3eGKPeerGetString(connectInfo->m_peer, S3E_GKPEER_DISPLAY_NAME);
+
+    s3eDebugErrorShow(S3E_MESSAGE_CONTINUE, ("Peer connected: %s", pPeerName));
+
     connectInfo->m_accept = S3E_TRUE;     
 }
 
 void GameKitPlayer::receivedData(s3eGKSession* sess, s3eGKSessionRecievedData* data, void* userData){
 
-    if(data->m_dataSize < sizeof(gk_data_t))
-        ((GameKitPlayer *)userData)->receiveSync();
+    s3eDebugErrorShow(S3E_MESSAGE_CONTINUE, "Receiving data");
+
+    
+    //s3eExtOSReadUserStringUTF8("Received data");
+    
+    //if(data->m_dataSize < sizeof(gk_data_t))
+    //    ((GameKitPlayer *)userData)->receiveSync();
     
     //queued_units.push_back((gk_data_t *) data->m_data);
 }
 
-void GameKitPlayer::sessDisconnected(s3eGKSession* sess, s3eGKSessionDisconnectInfo* info, void* userData){}

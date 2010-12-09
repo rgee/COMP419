@@ -11,7 +11,7 @@ Game::Game(Player* _local, RemotePlayer* opponent) : localPlayer(_local), oppone
             
     localIcing.clear();
     opponentIcing.clear();
-
+                    
 	CIwResList* resources = sprites->GetListHashed(IwHashString("CIwTexture"));
 	for(CIwManaged** itr = resources->m_Resources.GetBegin(); itr != resources->m_Resources.GetEnd(); ++itr) {
 		unitBucket[(*itr)->m_Hash] = new std::set<Unit*>();
@@ -131,10 +131,11 @@ void Game::addUnit(Unit *u, bool pay){
 
 void Game::tick(){
     
-    if(timesteps % 6 == 0){
-        opponentPlayer->sendSync();
-        opponentPlayer->applyUpdates();
-    }
+    //if(true || timesteps % 2 == 0){
+        //opponentPlayer->sendSync();
+        //s3eExtOSReadUserStringUTF8("Sync sent");
+        // opponentPlayer->applyUpdates();
+    //}
 
 	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
         (*itr)->update(itr);

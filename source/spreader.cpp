@@ -7,7 +7,7 @@ Spreader::Spreader(Player* owner, Game* game, float x, float y)
     curFrame = 0;
     scale = 0.25f;
     amountSpread = 1;
-	spreadDelay = 64;
+	spreadDelay = 32;
     setPosition(x, y);
 	worldRad = game->getWorldRadius();
 	texture_names.push_back(IwHashString("spreader_sprite_sheet"));
@@ -15,7 +15,7 @@ Spreader::Spreader(Player* owner, Game* game, float x, float y)
 
 Spreader::Spreader(const Spreader& newSpreader) : Unit(newSpreader) {
 	amountSpread = 1;
-	spreadDelay = 64;
+	spreadDelay = 32;
 	worldRad = game->getWorldRadius();
 }
 
@@ -29,7 +29,7 @@ bool Spreader::update(std::list<Unit*>::iterator itr){
 	//how to interpret the units stats/do some refactoring.
 	
 	// Take twice as long each time, x & (x + 1) will be true iff x+1 is a power of 2
-	if(!(spreadDelay & ++spreadDelay) && spreadDelay >= 128) {
+	if(!(spreadDelay & ++spreadDelay) && spreadDelay >= 64) {
 		
 		//spread 3 layers of icing
 		if(amountSpread < 4) {
