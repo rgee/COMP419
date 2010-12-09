@@ -104,17 +104,31 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
         if (touch->active) {
             if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
-                
                 int y = touch->y - 94; // Palate offset
                 
                 if(y < 0) return;
                 
                 switch (y / 55) {
-                    case 0: touch->unit = new Thrower(localPlayer,  game, 0, 0); break;
-                    case 1: touch->unit = new Wrecker(localPlayer,  game, 0, 0); break;
-                    case 2: touch->unit = new Muncher(localPlayer,  game, 0, 0); break;
-                    case 3: touch->unit = new Shooter(localPlayer,  game, 0, 0); break;
-                    case 4: touch->unit = new Spreader(localPlayer, game, 0, 0); break;
+                    case 0:
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_THROWER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Thrower(localPlayer,  game, 0, 0);
+                        break;
+                    case 1:
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_WRECKER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Wrecker(localPlayer,  game, 0, 0);
+                        break;
+                    case 2: 
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_MUNCHER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Muncher(localPlayer,  game, 0, 0);
+                        break;
+                    case 3:
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_SHOOTER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Shooter(localPlayer,  game, 0, 0);
+                        break;
+                    case 4: 
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_SPREADER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Spreader(localPlayer, game, 0, 0);
+                        break;
                     default: break;
                 }
                    
@@ -125,7 +139,10 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
         // if it's the end of a touch, check what kind of gesture it and render.
         } else {
 			switch(touch->gesture_type) {
-				case CREATE_UNIT: renderUnitCreation(touch); break;
+				case CREATE_UNIT:
+                    unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2", IW_GX_RESTYPE_TEXTURE));
+                    renderUnitCreation(touch);
+                    break;
 				case DRAG_WORLD: /* shouldn't need to do anything */ break;
 				default: break;
             }
@@ -221,7 +238,7 @@ void doMain() {
 
     IwGetResManager()->LoadGroup("resource_groups/palate.group");
     
-    CIwResGroup* palateGroup = IwGetResManager()->GetGroupNamed("Palate");
+    palateGroup = IwGetResManager()->GetGroupNamed("Palate");
 
     std::vector<int> ui_texture_hashes;
 	int background_hash = IwHashString("background_clean");
@@ -237,13 +254,14 @@ void doMain() {
     background->SetModulateMode(CIwMaterial::MODULATE_NONE);
     background->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 
-	CIwMaterial* unit_ui = new CIwMaterial();
+	unit_ui = new CIwMaterial();
     unit_ui->SetModulateMode(CIwMaterial::MODULATE_NONE);
     unit_ui->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+    unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2", IW_GX_RESTYPE_TEXTURE));
     
     CIwSVec2 bg_wh(320, 480);
-	CIwSVec2 ui_wh(85, 480);
-	CIwSVec2 ui_offset(235, 0);
+	CIwSVec2 ui_wh(80, 480);
+	CIwSVec2 ui_offset(240, 0);
 	CIwSVec2 uv(0, 0);
 	CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
 
@@ -277,7 +295,6 @@ void doMain() {
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&CIwSVec2::g_Zero, &bg_wh, &uv, &duv);
 
-		unit_ui->SetTexture((CIwTexture*)palateGroup->GetResHashed(ui_texture_hashes[ui_texture_index], IW_GX_RESTYPE_TEXTURE));
 		IwGxSetMaterial(unit_ui);
         IwGxSetScreenSpaceSlot(-1); 
         IwGxDrawRectScreenSpace(&ui_offset, &ui_wh, &uv, &duv);
@@ -290,8 +307,6 @@ void doMain() {
         if(frameCount % FRAMES_PER_UPDATE == 0) {
 			game->tick();
 		}
-
-        //unit_ui->SetTexture((CIwTexture*)palateGroup->GetResHashed(ui_texture_hashes[ui_texture_index], IW_GX_RESTYPE_TEXTURE));
 		game->render();
 		if(!renderTouches()) break;
         		

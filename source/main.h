@@ -37,8 +37,10 @@ struct CTouch {
     int32 last_y;           // previous y position of a world_drag gesture
 };
 
+CIwMaterial* unit_ui;
 Game* game = NULL;
 Player* localPlayer = NULL;
+CIwResGroup* palateGroup = NULL;
 RemotePlayer* opponentPlayer = NULL;
 
 #define MAX_TOUCHES 10
