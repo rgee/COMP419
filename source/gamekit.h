@@ -26,17 +26,17 @@ struct gk_data_t {
     float x, y;    
 };
 
+// GameKit data -- move me into class plz
+static bool connected;
+static s3eGKPeer* peer;
+static s3eGKSession *session;
+static std::list<gk_data_t *> queued_units;
+
 class GameKitPlayer : public RemotePlayer {
     private:
         Game *game;
         bool sychronized;
     
-        // GameKit data
-        static bool connected;
-        static s3eGKPeer* peer;
-        static s3eGKSession *session;
-        static std::list<gk_data_t *> queued_units;
-        
         // Callbacks
         static void sendData(const gk_data_t*);
         static void sessConnected(s3eGKSession*,       s3eGKSessionConnectResult*,         void*);
@@ -45,7 +45,7 @@ class GameKitPlayer : public RemotePlayer {
         static void sessDisconnected(s3eGKSession*,    s3eGKSessionDisconnectInfo*,        void*);
         
     public:
-        GameKitPlayer(Game*, CIwColour& col);
+        GameKitPlayer(CIwColour& col);
         virtual bool connect();
         
         virtual void sendUpdate(Unit *);

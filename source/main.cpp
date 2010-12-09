@@ -180,8 +180,14 @@ void init(){
 	CIwColour opponentCol = {180, 255, 160, 255};
 	
 	localPlayer = new Player(localCol);
-	opponentPlayer = new Player(opponentCol);
+	opponentPlayer = new GameKitPlayer(opponentCol);
+    
     game = new Game(localPlayer, opponentPlayer);
+    
+    opponentPlayer->setGame(game);
+    while(!opponentPlayer->connect()){
+        s3eDeviceYield(100);
+    }
 	
     CIwFVec2 pos(game->getWorldRadius().y + 20, 0);
     polarToXY(pos);
