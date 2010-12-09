@@ -181,11 +181,12 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	polarize(toLeaderPolar);
 	float dodgeThetaIncr = toLeaderPolar.y < 0 ? .3 : -.3;
 	
-	//if not dodge pathing, add circular pathing force
+	// if not dodge pathing, add circular pathing force and leader attraction
 	if(!isDodgePathing) {
-		float centerR = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0;
-		float rDiff = centerR - r;
-		force += position * ((rDiff < 0 ? -1 : 1) * WALL_REPEL * SQ(rDiff)); // Ternary is experimentally faster
+		
+		// "spring" force to motivate circular pathing
+		float rDiff = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0 - r;
+		force += position * ((rDiff < 0 ? -1 : 1) * CIRCLE_SPRING * SQ(rDiff)); // Ternary is experimentally faster
 		force += LEADER_ATTRACTION * toLeader;
 	}
 	
@@ -210,11 +211,6 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	}
 	
 	if (isDodgePathing) {
-		/*char* str = (char*)malloc(sizeof(char)*100);
-		sprintf(str, "%f", force.GetLengthSquared());
-		s3eDebugOutputString(str);
-		free(str);*/
-		
 		force += NAV_ATTRACT_FACTOR * (navTarget-position).GetNormalised();
 		
 		CIwFVec2 navVec = (navTarget - position);
@@ -231,7 +227,13 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		}
 	}
 	
+	/*char* str = (char*)malloc(sizeof(char)*100);
+	sprintf(str, "%f", getR() - inner);
+	s3eDebugOutputString(str);
+	free(str);*/
+
 	velocity = speed * force.GetNormalised();
+
 	setPosition(position + velocity);
 }
 

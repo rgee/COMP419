@@ -18,8 +18,9 @@ class Unit;
 #define THETA_DIFF(X, Y) (min(abs((X)-(Y)), 2*PI - abs((X) - (Y))))
 #define REPEL_FACTOR 8000000
 #define LEADER_ATTRACTION 1000
-#define WALL_REPEL .0015f
-#define FORCE_THRESHOLD 80000
+#define CIRCLE_SPRING .0015f
+#define WALL_REPEL 2000
+#define FORCE_THRESHOLD 70000
 #define NAV_ATTRACT_FACTOR 4000
 
 
