@@ -12,7 +12,7 @@ Unit::Unit(const Unit& newUnit)
 	setOwner(newUnit.owner);
 	navTarget = CIwFVec2::g_Zero;
 	enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
-	isDodgePathing = false;
+	pathMode = NORMAL;
 }
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
@@ -28,7 +28,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
     setOwner(owner);
 	navTarget = CIwFVec2::g_Zero;
 	enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
-	isDodgePathing = false;
+	pathMode = NORMAL;
 }
 
 void Unit::display(){
@@ -157,12 +157,21 @@ float Unit::distToTarget(){
 
 void Unit::path(std::list<Unit*>::iterator itr) {
 	
-	std::list<Unit*>* units = game->getUnits();
+	// Normalized vector from this unit to the enemy leader. 
+	// Need this for normal pathing and escape pathing.
+	CIwFVec2 toLeader = (enemyLeaderPos-position).GetNormalised();
 	
+	CIwFVec2 repulsionSum = CIwFVec2::g_Zero;
+	
+	/********************************
+	 **** Begin Force Calculation ***
+	 ********************************/
+	
+	
+	std::list<Unit*>* units = game->getUnits(); //all the units in the game
 	CIwFVec2 force = CIwFVec2::g_Zero; //sum of all forces on this unit
-	
-	CIwFVec2 dirToward = CIwFVec2::g_Zero; //vector from repelling unit to this unit
-	Unit* curUnit; //current repelling unit
+	CIwFVec2 dirToward = CIwFVec2::g_Zero; //vector from current repelling unit to this unit
+	Unit* curUnit; //current repelling unit in loop
 	
 	//sum up all of the repulsive forces on this unit
 	for (itr = units->begin() ; itr != units->end(); ++itr) {
@@ -171,68 +180,117 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		if ((*itr) != this && THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
 			dirToward = position - curUnit->getPosition();
 			float dist = dirToward.GetLengthSquared();
-			force += dirToward.GetNormalised() * (repulsion_factor * curUnit->getSize()*REPEL_FACTOR / pow(dist, 1.875));
-            // We can tweak bottom factor later, this seems to work fine:           ^
+			repulsionSum += dirToward.GetNormalised() * (repulsion_factor * curUnit->getSize()*REPEL_FACTOR / pow(dist, 1.875));
 		}
 	}
 	
-	CIwFVec2 toLeader = (enemyLeaderPos-position).GetNormalised();
-	CIwFVec2 toLeaderPolar = toLeader;
-	polarize(toLeaderPolar);
-	float dodgeThetaIncr = toLeaderPolar.y < 0 ? .3 : -.3;
-	
-	// if not dodge pathing, add circular pathing force and leader attraction
-	if(!isDodgePathing) {
-		
-		// "spring" force to motivate circular pathing
+	force += repulsionSum;
+
+	// if not escape pathing, add at least the circular pathing force 
+	if(pathMode != ESCAPE) {
 		float rDiff = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0 - r;
 		force += position * ((rDiff < 0 ? -1 : 1) * CIRCLE_SPRING * SQ(rDiff)); // Ternary is experimentally faster
-		force += LEADER_ATTRACTION * toLeader;
+		
+		// only add enemy leader force if doing normal pathing
+		if (pathMode == NORMAL) {
+			force += LEADER_ATTRACTION * toLeader;
+		}
 	}
 	
-	if (!isDodgePathing && force.GetLengthSquared() < FORCE_THRESHOLD) {
-		CIwFVec2 worldRad = game->getWorldRadius();
-		float innerDist = getR() - worldRad.x;
-		float outerDist = worldRad.y - getR();
-	
-		float targetR;
-		
-		if (innerDist > outerDist) {
-			targetR = worldRad.x + getSize()/2;
-		}
-		else {
-			targetR = worldRad.y - getSize()/2;
-		}
-		
-		navTargetPolar = CIwFVec2(targetR, getTheta() + dodgeThetaIncr);
-		navTarget = navTargetPolar;
-		polarToXY(navTarget);					
-		isDodgePathing = true;
-	}
-	
-	if (isDodgePathing) {
+	// if in a special pathing mode, add force toward the navigation target
+	if (pathMode != NORMAL) {
 		force += NAV_ATTRACT_FACTOR * (navTarget-position).GetNormalised();
-		
-		CIwFVec2 navVec = (navTarget - position);
-		CIwFVec2 enemyLeaderDir = (enemyLeaderPos - position).GetNormalised();
-		float dot = (force.GetNormalised()).Dot(enemyLeaderDir);
-		
-		if (dot > cos(PI/4) || navVec.GetLengthSquared() < 1000) {
-			isDodgePathing = false;
-		}
-		else {
-			navTargetPolar.y = getTheta() + dodgeThetaIncr;
-			navTarget = navTargetPolar;
-			polarToXY(navTarget);
-		}
 	}
 	
-	/*char* str = (char*)malloc(sizeof(char)*100);
-	sprintf(str, "%f", getR() - inner);
-	s3eDebugOutputString(str);
-	free(str);*/
+	
+	/********************************
+	 **** End Force Calculation *****
+	 ********************************/
+	
+	
+	// If we've fallen into equilibrium and aren't already escape pathing, create
+	// an escape navigation target. Note that this conditional allows escape pathing 
+	// to override objective pathing - if we get stuck, our only priority is to get unstuck.
+	if (pathMode != ESCAPE && force.GetLengthSquared() < FORCE_THRESHOLD)
+		setEscapeTarget(toLeader);
+
+	if (pathMode == ESCAPE) {
+		
+		CIwFVec2 normal = (CIwFVec2(-force.y, force.x)).GetNormalised();
+		CIwFVec2 repulsionNorm = repulsionSum.GetNormalised();
+		CIwFVec2 normalForce = repulsionSum * normal.Dot(repulsionNorm) / (repulsionNorm * normal);
+		
+		char* str = (char*)malloc(sizeof(char)*100);
+		sprintf(str, "%f", normalForce.GetLengthSquared());
+		s3eDebugOutputString(str);
+		free(str);
+		
+		if (normalForce.GetLengthSquared() < NORMAL_FORCE_THRESHOLD) {
+			s3eDebugOutputString("done");
+			//navTarget = position +  -1 * getSize() * normal;
+			pathMode = NORMAL;
+		}
+		else if ((navTarget - position).GetLengthSquared() < 900) {
+			pathMode = NORMAL;
+		}
+		else {
+			setEscapeTarget(toLeader);
+		}
+
+	}
 
 	velocity = speed * force.GetNormalised();
 	setPosition(position + velocity);
+
+	CIwFVec2 worldRad = game->getWorldRadius();
+	float unitRad = getSize()/2;
+	float toInner = getR() - worldRad.x,
+		  toOuter = worldRad.y - getR();
+	
+	// If we're about to hit a wall, prevent any further movement along
+	// the radius. If we're also escape pathing, change the target to	
+	//the opposite wall.
+	if (toInner <= unitRad) {
+		setPolarPosition(worldRad.x - unitRad, getTheta());
+		if (pathMode == ESCAPE)	setEscapeTarget(toLeader);
+	}
+	else if(toOuter <= unitRad) {
+		setPolarPosition(worldRad.y - unitRad, getTheta());
+		if (pathMode == ESCAPE)	setEscapeTarget(toLeader);
+	}
+}
+
+// Create a navigation target at the wall furthest from this
+// unit, slightly ahead of it's current theta position.
+void Unit::setEscapeTarget(CIwFVec2 toLeader) {
+	
+	//figure out which way we're going in the circle
+	polarize(toLeader);
+	float thetaIncr = toLeader.y < 0 ? .3 : -.3; 
+	
+	CIwFVec2 worldRad = game->getWorldRadius();
+	float innerDist = getR() - worldRad.x;
+	float outerDist = worldRad.y - getR();
+	
+	//if already escape pathing, don't change the target wall, else
+	//figure out which wall is the furthest from us, and go to it
+	if (pathMode != ESCAPE) {
+		if (innerDist > outerDist) {
+			navTarget.x = worldRad.x + getSize()/2;
+		}
+		else {
+			navTarget.x = worldRad.y - getSize()/2;
+		}
+		
+		navTarget.y = getTheta() + thetaIncr;
+		polarToXY(navTarget);
+	}
+	else {
+		polarize(navTarget);
+		navTarget.y = getTheta() + thetaIncr;
+		polarToXY(navTarget);
+	}
+	
+	pathMode = ESCAPE;
 }
 

@@ -20,8 +20,9 @@ class Unit;
 #define LEADER_ATTRACTION 1000
 #define CIRCLE_SPRING .0015f
 #define WALL_REPEL 2000
-#define FORCE_THRESHOLD 70000
+#define FORCE_THRESHOLD 80000
 #define NAV_ATTRACT_FACTOR 4000
+#define NORMAL_FORCE_THRESHOLD 18000
 
 
 /**
@@ -29,6 +30,19 @@ This lets us quickly determine a unit's type at run time.
 */
 enum unit_type {
 	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER, LEADER
+};
+
+/**
+Pathing modes that a unit can be in
+ 
+NORMAL: all is well - move toward the enemy leader and do circular pathing
+ESCAPE: fell into equilibrium - ignore enemy leader and circular pathing, 
+		go to a wall
+OBJECTIVE: trying to go somewhere/chase something - ignore enemy leader, 
+		   but not circular pathing
+*/
+enum path_mode {
+	NORMAL, ESCAPE, OBJECTIVE
 };
 
 class Unit : public WorldObject {
@@ -65,9 +79,15 @@ class Unit : public WorldObject {
 	
 		CIwFVec2 navTarget;	//a target the unit will move toward when it's stuck
 		CIwFVec2 navTargetPolar; //polar navigation target
-		bool isDodgePathing; //whether we're moving somewhere to get unstuck
+		path_mode pathMode; //the current pathing mode that we're in
 	
 		Unit *target;
+	
+		/** 
+		 Calculate a target (the inner or outer wall) for escape pathing
+		 @param toLeader - vector pointing from this unit to the enemy leader 
+		 */
+		void setEscapeTarget(CIwFVec2 toLeader);
 	
         
     public:

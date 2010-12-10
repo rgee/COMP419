@@ -39,7 +39,8 @@ struct CTouch {
 
 Game* game = NULL;
 Player* localPlayer = NULL;
-RemotePlayer* opponentPlayer = NULL;
+//RemotePlayer* opponentPlayer = NULL
+Player* opponentPlayer = NULL;
 
 #define MAX_TOUCHES 10
 CTouch touches[MAX_TOUCHES];
