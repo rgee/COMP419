@@ -37,7 +37,7 @@ void Unit::display(){
 
     //UNCOMMENT TO DRAW DEBUG PRIMITIVES. Yellow circle = Unit Sight. Blue circle = Unit bounding volume
     
-	/*CIwFVec2 circle = navTarget;
+	CIwFVec2 circle = navTarget;
 	polarize(circle);
 	circle.y *= -1;
 	polarToXY(circle);
@@ -48,9 +48,9 @@ void Unit::display(){
     rot.SetRotZ(IW_ANGLE_FROM_RADIANS(game->getRotation()));
 
 	if (getType() == MUNCHER) {
-		IwGxDebugPrimCircle(pMat*rot, 20, 2, IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
+		//IwGxDebugPrimCircle(pMat*rot, 20, 2, IwGxGetColFixed(IW_GX_COLOUR_BLUE), false);
 	}
-    //IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);*/
+    //IwGxDebugPrimCircle(pMat*rot, sight, 2,IwGxGetColFixed(IW_GX_COLOUR_YELLOW), false);
      
 }
 
@@ -211,35 +211,34 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	// If we've fallen into equilibrium and aren't already escape pathing, create
 	// an escape navigation target. Note that this conditional allows escape pathing 
 	// to override objective pathing - if we get stuck, our only priority is to get unstuck.
-	if (pathMode != ESCAPE && force.GetLengthSquared() < FORCE_THRESHOLD)
-		setEscapeTarget(toLeader);
+	if (force.GetLengthSquared() < FORCE_THRESHOLD) {
+		setEscapeTarget(toLeader, force);
+	}
 
 	if (pathMode == ESCAPE) {
-		
 		CIwFVec2 normal = (CIwFVec2(-force.y, force.x)).GetNormalised();
 		CIwFVec2 repulsionNorm = repulsionSum.GetNormalised();
 		CIwFVec2 normalForce = repulsionSum * normal.Dot(repulsionNorm) / (repulsionNorm * normal);
 		
-		char* str = (char*)malloc(sizeof(char)*100);
+		/*char* str = (char*)malloc(sizeof(char)*100);
 		sprintf(str, "%f", normalForce.GetLengthSquared());
 		s3eDebugOutputString(str);
-		free(str);
+		free(str);*/
 		
 		if (normalForce.GetLengthSquared() < NORMAL_FORCE_THRESHOLD) {
 			s3eDebugOutputString("done");
-			//navTarget = position +  -1 * getSize() * normal;
-			pathMode = NORMAL;
-		}
-		else if ((navTarget - position).GetLengthSquared() < 900) {
 			pathMode = NORMAL;
 		}
 		else {
-			setEscapeTarget(toLeader);
+			setEscapeTarget(toLeader, force);
 		}
 
 	}
 
-	velocity = speed * force.GetNormalised();
+	float curSpeed = speed * 4 * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
+	curSpeed = (curSpeed <= speed) ? curSpeed : speed;
+	
+	velocity = curSpeed * force.GetNormalised();
 	setPosition(position + velocity);
 
 	CIwFVec2 worldRad = game->getWorldRadius();
@@ -250,44 +249,49 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	// If we're about to hit a wall, prevent any further movement along
 	// the radius. If we're also escape pathing, change the target to	
 	//the opposite wall.
-	if (toInner <= unitRad) {
+	/*if (toInner <= unitRad) {
 		setPolarPosition(worldRad.x - unitRad, getTheta());
-		if (pathMode == ESCAPE)	setEscapeTarget(toLeader);
+		if (pathMode == ESCAPE)	setEscapeTarget(toLeader, force);
 	}
 	else if(toOuter <= unitRad) {
 		setPolarPosition(worldRad.y - unitRad, getTheta());
-		if (pathMode == ESCAPE)	setEscapeTarget(toLeader);
-	}
+		if (pathMode == ESCAPE)	setEscapeTarget(toLeader, force);
+	}*/
 }
 
 // Create a navigation target at the wall furthest from this
 // unit, slightly ahead of it's current theta position.
-void Unit::setEscapeTarget(CIwFVec2 toLeader) {
-	
+void Unit::setEscapeTarget(CIwFVec2 toLeader, CIwFVec2 force) {
+		
 	//figure out which way we're going in the circle
 	polarize(toLeader);
-	float thetaIncr = toLeader.y < 0 ? .3 : -.3; 
 	
 	CIwFVec2 worldRad = game->getWorldRadius();
 	float innerDist = getR() - worldRad.x;
 	float outerDist = worldRad.y - getR();
 	
-	//if already escape pathing, don't change the target wall, else
-	//figure out which wall is the furthest from us, and go to it
+	// if already escape pathing, don't change the target wall, else
+	// figure out which wall is the furthest from us, and go to it
 	if (pathMode != ESCAPE) {
 		if (innerDist > outerDist) {
-			navTarget.x = worldRad.x + getSize()/2;
+			navTarget.x = worldRad.x - getSize();
 		}
 		else {
-			navTarget.x = worldRad.y - getSize()/2;
+			navTarget.x = worldRad.y + getSize();
 		}
 		
-		navTarget.y = getTheta() + thetaIncr;
+		navTarget.y = getTheta() + (toLeader.y < 0 ? .3 : -.3); 
 		polarToXY(navTarget);
 	}
 	else {
 		polarize(navTarget);
-		navTarget.y = getTheta() + thetaIncr;
+		
+		char* str = (char*)malloc(sizeof(char)*100);
+		sprintf(str, "%f", force.GetLengthSquared());
+		s3eDebugOutputString(str);
+		free(str);
+		
+		navTarget.y += (toLeader.y < 0 ? .01 : -.01) * (force.GetLengthSquared() < SQ(NAV_ATTRACT_FACTOR) ? -1 : 10);
 		polarToXY(navTarget);
 	}
 	

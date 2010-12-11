@@ -20,9 +20,9 @@ class Unit;
 #define LEADER_ATTRACTION 1000
 #define CIRCLE_SPRING .0015f
 #define WALL_REPEL 2000
-#define FORCE_THRESHOLD 80000
-#define NAV_ATTRACT_FACTOR 4000
-#define NORMAL_FORCE_THRESHOLD 18000
+#define FORCE_THRESHOLD 10000
+#define NAV_ATTRACT_FACTOR 1000
+#define NORMAL_FORCE_THRESHOLD 40000
 
 
 /**
@@ -85,9 +85,10 @@ class Unit : public WorldObject {
 	
 		/** 
 		 Calculate a target (the inner or outer wall) for escape pathing
-		 @param toLeader - vector pointing from this unit to the enemy leader 
+		 @param toLeader vector pointing from this unit to the enemy leader
+		 @param the sum of the forces currently acting on this unit
 		 */
-		void setEscapeTarget(CIwFVec2 toLeader);
+		void setEscapeTarget(CIwFVec2 toLeader, CIwFVec2 force);
 	
         
     public:
