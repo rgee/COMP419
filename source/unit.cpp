@@ -202,15 +202,25 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		force += NAV_ATTRACT_FACTOR * (navTarget-position).GetNormalised();
 	}
 	
+	// if we're running into walls, add their normal force to the sum
+	CIwFVec2 worldRad = game->getWorldRadius();
+	float unitRad = getSize()/2;
+	float toInner = getR() - worldRad.x,
+	toOuter = worldRad.y - getR();
+	
+	if (toInner <= unitRad) {
+		CIwFVec2 normal = CIwFVec2(cos(getTheta()), sin(getTheta()));
+		force += normal * (force.GetNormalised().Dot(-1 * normal)) * force.GetLength();
+	}
+	else if(toOuter <= unitRad) {
+		CIwFVec2 normal = CIwFVec2(-cos(getTheta()), -sin(getTheta()));
+		force += normal * (force.GetNormalised().Dot(-1 * normal)) * force.GetLength();
+	}
 	
 	/********************************
 	 **** End Force Calculation *****
 	 ********************************/
 	
-	
-	// If we've fallen into equilibrium and aren't already escape pathing, create
-	// an escape navigation target. Note that this conditional allows escape pathing 
-	// to override objective pathing - if we get stuck, our only priority is to get unstuck.
 	if (force.GetLengthSquared() < FORCE_THRESHOLD) {
 		setEscapeTarget(toLeader, force);
 	}
@@ -218,12 +228,7 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	if (pathMode == ESCAPE) {
 		CIwFVec2 normal = (CIwFVec2(-force.y, force.x)).GetNormalised();
 		CIwFVec2 repulsionNorm = repulsionSum.GetNormalised();
-		CIwFVec2 normalForce = repulsionSum * normal.Dot(repulsionNorm) / (repulsionNorm * normal);
-		
-		/*char* str = (char*)malloc(sizeof(char)*100);
-		sprintf(str, "%f", normalForce.GetLengthSquared());
-		s3eDebugOutputString(str);
-		free(str);*/
+		CIwFVec2 normalForce = repulsionSum * normal.Dot(repulsionNorm);
 		
 		if (normalForce.GetLengthSquared() < NORMAL_FORCE_THRESHOLD) {
 			s3eDebugOutputString("done");
@@ -235,30 +240,13 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 
 	}
 
-	float curSpeed = speed * 4 * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
+	float curSpeed = 8 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
 	curSpeed = (curSpeed <= speed) ? curSpeed : speed;
-	
 	velocity = curSpeed * force.GetNormalised();
 	setPosition(position + velocity);
-
-	CIwFVec2 worldRad = game->getWorldRadius();
-	float unitRad = getSize()/2;
-	float toInner = getR() - worldRad.x,
-		  toOuter = worldRad.y - getR();
-	
-	// If we're about to hit a wall, prevent any further movement along
-	// the radius. If we're also escape pathing, change the target to	
-	//the opposite wall.
-	/*if (toInner <= unitRad) {
-		setPolarPosition(worldRad.x - unitRad, getTheta());
-		if (pathMode == ESCAPE)	setEscapeTarget(toLeader, force);
-	}
-	else if(toOuter <= unitRad) {
-		setPolarPosition(worldRad.y - unitRad, getTheta());
-		if (pathMode == ESCAPE)	setEscapeTarget(toLeader, force);
-	}*/
 }
 
+									   
 // Create a navigation target at the wall furthest from this
 // unit, slightly ahead of it's current theta position.
 void Unit::setEscapeTarget(CIwFVec2 toLeader, CIwFVec2 force) {
@@ -285,16 +273,63 @@ void Unit::setEscapeTarget(CIwFVec2 toLeader, CIwFVec2 force) {
 	}
 	else {
 		polarize(navTarget);
-		
-		char* str = (char*)malloc(sizeof(char)*100);
-		sprintf(str, "%f", force.GetLengthSquared());
-		s3eDebugOutputString(str);
-		free(str);
-		
-		navTarget.y += (toLeader.y < 0 ? .01 : -.01) * (force.GetLengthSquared() < SQ(NAV_ATTRACT_FACTOR) ? -1 : 10);
+		navTarget.y += (toLeader.y < 0 ? .01 : -.01) * (force.GetLengthSquared() < SQ(NAV_ATTRACT_FACTOR) ? -1 : (PI - getTheta()) * 10);
 		polarToXY(navTarget);
 	}
 	
 	pathMode = ESCAPE;
+}
+
+
+void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
+    std::list<Unit*>* units = game->getUnits();
+    CIwFVec2 position = (*unit_itr)->getPosition() + (*unit_itr)->getVelocity();
+    CIwFVec2 otherPos = CIwFVec2::g_Zero;
+    
+    float sq_dist = 0;
+    float closest_distance = SQ((*unit_itr)->getSight());
+    float max_dist = closest_distance;
+    Unit* closest = (*unit_itr)->getTarget();
+    
+    /**
+	* In order to avoid brute-force distance calculations, we take advantage of
+	* the fact that the units are sorted by their theta values. We begin our distance
+	* checking at the given unit's position in the sorted container, then at each
+	* step, check the unit with the next nearest theta, and see if it's close enough.
+	* 
+	* We stop once we've reached a unit that is completely outside the sight range,
+	* We do the same thing in both directions to find the closest unit.
+	*/
+    std::list<Unit*>::iterator incr_theta_itr = unit_itr;
+    std::list<Unit*>::iterator decr_theta_itr = unit_itr;
+    while(incr_theta_itr != units->end() && sq_dist <= max_dist) {
+	// Look up theta, which means we're moving to the BACK of the container
+		if(&(*incr_theta_itr)->getOwner() != &(*unit_itr)->getOwner()) {
+			otherPos = (*incr_theta_itr)->getPosition();
+			sq_dist = SQ(position.x - otherPos.x) + SQ(position.y - otherPos.y);
+			
+			if(sq_dist < closest_distance && (*incr_theta_itr)->getHp() > 0) {
+				closest_distance = sq_dist;
+				closest = *(incr_theta_itr);
+			}
+		}
+		++incr_theta_itr;
+	}
+
+	// Must reset the distance here since we're switching directions.
+	sq_dist = 0.0f;
+	while(decr_theta_itr != units->begin() && sq_dist <= max_dist) {
+		// Look down theta, which means we're moving to the FRONT of the container. 
+		if(&(*decr_theta_itr)->getOwner() != &(*unit_itr)->getOwner()) {
+			otherPos = (*decr_theta_itr)->getPosition();
+			sq_dist = SQ(position.x - otherPos.x) + SQ(position.y - otherPos.y);
+			
+			if(sq_dist < closest_distance && (*decr_theta_itr)->getHp() > 0) {
+				closest_distance = sq_dist;
+				closest = *(decr_theta_itr);
+			}
+		}
+		--decr_theta_itr;
+	}
 }
 
