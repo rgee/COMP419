@@ -9,6 +9,8 @@
 #include "icing.h"
 #include <cmath>
 
+typedef std::map<std::pair<int, float>, bool> IceMap;
+
 class Spreader : public Unit {
     private:
         // The maximum radii at which to drop icing.
@@ -26,19 +28,19 @@ class Spreader : public Unit {
 		CIwFVec2 worldRad;
 
         // Map from (r, theta) centered at the spreader's center to icing pointers.
-        std::map<std::pair<int, float >, Icing*> icingMap;
+        IceMap icingMap;
     
 	public:
 		Spreader(Player* owner, Game* game, float x, float y);
 		Spreader(const Spreader& newSpreader);
-		~Spreader(){};
+		~Spreader();
 
 		virtual bool update(std::list<Unit*>::iterator itr);
 
 		virtual unit_type getType();
 		virtual Unit* spawnCopy();
         virtual bool shouldAIUpdate();
-        std::map<std::pair<int, float>, Icing*>* getIcing();
+        IceMap* getIcing();
 };
 
 #endif

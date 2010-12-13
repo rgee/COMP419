@@ -51,12 +51,14 @@ bool Spreader::update(std::list<Unit*>::iterator itr){
             float yOffset = radius * sin(spreadTheta);
             std::pair<int, float> key = std::make_pair<int, float>(actualRadius, spreadTheta);
 
-            if(isInWorld(CIwFVec2(position.x + xOffset, position.y + yOffset), worldRad.x, worldRad.y) &&
-                !icingMap[key]) {
+            if(!icingMap[key]) {
 
-                Icing* ice = new Icing(CIwFVec2(position.x + xOffset, position.y + yOffset), game, owner);
-	            game->addIcing(ice);
-                icingMap[key] = ice;
+                // Only add icing to the GAME if it's in the world, so we can still breadcrumb off-world slots.
+	            if(isInWorld(CIwFVec2(position.x + xOffset, position.y + yOffset), worldRad.x, worldRad.y)) {
+                    game->addIcing(new Icing(CIwFVec2(position.x + xOffset, position.y + yOffset), game, owner));
+                }
+
+                icingMap[key] = true;
                 foundLocation = true;
 	        }
         }
@@ -64,6 +66,10 @@ bool Spreader::update(std::list<Unit*>::iterator itr){
 	++sinceLastSpread;
 	curFrame = (curFrame + 1) % numFrames;
     return true;
+}
+
+Spreader::~Spreader() {
+    icingMap.clear();
 }
 
 unit_type Spreader::getType() {
@@ -74,7 +80,7 @@ Unit* Spreader::spawnCopy() {
 	return new Spreader(*this);
 }
 
-std::map<std::pair<int, float>, Icing*>* Spreader::getIcing() {
+IceMap* Spreader::getIcing() {
     return &icingMap;
 }
 
