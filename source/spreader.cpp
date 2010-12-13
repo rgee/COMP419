@@ -27,9 +27,11 @@ bool Spreader::update(std::list<Unit*>::iterator itr){
 	
 	//This is just using magic numbers right now - we need to discuss
 	//how to interpret the units stats/do some refactoring.
-	
+
+    int prev_delay = spreadDelay;
+    ++spreadDelay;
 	// Take twice as long each time, x & (x + 1) will be true iff x+1 is a power of 2
-	if(!(spreadDelay & ++spreadDelay) && spreadDelay >= 128) {
+	if(((prev_delay & (spreadDelay)) == 0) && spreadDelay >= 128) {
 		
 		//spread 3 layers of icing
 		if(amountSpread < 4) {
