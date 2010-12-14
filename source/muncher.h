@@ -5,19 +5,19 @@
 #include <math.h>
 
 class Muncher : public Unit {
-	
+
 	public:
-	
+
 		Muncher(Player* owner, Game* game, CIwFVec2 position);
-	
+
 		~Muncher() {};
 
 		virtual char* getTextureName();
 		virtual bool update();
 		virtual void display(float worldRot);
-	
+
 	private:
-	
+
 		float circleOffset;
 };
 
