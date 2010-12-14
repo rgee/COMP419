@@ -12,10 +12,8 @@
 
 // Structure to track touches.
 struct CTouch {
-	int32 x;		// position
-	int32 y;		// position
+	int32 x, y, id;
 	bool active;	// whether touch is currently active
-	int32 id;		// touch's unique identifier
     Unit* unit;
 };
 
@@ -63,12 +61,12 @@ bool renderTouch(CTouch* touch) {
     
     CIwFVec2 radii = game->getWorldRadius();
     
-    int32 world_x = x + (radii.x - 20);
+    int32 world_x = x + (radii.x - 10);
     int32 world_y = y - h/2;
     
+    float theta = -TO_RADIANS(game->getRotation());
     
-    float theta = TO_RADIANS(game->getRotation());
-    
+    // Rotates (world_x, world_y) around world origin (w/2 + radii.x - 20, h/2) by theta
     int32 model_x = world_x * cos(theta) - world_y * sin(theta);
     int32 model_y = world_x * sin(theta) + world_y * cos(theta);
     
@@ -136,16 +134,16 @@ void doMain() {
 	game = new Game(2);
 
     CTouch t;
-    t.x = 40;
-    t.y = 480 / 2;
+    t.x = 100;
+    t.y = 480 / 2 + 10;
     t.unit = new Muncher(NULL, game, CIwFVec2(0,0));
     renderTouch(&t);
-    
-//    CTouch t2;
-//    t2.x = 150;
-//    t2.y = 480 / 2 + 50;
-//    t2.unit = new Muncher(NULL, game, CIwFVec2(0,0));
-//    renderTouch(&t2);
+//    
+////    CTouch t2;
+////    t2.x = 150;
+////    t2.y = 480 / 2 + 50;
+////    t2.unit = new Muncher(NULL, game, CIwFVec2(0,0));
+////    renderTouch(&t2);
 
 	
 	while (1) {
