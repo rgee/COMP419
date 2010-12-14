@@ -18,32 +18,38 @@ void AI::path(Unit* unit){
     
 	if(unit->pursuing()){ 
 		Unit *pursuing = unit->getPursuing();
-		CIwSVec2 pursuingPos = pursuing->getPosition();
-		CIwSVec2 pursuitVector = pursuingPos - unit->getPosition();
-		CIwSVec2 tempPos; 
+		CIwFVec2 pursuingPos = pursuing->getPosition();
+		CIwFVec2 pursuitVector = pursuingPos - unit->getPosition();
+		CIwFVec2 tempPos; 
 		if (pursuitVector.GetLength()<range)
             attack(unit);
 		tempPos = (pursuitVector/speed)+unit->getPosition();
         unit->setVelocity(tempPos-unit->getPosition());
+
 		
         std::list<Unit*> *tempArray = collisionDetection(unit, unit->getGame()->getUnits());
         
-        if (tempArray == NULL || !tempArray->empty())
-            unit->setVelocity(CIwSVec2::g_Zero);
+        if (tempArray == NULL || !tempArray->empty()){
+            unit->setVelocity(CIwFVec2::g_Zero);}
+
         
         delete tempArray;
 	}
 	else {
 		float thetaChange = speed/rad;
 		float tempTheta = thetaChange + theta;
+
         unit->setRTheta(rad, tempTheta);
-        CIwSVec2 tempPos = unit->getPosition();
+        CIwFVec2 tempPos = unit->getPosition();
         unit->setRTheta(rad, theta);
         unit->setVelocity(tempPos-unit->getPosition());
+
         
         std::list<Unit*> *tempArray = collisionDetection(unit, unit->getGame()->getUnits());
         if (tempArray == NULL || !tempArray->empty()) {
-            unit->setVelocity(CIwSVec2::g_Zero);
+
+            unit->setVelocity(CIwFVec2::g_Zero);
+
         }
         delete tempArray;
 	}
@@ -66,13 +72,13 @@ Unit* AI::detectEnemy(Unit* unit, std::list<Unit*>* Units){
 	float sight = unit->getSight();
     float lowTheta = unit->getTheta()-sight;
     float upTheta = unit->getTheta()+sight;
-    CIwSVec2 Pos = unit->getPosition()+unit->getVelocity();
+    CIwFVec2 Pos = unit->getPosition()+unit->getVelocity();
     float minDist=1000;
     Unit *Enemy;
     for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
         Unit *temp = *itr;
         if(lowTheta <= temp->getTheta() <= upTheta){
-            CIwSVec2 tempPos = temp->getPosition();
+            CIwFVec2 tempPos = temp->getPosition();
             float dist = sqrt((tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y));
             if (dist<=minDist) {
                 minDist = dist;
@@ -85,7 +91,7 @@ Unit* AI::detectEnemy(Unit* unit, std::list<Unit*>* Units){
 }
  
 void AI::updateAI(Unit* unit){
-    //path(unit);
+     //path(unit);
 }
 
 std::list<Unit*>* AI::collisionDetection(Unit* unit, std::list<Unit*>* Units){
@@ -93,11 +99,12 @@ std::list<Unit*>* AI::collisionDetection(Unit* unit, std::list<Unit*>* Units){
     float upTheta  = unit->getTheta()+10;
     float upRad  = unit->getGame()->getWorldRadius().y;
     float lowRad = unit->getGame()->getWorldRadius().x;
-    
-    CIwSVec2 Pos = unit->getPosition()+unit->getVelocity();
+ 
+    CIwFVec2 Pos = unit->getPosition()+unit->getVelocity();
     float rad = unit->ConvertToRTheta(Pos).x;
     float theta = unit->ConvertToRTheta(Pos).y;
     float size = unit->getSize();
+
    
     
     std::list<Unit*>* collide_array = new std::list<Unit*>();
@@ -107,7 +114,7 @@ std::list<Unit*>* AI::collisionDetection(Unit* unit, std::list<Unit*>* Units){
     for(std::list<Unit*>::iterator itr = Units->begin(); itr != Units->end(); itr++){
         Unit *temp = *itr;
         if(lowTheta <= temp->getTheta() <= upTheta){
-            CIwSVec2 tempPos = temp->getPosition();
+            CIwFVec2 tempPos = temp->getPosition();
             float dist = sqrt((tempPos.x+Pos.x)*(tempPos.x+Pos.x)+(tempPos.y+Pos.y)*(tempPos.y+Pos.y));
             if (dist<=(size+temp->getSize())) {
                 collide_array->push_back(temp);
