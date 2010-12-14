@@ -7,7 +7,7 @@ class AI;
 
 class AI{
     private:
-        CIwFVec2* worldRad;
+        CIwFVec2 worldRad;
         Game* game;
 
     public: 
