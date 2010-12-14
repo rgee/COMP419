@@ -6,10 +6,13 @@ class AI;
 #include "unit.h"
 
 class AI{
+    private:
+        CIwFVec2* worldRad;
+        Game* game;
 
     public: 
     
-        AI();
+        AI(Game* game);
     
         void updateAI(Unit* unit);
         

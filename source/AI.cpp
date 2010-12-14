@@ -1,6 +1,8 @@
 #include "AI.h"
   
-AI::AI(){}
+AI::AI(Game* game):game(game){
+    worldRad = game->getWorldRadius();
+}
 
 void AI::path(Unit* unit){ 
 	float rad = unit->getR();
