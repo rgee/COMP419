@@ -19,6 +19,12 @@ files
 	shooter.cpp
 	util.h
 	util.cpp
+    spreader.h
+    spreader.cpp
+    thrower.h
+    thrower.cpp
+    wrecker.h
+    wrecker.cpp    
 }
 
 subprojects
