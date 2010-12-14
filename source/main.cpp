@@ -206,6 +206,7 @@ void init(){
         // Draw a loading thing in here
         s3eDeviceYield();
     }
+
 	
     CIwFVec2 pos(game->getWorldRadius().y + 20, 0);
     polarToXY(pos);
