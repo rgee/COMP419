@@ -210,11 +210,13 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	
 	if (toInner <= unitRad) {
 		CIwFVec2 normal = CIwFVec2(cos(getTheta()), sin(getTheta()));
-		force += normal * (force.GetNormalised().Dot(-1 * normal)) * force.GetLength();
+		float dot = force.GetNormalised().Dot(-1 * normal);
+		force += normal * (dot > 0 ? dot : 0) * force.GetLength();
 	}
 	else if(toOuter <= unitRad) {
 		CIwFVec2 normal = CIwFVec2(-cos(getTheta()), -sin(getTheta()));
-		force += normal * (force.GetNormalised().Dot(-1 * normal)) * force.GetLength();
+		float dot = force.GetNormalised().Dot(-1 * normal);
+		force += normal * (dot > 0 ? dot : 0) * force.GetLength();
 	}
 	
 	/********************************
