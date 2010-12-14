@@ -11,8 +11,9 @@ Unit::Unit(const Unit& newUnit)
 {
 	setOwner(newUnit.owner);
 	navTarget = CIwFVec2::g_Zero;
-	enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
 	pathMode = NORMAL;
+	if(speed > 0.00001f)
+        enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
 }
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
@@ -27,8 +28,9 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 {
     setOwner(owner);
 	navTarget = CIwFVec2::g_Zero;
-	enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
 	pathMode = NORMAL;
+	if(speed > 0.00001f)
+        enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
 }
 
 void Unit::display(){
@@ -208,17 +210,6 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	float toInner = getR() - worldRad.x,
 	toOuter = worldRad.y - getR();
 	
-	if (toInner <= unitRad) {
-		CIwFVec2 normal = CIwFVec2(cos(getTheta()), sin(getTheta()));
-		float dot = force.GetNormalised().Dot(-1 * normal);
-		force += normal * (dot > 0 ? dot : 0) * force.GetLength();
-	}
-	else if(toOuter <= unitRad) {
-		CIwFVec2 normal = CIwFVec2(-cos(getTheta()), -sin(getTheta()));
-		float dot = force.GetNormalised().Dot(-1 * normal);
-		force += normal * (dot > 0 ? dot : 0) * force.GetLength();
-	}
-	
 	/********************************
 	 **** End Force Calculation *****
 	 ********************************/
@@ -241,8 +232,19 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		}
 
 	}
-
-	float curSpeed = 8 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
+	
+	if (toInner <= unitRad) {
+		CIwFVec2 normal = CIwFVec2(cos(getTheta()), sin(getTheta()));
+		float dot = force.GetNormalised().Dot(-1 * normal);
+		force += normal * (dot > 0 ? dot : 0) * force.GetLength();
+	}
+	else if(toOuter <= unitRad) {
+		CIwFVec2 normal = CIwFVec2(-cos(getTheta()), -sin(getTheta()));
+		float dot = force.GetNormalised().Dot(-1 * normal);
+		force += normal * (dot > 0 ? dot : 0) * force.GetLength();
+	}
+	
+	float curSpeed = 10 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
 	curSpeed = (curSpeed <= speed) ? curSpeed : speed;
 	velocity = curSpeed * force.GetNormalised();
 	setPosition(position + velocity);

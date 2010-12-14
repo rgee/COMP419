@@ -2,7 +2,7 @@
 #include "unit.h"
 
  
-Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
+Game::Game(Player* _local, RemotePlayer* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
         innerRadius(72), outerRadius(288), timesteps(0) {
 	IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
@@ -97,7 +97,10 @@ void Game::addUnit(Unit *u, bool pay){
     
     if(&u->getOwner() == opponentPlayer)
         icing = &opponentIcing;
-        
+    else
+        opponentPlayer->sendUpdate(u);
+
+    
     bool paid_for = !pay;
     if(!paid_for && icing->size() > 0)
         for(std::list<Icing*>::iterator itr = icing->begin(); itr != icing->end(); ++itr){
@@ -127,6 +130,11 @@ void Game::addUnit(Unit *u, bool pay){
 }
 
 void Game::tick(){
+    
+    if(timesteps % 6 == 0){
+        opponentPlayer->sendSync();
+        opponentPlayer->applyUpdates();
+    }
 
 	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
         (*itr)->update(itr);

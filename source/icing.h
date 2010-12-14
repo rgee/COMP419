@@ -18,6 +18,7 @@ class Icing : public WorldObject {
 		float finalScale;
 	
 	public:
+        CIwColour colors[4];
 	
 		Icing(const CIwFVec2 position, Game* game, Player* owner);
 	

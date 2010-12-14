@@ -104,17 +104,31 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
         if (touch->active) {
             if (touch->x > (int32) IwGxGetScreenWidth() - 60) {
                 touch->gesture_type = CREATE_UNIT;
-                
                 int y = touch->y - 94; // Palate offset
                 
                 if(y < 0) return;
                 
                 switch (y / 55) {
-                    case 0: touch->unit = new Thrower(localPlayer,  game, 0, 0); break;
-                    case 1: touch->unit = new Wrecker(localPlayer,  game, 0, 0); break;
-                    case 2: touch->unit = new Muncher(localPlayer,  game, 0, 0); break;
-                    case 3: touch->unit = new Shooter(localPlayer,  game, 0, 0); break;
-                    case 4: touch->unit = new Spreader(localPlayer, game, 0, 0); break;
+                    case 0:
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_THROWER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Thrower(localPlayer,  game, 0, 0);
+                        break;
+                    case 1:
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_WRECKER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Wrecker(localPlayer,  game, 0, 0);
+                        break;
+                    case 2: 
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_MUNCHER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Muncher(localPlayer,  game, 0, 0);
+                        break;
+                    case 3:
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_SHOOTER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Shooter(localPlayer,  game, 0, 0);
+                        break;
+                    case 4: 
+                        unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_SPREADER", IW_GX_RESTYPE_TEXTURE));
+                        touch->unit = new Spreader(localPlayer, game, 0, 0);
+                        break;
                     default: break;
                 }
                    
@@ -125,7 +139,10 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
         // if it's the end of a touch, check what kind of gesture it and render.
         } else {
 			switch(touch->gesture_type) {
-				case CREATE_UNIT: renderUnitCreation(touch); break;
+				case CREATE_UNIT:
+                    unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2", IW_GX_RESTYPE_TEXTURE));
+                    renderUnitCreation(touch);
+                    break;
 				case DRAG_WORLD: /* shouldn't need to do anything */ break;
 				default: break;
             }
@@ -180,8 +197,7 @@ void init(){
 	CIwColour opponentCol = {180, 255, 160, 255};
 	
 	localPlayer = new Player(localCol);
-	//opponentPlayer = new GameKitPlayer(opponentCol)
-	opponentPlayer = new Player(opponentCol);
+	opponentPlayer = new GameKitPlayer(opponentCol);
     
     game = new Game(localPlayer, opponentPlayer);
     
@@ -189,6 +205,13 @@ void init(){
     while(!opponentPlayer->connect()){
         s3eDeviceYield(100);
     }*/
+    opponentPlayer->setGame(game);
+    
+    // Presumably, draw something before doing this
+    while(s3eExtIPhoneGameKitAvailable() && !opponentPlayer->connect()){
+        // Draw a loading thing in here
+        s3eDeviceYield();
+    }
 	
     CIwFVec2 pos(game->getWorldRadius().y + 20, 0);
     polarToXY(pos);
@@ -216,23 +239,40 @@ void doMain() {
         s3ePointerRegister(S3E_POINTER_MOTION_EVENT, (s3eCallback)SingleTouchMotionCB, NULL);
     }
 
-    
+
     IwGetResManager()->LoadGroup("resource_groups/palate.group");
     
-    CIwResGroup* palateGroup = IwGetResManager()->GetGroupNamed("Palate");
+    palateGroup = IwGetResManager()->GetGroupNamed("Palate");
+
+    std::vector<int> ui_texture_hashes;
+	int background_hash = IwHashString("background_clean");
+	CIwResList* resources = palateGroup->GetListHashed(IwHashString("CIwTexture"));
+	for(CIwManaged** itr = resources->m_Resources.GetBegin(); itr != resources->m_Resources.GetEnd(); ++itr) {
+		if(background_hash != (*itr)->m_Hash) {
+			ui_texture_hashes.push_back((*itr)->m_Hash);
+		}
+	}
     
     CIwMaterial* background = new CIwMaterial();
-    background->SetTexture((CIwTexture*)palateGroup->GetResNamed("background", IW_GX_RESTYPE_TEXTURE));
+    background->SetTexture((CIwTexture*)palateGroup->GetResNamed("background_clean", IW_GX_RESTYPE_TEXTURE));
     background->SetModulateMode(CIwMaterial::MODULATE_NONE);
     background->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+
+	unit_ui = new CIwMaterial();
+    unit_ui->SetModulateMode(CIwMaterial::MODULATE_NONE);
+    unit_ui->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
+    unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2", IW_GX_RESTYPE_TEXTURE));
     
     CIwSVec2 bg_wh(320, 480);
+	CIwSVec2 ui_wh(80, 480);
+	CIwSVec2 ui_offset(240, 0);
 	CIwSVec2 uv(0, 0);
 	CIwSVec2 duv(IW_GEOM_ONE, IW_GEOM_ONE);
 
     init();
     
 	IwGxLightingOff();
+    IwGxSetColClear(255, 255, 255, 255);
     
     float worldScrollMultiplier = 0.75;
     
@@ -241,11 +281,6 @@ void doMain() {
     }
 
 	while (1) {
-        
-        // Connect to bluetooth... TODO: we gotta show the loading screen first
-        //while(!updateGamekit(game)){
-         //   s3eDeviceYield(100);
-        //}
         
         int64 start = s3eTimerGetMs();
 	
@@ -263,6 +298,10 @@ void doMain() {
         IwGxSetMaterial(background);
         IwGxSetScreenSpaceSlot(-1);
         IwGxDrawRectScreenSpace(&CIwSVec2::g_Zero, &bg_wh, &uv, &duv);
+
+		IwGxSetMaterial(unit_ui);
+        IwGxSetScreenSpaceSlot(-1); 
+        IwGxDrawRectScreenSpace(&ui_offset, &ui_wh, &uv, &duv);
         
 		if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {
 			game->rotate(worldScrollSpeed);
@@ -272,10 +311,9 @@ void doMain() {
         if(frameCount % FRAMES_PER_UPDATE == 0) {
 			game->tick();
 		}
-        
 		game->render();
 		if(!renderTouches()) break;
-		
+        		
         IwGxFlush();
         
         IwGxSwapBuffers();
@@ -293,7 +331,6 @@ void doMain() {
 		frameCount++;
 
         
-        IwGxSetColClear(255, 255, 255, 255);
         IwGxClear(IW_GX_COLOUR_BUFFER_F | IW_GX_DEPTH_BUFFER_F);
 	}
     
@@ -301,6 +338,7 @@ void doMain() {
 	delete localPlayer;
 	delete opponentPlayer;
     delete background;
+	delete unit_ui;
     palateGroup->Finalise();
     
     for(int i = 0; i < MAX_TOUCHES; ++i)
