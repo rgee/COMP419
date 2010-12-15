@@ -1,7 +1,7 @@
 #include "wrecker.h"
 
 Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
-	: Unit(350.0f, 100.0f, 40.0f, 3.0f, 5.0f, 15.0f, 80.0f, 0.0f, 0.0f, owner, game)
+	: Unit(350.0f, 100.0f, 40.0f, 3.0f, 5.0f, 60.0f, 200.0f, 0.0f, 0.0f, owner, game)
 {
 	spriteSize = 256;
 	numFrames = 6;
@@ -9,12 +9,12 @@ Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
     scale = 0.2;
     setPosition(x, y);
     
-    statAttacks.insert(std::pair<unit_type, int>(MUNCHER,10));
-    statAttacks.insert(std::pair<unit_type, int>(WRECKER,40));
-    statAttacks.insert(std::pair<unit_type, int>(THROWER,10));
-    statAttacks.insert(std::pair<unit_type, int>(SHOOTER,10));
-    statAttacks.insert(std::pair<unit_type, int>(SPREADER,10));
-    statAttacks.insert(std::pair<unit_type, int>(LEADER,10));
+    statAttacks.insert(std::pair<unit_type, int>(MUNCHER,5));
+    statAttacks.insert(std::pair<unit_type, int>(WRECKER,20));
+    statAttacks.insert(std::pair<unit_type, int>(THROWER,5));
+    statAttacks.insert(std::pair<unit_type, int>(SHOOTER,5));
+    statAttacks.insert(std::pair<unit_type, int>(SPREADER,5));
+    statAttacks.insert(std::pair<unit_type, int>(LEADER,5));
 
 	texture_names.push_back(IwHashString("wrecker_walk_sprite_sheet"));
 	texture_names.push_back(IwHashString("wrecker_attack_sprite_sheet"));
@@ -25,6 +25,7 @@ Wrecker::Wrecker(const Wrecker& newWrecker) : Unit(newWrecker) { }
 bool Wrecker::update(std::list<Unit*>::iterator itr){
 	curFrame = (curFrame + 1) % numFrames;
 	path(itr);
+	if (target != NULL) attack();
     return true;
 }
 
@@ -62,6 +63,7 @@ void Wrecker::attack(){
     if((target->getPosition()-position).GetLength() <= range){
 		setAttackSprite();
         target->receiveDamage(getDamage(target), this);
+		s3eDebugOutputString("attack!");
     }
 }
 
