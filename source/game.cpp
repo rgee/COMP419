@@ -144,9 +144,6 @@ void Game::addUnit(Unit *u, bool pay){
 	else {
 		delete mirror;
 	}
-
-
-
 }
 
 void Game::tick(){

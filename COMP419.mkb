@@ -33,6 +33,8 @@ files
 	icing.cpp
 	leader.h
 	leader.cpp
+	projectile.h
+	projectile.cpp
 	
 	(data/resource_groups)
 	game.group
@@ -57,8 +59,9 @@ assets
 	shooter_sprite_sheet.png
 	thrower_walk_sprite_sheet.png
 	leader_sprite_sheet.png
+	projectile_sprite_sheet.png
 	icing.png
-	background.png    
+	background.png  
 	TAKE2.png
 	TAKE2_MINUS_WRECKER.png
 	
