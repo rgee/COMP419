@@ -116,17 +116,34 @@ void Game::addUnit(Unit *u, bool pay){
 
     u->setId(numUnits++);
 
+	Unit* mirror = u->spawnCopy();
+	
 	if(units.empty()) {
 		units.push_back(u);
 	} else {
 		unitBuffer.push_back(u);
+		
+		//mirror player
+		if (mirror != NULL && mirror->getType() != WRECKER) {
+			s3eDebugOutputString("not null");
+			mirror->setOwner(opponentPlayer);
+			mirror->setPolarPosition(u->getR(), PI - u->getTheta());
+			unitBuffer.push_back(mirror);
+		}
 	}
     	
 	if(unitBucket.find(u->getTextureName()) == unitBucket.end())
 		unitBucket[u->getTextureName()] = new std::set<Unit*>();
 	
 	(unitBucket[u->getTextureName()])->insert(u);
-
+	
+	//mirror player
+	if (mirror != NULL && mirror->getType() != WRECKER) {
+		(unitBucket[mirror->getTextureName()])->insert(mirror);
+	}
+	else {
+		delete mirror;
+	}
 }
 
 void Game::tick(){
@@ -139,6 +156,7 @@ void Game::tick(){
 
 	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
         (*itr)->update(itr);
+		if (timesteps % 12 == 0) (*itr)->detectEnemy(itr);
     }
     
     for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
@@ -200,7 +218,7 @@ void Game::renderSprites() {
 		std::set<Unit*>* renderUnits = (*itr).second;
 		
 		for (std::set<Unit*>::iterator u_it = renderUnits->begin(); u_it != renderUnits->end(); ++u_it) {
-            if((*u_it)->getHp() <= 0){
+            if((*u_it) != NULL && (*u_it)->getHp() <= 0){
                 renderUnits->erase(u_it);
             }
             

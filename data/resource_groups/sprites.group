@@ -8,4 +8,5 @@ CIwResGroup
 	"../images/spreader_sprite_sheet.png"
 	"../images/thrower_walk_sprite_sheet.png"
 	"../images/leader_sprite_sheet.png"
+	"../images/projectile_sprite_sheet.png"
 }

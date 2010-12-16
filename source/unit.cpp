@@ -13,8 +13,14 @@ Unit::Unit(const Unit& newUnit)
 	navTarget = CIwFVec2::g_Zero;
 
 	pathMode = NORMAL;
-	if(speed > 0.00001f)
-        enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+	if(speed > 0.00001f) {
+		if (owner == game->getLocalPlayer()) {
+			enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+		}
+		else {
+			enemyLeaderPos = ((Unit*)(game->getLocalPlayer()->getLeader()))->getPosition();
+		}
+	}
 }
 
 Unit::Unit(float hp, float cost, float attack, float speed, 
@@ -31,8 +37,14 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 	navTarget = CIwFVec2::g_Zero;
 
 	pathMode = NORMAL;
-	if(speed > 0.00001f)
-        enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+	if(speed > 0.00001f) {
+		if (owner == game->getLocalPlayer()) {
+			enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+		}
+		else {
+			enemyLeaderPos = ((Unit*)(game->getLocalPlayer()->getLeader()))->getPosition();
+		}
+	}
 }
 
 void Unit::display(){
@@ -107,6 +119,13 @@ bool Unit::hasTarget(){
 void Unit::setOwner(Player* p){
 	owner = p;
     localPlayedOwnsThis = owner == game->getLocalPlayer();
+	
+	if (localPlayedOwnsThis) {
+		enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+	}
+	else {
+		enemyLeaderPos = ((Unit*)(game->getLocalPlayer()->getLeader()))->getPosition();
+	}
 }
 
 float Unit::getHp(){ return hp; }
@@ -190,6 +209,16 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	
 	force += repulsionSum;
 
+	if (pathMode == OBJECTIVE) {
+		if (target != NULL) {
+			navTarget = target->getPosition();
+		}
+		else {
+			pathMode = NORMAL;
+		}
+
+	}
+	
 	// if not escape pathing, add at least the circular pathing force 
 	if(pathMode != ESCAPE) {
 		float rDiff = (game->getWorldRadius().y + game->getWorldRadius().x)/2.0 - r;
@@ -226,7 +255,7 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		CIwFVec2 normalForce = repulsionSum * normal.Dot(repulsionNorm);
 		
 		if (normalForce.GetLengthSquared() < NORMAL_FORCE_THRESHOLD) {
-			s3eDebugOutputString("done");
+			//s3eDebugOutputString("done");
 			pathMode = NORMAL;
 		}
 		else {
@@ -239,14 +268,16 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		CIwFVec2 normal = CIwFVec2(cos(getTheta()), sin(getTheta()));
 		float dot = force.GetNormalised().Dot(-1 * normal);
 		force += normal * (dot > 0 ? dot : 0) * force.GetLength();
+		if(pathMode == ESCAPE) setEscapeTarget(toLeader, force);
 	}
 	else if(toOuter <= unitRad) {
 		CIwFVec2 normal = CIwFVec2(-cos(getTheta()), -sin(getTheta()));
 		float dot = force.GetNormalised().Dot(-1 * normal);
 		force += normal * (dot > 0 ? dot : 0) * force.GetLength();
+		if(pathMode == ESCAPE) setEscapeTarget(toLeader, force);
 	}
 	
-	float curSpeed = 10 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
+	float curSpeed =10 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
 	curSpeed = (curSpeed <= speed) ? curSpeed : speed;
 	velocity = curSpeed * force.GetNormalised();
 	setPosition(position + velocity);
@@ -255,11 +286,17 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 									   
 // Create a navigation target at the wall furthest from this
 // unit, slightly ahead of it's current theta position.
-void Unit::setEscapeTarget(CIwFVec2 toLeader, CIwFVec2 force) {
-		
-	//figure out which way we're going in the circle
-	polarize(toLeader);
+void Unit::setEscapeTarget(CIwFVec2 toLeader, CIwFVec2 force) {	
 	
+	float thetaDir; //the "forward" direction toward the enemy base
+	
+	if (owner == game->getLocalPlayer()) {
+		thetaDir = getTheta() > 0 ? 1 : -1;
+	}
+	else {
+		thetaDir = getTheta() > PI ? 1 : -1;
+	}
+
 	CIwFVec2 worldRad = game->getWorldRadius();
 	float innerDist = getR() - worldRad.x;
 	float outerDist = worldRad.y - getR();
@@ -274,12 +311,12 @@ void Unit::setEscapeTarget(CIwFVec2 toLeader, CIwFVec2 force) {
 			navTarget.x = worldRad.y + getSize();
 		}
 		
-		navTarget.y = getTheta() + (toLeader.y < 0 ? .3 : -.3); 
+		navTarget.y = getTheta() + .3 * thetaDir; 
 		polarToXY(navTarget);
 	}
 	else {
 		polarize(navTarget);
-		navTarget.y += (toLeader.y < 0 ? .01 : -.01) * (force.GetLengthSquared() < SQ(NAV_ATTRACT_FACTOR) ? -1 : (PI - getTheta()) * 10);
+		navTarget.y += .01 * thetaDir * (force.GetLengthSquared() < SQ(NAV_ATTRACT_FACTOR) ? -1 : (PI - abs(getTheta())) * 10);
 		polarToXY(navTarget);
 	}
 	
@@ -296,6 +333,8 @@ void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
     float closest_distance = SQ((*unit_itr)->getSight());
     float max_dist = closest_distance;
     Unit* closest = (*unit_itr)->getTarget();
+	
+	bool foundTarget = false;
     
     /**
 	* In order to avoid brute-force distance calculations, we take advantage of
@@ -317,6 +356,7 @@ void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
 			if(sq_dist < closest_distance && (*incr_theta_itr)->getHp() > 0) {
 				closest_distance = sq_dist;
 				closest = *(incr_theta_itr);
+				foundTarget = true;
 			}
 		}
 		++incr_theta_itr;
@@ -333,9 +373,18 @@ void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
 			if(sq_dist < closest_distance && (*decr_theta_itr)->getHp() > 0) {
 				closest_distance = sq_dist;
 				closest = *(decr_theta_itr);
+				foundTarget = true;
 			}
 		}
 		--decr_theta_itr;
+	}
+	
+	
+	target = closest;
+	
+	if (foundTarget) {
+		s3eDebugOutputString("found target");
+		pathMode = OBJECTIVE;
 	}
 }
 

@@ -37,6 +37,7 @@ int Muncher::getDamage(Unit* unit){
 }
 
 Unit* Muncher::spawnCopy() {
+	s3eDebugOutputString("spawn copy");
 	return new Muncher(*this);
 }
 
