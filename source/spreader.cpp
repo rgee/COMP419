@@ -8,7 +8,7 @@ Spreader::Spreader(Player* owner, Game* game, float x, float y)
     scale = 0.25f;
     maxSpread = 3;
     sinceLastSpread = 0;
-	spreadDelay = 3;
+	spreadDelay = 2;
     setPosition(x, y);
 	worldRad = game->getWorldRadius();
 	texture_names.push_back(IwHashString("spreader_sprite_sheet"));
@@ -18,7 +18,11 @@ Spreader::Spreader(Player* owner, Game* game, float x, float y)
     for(int i = 1; i <= maxSpread; i++) {
         maxIcingCount += (2*PI) / (PI/4.0/(float)i);
     }
-
+    
+    currentRadius = 1;
+    currentJump = PI/4.0/currentRadius;
+    radiusMaxIcing = (2*PI) / (PI/4.0/currentRadius);
+    icingThisRadius = 0;
 }
 
 Spreader::Spreader(const Spreader& newSpreader) : Unit(newSpreader) {
@@ -31,25 +35,20 @@ bool Spreader::shouldAIUpdate() {
 }
 
 bool Spreader::update(std::list<Unit*>::iterator itr){
-
-    // If it's been an appropriate amount of time and we haven't filled our space,
-    // just sample a random r and theta and see if it's being used already. If not,
-    // add that icing. If so, repeat until an empty slot is found.
-    //
-    // Not slow for a low maxSpread because the likelihood of having to repeat
-    // this step never gets very high and occupied check is constant time.
+    // Create icing in a winding out counter-clockwise pattern.
     if(icingMap.size() < maxIcingCount && sinceLastSpread % spreadDelay == 0) {
-        bool foundLocation = false;
-        while(!foundLocation) {
-            float actualRadius = (rand() % maxSpread + 1);
+        if(icingThisRadius == radiusMaxIcing) {
+            ++currentRadius;
+            icingThisRadius = 0;
+            currentJump = PI/4.0f/currentRadius;
+            radiusMaxIcing = (2*PI) / (PI/4.0f/currentRadius);
+        }
 
-            float radius = actualRadius*20.0f;
-            float thetaJump = PI/4.0/actualRadius;
-            float spreadTheta = fmod(thetaJump * rand(), 2*PI);
-
-            float xOffset = radius * cos(spreadTheta);
-            float yOffset = radius * sin(spreadTheta);
-            std::pair<int, float> key = std::make_pair<int, float>(actualRadius, spreadTheta);
+        float actualRadius = currentRadius * 20.0f;
+        float spreadTheta = fmod(currentJump * icingThisRadius, 2*PI);
+        float xOffset = actualRadius * cos(spreadTheta);
+        float yOffset = actualRadius * sin(spreadTheta);
+        std::pair<int, float> key = std::make_pair<int, float>(currentRadius, spreadTheta);
 
             if(!icingMap[key]) {
 
@@ -59,9 +58,8 @@ bool Spreader::update(std::list<Unit*>::iterator itr){
                 }
 
                 icingMap[key] = true;
-                foundLocation = true;
+                ++icingThisRadius;
 	        }
-        }
     }
 	++sinceLastSpread;
 	curFrame = (curFrame + 1) % numFrames;
