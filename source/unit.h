@@ -28,7 +28,7 @@ class Unit;
 This lets us quickly determine a unit's type at run time.
 */
 enum unit_type {
-	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER, LEADER
+	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER, LEADER, PROJECTILE
 };
 
 /**
