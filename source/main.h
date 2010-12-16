@@ -37,8 +37,10 @@ struct CTouch {
     int32 last_y;           // previous y position of a world_drag gesture
 };
 
+CIwMaterial* unit_ui;
 Game* game = NULL;
 Player* localPlayer = NULL;
+CIwResGroup* palateGroup = NULL;
 RemotePlayer* opponentPlayer = NULL;
 
 #define MAX_TOUCHES 10
@@ -52,6 +54,8 @@ float getAngleDiff(CTouch* touch);
 
 // find an active touch with the specified id, or allocate a free one from the list.
 CTouch* GetTouch(int32 id);
+
+int ui_texture_index = 0;
 
 bool renderTouches(CTouch touches[]);
 bool renderUnitCreation(CTouch* touch);

@@ -20,7 +20,7 @@ class Unit;
 #define LEADER_ATTRACTION 1000
 #define CIRCLE_SPRING .0015f
 #define WALL_REPEL 2000
-#define FORCE_THRESHOLD 10000
+#define FORCE_THRESHOLD 8000
 #define NAV_ATTRACT_FACTOR 1000
 #define NORMAL_FORCE_THRESHOLD 40000
 
@@ -89,8 +89,7 @@ class Unit : public WorldObject {
 		 @param the sum of the forces currently acting on this unit
 		 */
 		void setEscapeTarget(CIwFVec2 toLeader, CIwFVec2 force);
-	
-        
+
     public:
 	
 		Unit(float hp, float cost, float attack, float speed, 
@@ -162,6 +161,8 @@ class Unit : public WorldObject {
         float distToTarget();
 	
 		void path(std::list<Unit*>::iterator itr);
+	
+		void detectEnemy(std::list<Unit*>::iterator unit_itr);
 };
 
 #endif

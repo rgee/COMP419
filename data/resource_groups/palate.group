@@ -1,5 +1,11 @@
 CIwResGroup
 {
-	name "Palate"
-    "../images/background.png"
+    name "Palate"
+    "../images/background_clean.png"
+    "../images/TAKE2.png"
+    "../images/TAKE2_MINUS_MUNCHER.png"
+    "../images/TAKE2_MINUS_WRECKER.png"
+    "../images/TAKE2_MINUS_SHOOTER.png"
+    "../images/TAKE2_MINUS_SPREADER.png"
+    "../images/TAKE2_MINUS_THROWER.png"
 }
