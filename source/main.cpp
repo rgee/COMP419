@@ -311,6 +311,7 @@ void doMain() {
         if(frameCount % FRAMES_PER_UPDATE == 0) {
 			game->tick();
 		}
+		
 		game->render();
 		if(!renderTouches()) break;
         		

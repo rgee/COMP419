@@ -7,7 +7,7 @@ class Projectile : public Unit {
 	
 	public:
 		
-		Projectile(Player* owner, Game* game, float x, float y, CIwFVec2 velocity);
+		Projectile(Player* owner, Game* game, float x, float y, CIwFVec2 velocity, Unit* _target);
 	
 		virtual bool update(std::list<Unit*>::iterator itr);
 	
@@ -16,6 +16,8 @@ class Projectile : public Unit {
 	private:
 		
 		CIwFVec2 worldRad;
+		
+		float minTargetDist;
 	
 };
 

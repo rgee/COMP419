@@ -98,7 +98,7 @@ class Unit : public WorldObject {
 
 		Unit(const Unit& newUnit);
 
-		virtual ~Unit() {};
+		virtual ~Unit() { s3eDebugOutputString("destroying unit");  };
     	
 		virtual unit_type getType() = 0;
 

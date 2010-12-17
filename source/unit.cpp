@@ -198,7 +198,7 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 	for (itr = units->begin() ; itr != units->end(); ++itr) {
 		curUnit = *(itr);
 		
-		if ((*itr) != this && THETA_DIFF(curUnit->getTheta(), theta) < PATH_THETA_RANGE) {
+		if (curUnit != this && curUnit->getType() != PROJECTILE) {
 			dirToward = position - curUnit->getPosition();
 			float dist = dirToward.GetLengthSquared();
 			repulsionSum += dirToward.GetNormalised() * (repulsion_factor * curUnit->getSize()*REPEL_FACTOR / pow(dist, 1.875));
@@ -253,7 +253,6 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		CIwFVec2 normalForce = repulsionSum * normal.Dot(repulsionNorm);
 		
 		if (normalForce.GetLengthSquared() < NORMAL_FORCE_THRESHOLD) {
-			//s3eDebugOutputString("done");
 			pathMode = NORMAL;
 		}
 		else {
@@ -275,10 +274,16 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		if(pathMode == ESCAPE) setEscapeTarget(toLeader, force);
 	}
 	
-	float curSpeed =10 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
-	curSpeed = (curSpeed <= speed) ? curSpeed : speed;
-	velocity = curSpeed * force.GetNormalised();
-	setPosition(position + velocity);
+	if (pathMode == OBJECTIVE && (navTarget-position).GetLengthSquared() <= SQ(range)) {
+		s3eDebugOutputString("made it!");
+		velocity = force.GetNormalised();
+	}
+	else {
+		float curSpeed =10 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
+		curSpeed = (curSpeed <= speed) ? curSpeed : speed;
+		velocity = curSpeed * force.GetNormalised();
+		setPosition(position + velocity);
+	}
 }
 
 									   
@@ -351,7 +356,7 @@ void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
 			otherPos = (*incr_theta_itr)->getPosition();
 			sq_dist = SQ(position.x - otherPos.x) + SQ(position.y - otherPos.y);
 			
-			if(sq_dist < closest_distance && (*incr_theta_itr)->getHp() > 0) {
+			if(sq_dist < closest_distance && (*decr_theta_itr)->getHp() > 0 && (*incr_theta_itr)->getType() != PROJECTILE) {
 				closest_distance = sq_dist;
 				closest = *(incr_theta_itr);
 				foundTarget = true;
@@ -368,7 +373,7 @@ void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
 			otherPos = (*decr_theta_itr)->getPosition();
 			sq_dist = SQ(position.x - otherPos.x) + SQ(position.y - otherPos.y);
 			
-			if(sq_dist < closest_distance && (*decr_theta_itr)->getHp() > 0) {
+			if(sq_dist < closest_distance && (*decr_theta_itr)->getHp() > 0 && (*decr_theta_itr)->getType() != PROJECTILE) {
 				closest_distance = sq_dist;
 				closest = *(decr_theta_itr);
 				foundTarget = true;
