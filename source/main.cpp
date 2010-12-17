@@ -189,9 +189,9 @@ void SingleTouchMotionCB(s3ePointerMotionEvent* event){
 }
 
 void init(){
-    if(localPlayer) free(localPlayer);
-    if(opponentPlayer) free(opponentPlayer);
-    if(game) free(game);
+    if(localPlayer) delete localPlayer;
+    if(opponentPlayer) delete opponentPlayer;
+    if(game) delete game;
     
     CIwColour localCol = {255, 180, 180, 255};
 	CIwColour opponentCol = {180, 255, 160, 255};
@@ -209,11 +209,11 @@ void init(){
         s3eDeviceYield();
     }
 	
-    CIwFVec2 pos(game->getWorldRadius().y, 0);
+    CIwFVec2 pos(game->getWorldRadius().y, PI/30);
     polarToXY(pos);
 	Leader* localLeader = new Leader(localPlayer, game, pos.x, pos.y);
     pos.x = game->getWorldRadius().y;
-    pos.y = PI;
+    pos.y = PI - PI/30;
     polarToXY(pos);
 	Leader* opponentLeader = new Leader(opponentPlayer, game, pos.x, pos.y);
     

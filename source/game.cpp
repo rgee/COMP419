@@ -99,7 +99,7 @@ void Game::addUnit(Unit *u, bool pay){
     bool paid_for = !pay;
     if(!paid_for && icing->size() > 0)
         for(std::list<Icing*>::iterator itr = icing->begin(); itr != icing->end(); ++itr){
-            if(((*itr)->getPosition() - pos).GetLengthSquared() < 200){
+            if(((*itr)->getPosition() - pos).GetLengthSquared() < 1024){
                 icing->erase(itr);
                 paid_for = true;
                 break;
