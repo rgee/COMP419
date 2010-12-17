@@ -12,6 +12,7 @@ class Unit;
 #include <string>
 #include <vector>
 #include <math.h>
+#include "util.h"
 
 //range in which we will consider repulsion/attraction for pathing
 #define PATH_THETA_RANGE PI
