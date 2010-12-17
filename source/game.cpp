@@ -99,7 +99,7 @@ void Game::addUnit(Unit *u, bool pay){
         icing = &opponentIcing;
     else
         opponentPlayer->sendUpdate(u);
-
+    
     
     bool paid_for = !pay;
     if(!paid_for && icing->size() > 0)
@@ -116,7 +116,7 @@ void Game::addUnit(Unit *u, bool pay){
 
     u->setId(numUnits++);
 
-	Unit* mirror = u->spawnCopy();
+	// Unit* mirror = u->spawnCopy();
 	
 	if(units.empty()) {
 		units.push_back(u);
@@ -124,12 +124,12 @@ void Game::addUnit(Unit *u, bool pay){
 		unitBuffer.push_back(u);
 		
 		//mirror player
-		if (mirror != NULL && mirror->getType() != WRECKER) {
+		/* if (mirror != NULL && mirror->getType() != WRECKER) {
 			s3eDebugOutputString("not null");
 			mirror->setOwner(opponentPlayer);
 			mirror->setPolarPosition(u->getR(), PI - u->getTheta());
 			unitBuffer.push_back(mirror);
-		}
+		} */
 	}
     	
 	if(unitBucket.find(u->getTextureName()) == unitBucket.end())
@@ -138,21 +138,20 @@ void Game::addUnit(Unit *u, bool pay){
 	(unitBucket[u->getTextureName()])->insert(u);
 	
 	//mirror player
-	if (mirror != NULL && mirror->getType() != WRECKER) {
-		(unitBucket[mirror->getTextureName()])->insert(mirror);
-	}
-	else {
-		delete mirror;
-	}
+	//if (mirror != NULL && mirror->getType() != WRECKER) {
+//		(unitBucket[mirror->getTextureName()])->insert(mirror);
+//	}
+//	else {
+//		delete mirror;
+//	}
 }
 
 void Game::tick(){
     
-    //if(true || timesteps % 2 == 0){
+    if(timesteps % 2 == 0){
         //opponentPlayer->sendSync();
-        //s3eExtOSReadUserStringUTF8("Sync sent");
-        // opponentPlayer->applyUpdates();
-    //}
+        opponentPlayer->applyUpdates();
+    }
 
 	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
         (*itr)->update(itr);

@@ -33,6 +33,7 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 		  spread_speed(spread_speed), spread_radius(spread_radius),
 		  curFrame(0), target(NULL), navTarget(CIwFVec2(0, 0)), repulsion_factor(1)
 {
+    
     setOwner(owner);
 	navTarget = CIwFVec2::g_Zero;
 

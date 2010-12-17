@@ -32,7 +32,7 @@ class RemotePlayer : public Player {
         virtual void sendUpdate(Unit *) = 0;
         virtual void applyUpdates() = 0;
         virtual void sendSync() = 0;
-        void setGame(Game *g){game = g;}
+        void setGame(Game *g){ game = g; }
 };
 
 #endif

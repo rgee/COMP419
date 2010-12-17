@@ -209,10 +209,10 @@ void init(){
         s3eDeviceYield();
     }
 	
-    CIwFVec2 pos(game->getWorldRadius().y + 20, 0);
+    CIwFVec2 pos(game->getWorldRadius().y, 0);
     polarToXY(pos);
 	Leader* localLeader = new Leader(localPlayer, game, pos.x, pos.y);
-    pos.x = game->getWorldRadius().y + 20;
+    pos.x = game->getWorldRadius().y;
     pos.y = PI;
     polarToXY(pos);
 	Leader* opponentLeader = new Leader(opponentPlayer, game, pos.x, pos.y);
@@ -296,7 +296,7 @@ void doMain() {
         IwGxDrawRectScreenSpace(&CIwSVec2::g_Zero, &bg_wh, &uv, &duv);
 
 		IwGxSetMaterial(unit_ui);
-        IwGxSetScreenSpaceSlot(-1); 
+        IwGxSetScreenSpaceSlot(1); 
         IwGxDrawRectScreenSpace(&ui_offset, &ui_wh, &uv, &duv);
         
 		if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {

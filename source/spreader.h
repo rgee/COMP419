@@ -25,6 +25,18 @@ class Spreader : public Unit {
         // The maximum number of individual icing to drop. Precomputed at construction.
         uint maxIcingCount;
 
+        // The current iteration step being used to wind around the spreader's icing radius
+        float currentJump;
+
+        // The current radius where icing is being generated around the spreader.
+        int currentRadius;
+
+        // The maximum amount of icing that can fit on the current radius.
+        int radiusMaxIcing;
+
+        // The total icing spawned on the current radius.
+        int icingThisRadius;
+
 		CIwFVec2 worldRad;
 
         // Map from (r, theta) centered at the spreader's center to icing pointers.
