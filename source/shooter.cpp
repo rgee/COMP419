@@ -1,4 +1,5 @@
 #include "shooter.h"
+#include "projectile.h"
 
 Shooter::Shooter(Player* owner, Game* game, float x, float y)
 	: Unit(200.0f, 250.0f, 50.0f, 0.0f, 15.0f, 50.0f, 200.0f, 0.0f, 0.0f, owner, game)
@@ -7,6 +8,7 @@ Shooter::Shooter(Player* owner, Game* game, float x, float y)
 	numFrames = 7;
 	curFrame = 0;
     scale = 0.35;
+	projectileCount = 0;
     setPosition(x, y);
 
 	texture_names.push_back(IwHashString("shooter_sprite_sheet"));
@@ -20,13 +22,19 @@ bool Shooter::shouldAIUpdate() {
 
 bool Shooter::update(std::list<Unit*>::iterator itr){
     curFrame = (curFrame + 1) % numFrames;
-    
+	
     if(target == NULL){
         curFrame = 0;
+		projectileCount = 0;
     }
 		
 	if (target != NULL) {
 		velocity = target->getPosition()-position;
+		projectileCount++;
+		if (projectileCount%6 == 0) {
+			Projectile* p = new Projectile(owner, game, position.x + velocity.x/4, position.y + velocity.y/4, velocity.GetNormalised(), NULL);
+			game->addUnit(p, false);
+		}
 	}
     
     return true;
@@ -45,7 +53,6 @@ void Shooter::attack(){
         target->receiveDamage(getDamage(target), this);
     }
 }
-
 
 int Shooter::getDamage(Unit* unit){
     unit_type type = unit->getType();

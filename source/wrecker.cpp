@@ -1,7 +1,7 @@
 #include "wrecker.h"
 
 Wrecker::Wrecker(Player* owner, Game* game, float x, float y)
-	: Unit(350.0f, 100.0f, 40.0f, 3.0f, 5.0f, 60.0f, 200.0f, 0.0f, 0.0f, owner, game)
+	: Unit(350.0f, 100.0f, 40.0f, 3.0f, 5.0f, 50.0f, 200.0f, 0.0f, 0.0f, owner, game)
 {
 	spriteSize = 256;
 	numFrames = 6;
@@ -63,7 +63,6 @@ void Wrecker::attack(){
     if((target->getPosition()-position).GetLength() <= range){
 		setAttackSprite();
         target->receiveDamage(getDamage(target), this);
-		s3eDebugOutputString("attack!");
     }
 }
 

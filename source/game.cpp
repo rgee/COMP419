@@ -1,5 +1,6 @@
 #include "game.h"
 #include "unit.h"
+#include "s3eExt_IPhoneGameKit.h"
 
 Game::Game(Player* _local, RemotePlayer* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
         innerRadius(112*.85), outerRadius(358*.85), timesteps(0) {
@@ -68,9 +69,7 @@ std::list<Unit*>* Game::getUnits(){
 }
  
 void Game::addIcing(Icing* i) {
-		
 	if (i->getOwner() == localPlayer) {
-		
 		if(localIcing.empty()) {
 			localIcing.push_back(i);
 		} else {
@@ -78,15 +77,12 @@ void Game::addIcing(Icing* i) {
 		}
 		
 	} else {
-		
 		if(opponentIcing.empty()) {
 			opponentIcing.push_back(i);
 		} else {
 			opponentIcingBuffer.push_back(i);
 		}
-		
 	}
-	
 }
 
 
@@ -99,8 +95,7 @@ void Game::addUnit(Unit *u, bool pay){
         icing = &opponentIcing;
     else
         opponentPlayer->sendUpdate(u);
-    
-    
+
     bool paid_for = !pay;
     if(!paid_for && icing->size() > 0)
         for(std::list<Icing*>::iterator itr = icing->begin(); itr != icing->end(); ++itr){
@@ -111,39 +106,24 @@ void Game::addUnit(Unit *u, bool pay){
             }
         }
         
-    if(!paid_for)
-        return;
+    if(!paid_for) {
+		delete u;
+		return;
+	}
 
     u->setId(numUnits++);
 
-	// Unit* mirror = u->spawnCopy();
-	
-	if(units.empty()) {
-		units.push_back(u);
-	} else {
-		unitBuffer.push_back(u);
-		
-		//mirror player
-		/* if (mirror != NULL && mirror->getType() != WRECKER) {
-			s3eDebugOutputString("not null");
+	//mirror player
+	if (!s3eExtIPhoneGameKitAvailable() && u->getType() != WRECKER && u->getType() != PROJECTILE) {
+		Unit* mirror = u->spawnCopy();
+		if (mirror != NULL) {
 			mirror->setOwner(opponentPlayer);
 			mirror->setPolarPosition(u->getR(), PI - u->getTheta());
 			unitBuffer.push_back(mirror);
-		} */
+		}
 	}
-    	
-	if(unitBucket.find(u->getTextureName()) == unitBucket.end())
-		unitBucket[u->getTextureName()] = new std::set<Unit*>();
-	
-	(unitBucket[u->getTextureName()])->insert(u);
-	
-	//mirror player
-	//if (mirror != NULL && mirror->getType() != WRECKER) {
-//		(unitBucket[mirror->getTextureName()])->insert(mirror);
-//	}
-//	else {
-//		delete mirror;
-//	}
+				
+	unitBuffer.push_back(u);
 }
 
 void Game::tick(){
@@ -159,20 +139,18 @@ void Game::tick(){
     }
     
     for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
-        if((*itr)->getHp() < 0){
+        if((*itr)->getHp() <= 0){
 			// Remove the unit from all data structures
 			unitBucket[(*itr)->getTextureName()]->erase(unitBucket[(*itr)->getTextureName()]->find((*itr)));
-			
-			delete (*itr);
+			delete *itr;
             itr = units.erase(itr);
-
         }
     }  
 	
 	for(std::list<Icing*>::iterator itr = localIcing.begin(); itr != localIcing.end(); ++itr) {
         Icing* foo = *itr;
 		(*itr)->update();
-        
+	
         //if(itr != localIcing.begin() &&
 		//       ((*itr)->getPosition() + (*(itr-1))->getPosition())->GetLengthSquared() < 15)
 		//  localIcing->erase(itr);
@@ -182,9 +160,17 @@ void Game::tick(){
 		(*itr)->update();
 	}
     
+	for (std::list<Unit*>::iterator itr = unitBuffer.begin(); itr != unitBuffer.end(); ++itr) {
+		Unit* u = *itr;
+		if(unitBucket.find(u->getTextureName()) == unitBucket.end())
+			unitBucket[u->getTextureName()] = new std::set<Unit*>();
+		(unitBucket[u->getTextureName()])->insert(u);
+	}
+	
+	
     unitBuffer.sort();
     units.merge(unitBuffer);
-    
+	
     localIcingBuffer.sort();
 	localIcing.merge(localIcingBuffer);
     

@@ -24,7 +24,7 @@ class WorldObject {
 		
 		WorldObject(const WorldObject& newObj);
 	
-		virtual ~WorldObject() { };
+		virtual ~WorldObject() { s3eDebugOutputString("destroying worldobject"); };
 	
 		void setPosition(float x, float y);
 	

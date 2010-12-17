@@ -28,7 +28,7 @@ class Unit;
 This lets us quickly determine a unit's type at run time.
 */
 enum unit_type {
-	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER, LEADER
+	MUNCHER, SHOOTER, SPREADER, WRECKER, THROWER, LEADER, PROJECTILE
 };
 
 /**
@@ -98,7 +98,7 @@ class Unit : public WorldObject {
 
 		Unit(const Unit& newUnit);
 
-		virtual ~Unit() {};
+		virtual ~Unit() { s3eDebugOutputString("destroying unit");  };
     	
 		virtual unit_type getType() = 0;
 

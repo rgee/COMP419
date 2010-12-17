@@ -7,7 +7,7 @@ class Shooter : public Unit {
 	public:
 		Shooter(Player* owner, Game* game, float x, float y);
 		Shooter(const Shooter& newShooter);
-		~Shooter(){};
+		~Shooter(){ s3eDebugOutputString("destroying shooter"); };
 
 		virtual bool update(std::list<Unit*>::iterator itr);
 
@@ -21,6 +21,10 @@ class Shooter : public Unit {
         virtual void attack();
         virtual int getDamage(Unit* unit);
         virtual bool shouldAIUpdate();
+	
+	private:
+	
+		int projectileCount;
 
 };
 

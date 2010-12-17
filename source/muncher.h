@@ -14,7 +14,7 @@ class Muncher : public Unit {
 
 		Muncher(const Muncher& newMuncher);
 	
-		~Muncher() {};
+		~Muncher() { s3eDebugOutputString("destroying muncher"); };
     
         std::map<unit_type, int> statAttacks;
 
