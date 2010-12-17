@@ -14,6 +14,8 @@
 #include "IwArray.h"
 #include "IwRandom.h"
 
+#include "s3eExt_OSReadString.h"
+
 class Game;
 
 #include "unit.h"

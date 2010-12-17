@@ -60,7 +60,7 @@ bool renderUnitCreation(CTouch* touch) {
     }
     
     touch->unit->setPosition(modelCoords);
-	game->addUnit(touch->unit, false);
+	game->addUnit(touch->unit, true);
     
     touch->unit = NULL;
     touch->active = false;
@@ -111,19 +111,19 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
                 switch (y / 55) {
                     case 0:
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_THROWER", IW_GX_RESTYPE_TEXTURE));
-                        touch->unit = new Thrower(localPlayer,  game, 0, 0);
+                        touch->unit = new Thrower(localPlayer, game, 0, 0);
                         break;
                     case 1:
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_WRECKER", IW_GX_RESTYPE_TEXTURE));
-                        touch->unit = new Wrecker(localPlayer,  game, 0, 0);
+                        touch->unit = new Wrecker(localPlayer, game, 0, 0);
                         break;
                     case 2: 
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_MUNCHER", IW_GX_RESTYPE_TEXTURE));
-                        touch->unit = new Muncher(localPlayer,  game, 0, 0);
+                        touch->unit = new Muncher(localPlayer, game, 0, 0);
                         break;
                     case 3:
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_SHOOTER", IW_GX_RESTYPE_TEXTURE));
-                        touch->unit = new Shooter(localPlayer,  game, 0, 0);
+                        touch->unit = new Shooter(localPlayer, game, 0, 0);
                         break;
                     case 4: 
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_SPREADER", IW_GX_RESTYPE_TEXTURE));
@@ -201,10 +201,6 @@ void init(){
     
     game = new Game(localPlayer, opponentPlayer);
     
-    /*opponentPlayer->setGame(game);
-    while(!opponentPlayer->connect()){
-        s3eDeviceYield(100);
-    }*/
     opponentPlayer->setGame(game);
     
     // Presumably, draw something before doing this
@@ -213,10 +209,10 @@ void init(){
         s3eDeviceYield();
     }
 	
-    CIwFVec2 pos(game->getWorldRadius().y + 20, 0);
+    CIwFVec2 pos(game->getWorldRadius().y, 0);
     polarToXY(pos);
 	Leader* localLeader = new Leader(localPlayer, game, pos.x, pos.y);
-    pos.x = game->getWorldRadius().y + 20;
+    pos.x = game->getWorldRadius().y;
     pos.y = PI;
     polarToXY(pos);
 	Leader* opponentLeader = new Leader(opponentPlayer, game, pos.x, pos.y);
@@ -245,7 +241,7 @@ void doMain() {
     palateGroup = IwGetResManager()->GetGroupNamed("Palate");
 
     std::vector<int> ui_texture_hashes;
-	int background_hash = IwHashString("background_clean");
+	uint background_hash = IwHashString("background_clean");
 	CIwResList* resources = palateGroup->GetListHashed(IwHashString("CIwTexture"));
 	for(CIwManaged** itr = resources->m_Resources.GetBegin(); itr != resources->m_Resources.GetEnd(); ++itr) {
 		if(background_hash != (*itr)->m_Hash) {
@@ -300,12 +296,12 @@ void doMain() {
         IwGxDrawRectScreenSpace(&CIwSVec2::g_Zero, &bg_wh, &uv, &duv);
 
 		IwGxSetMaterial(unit_ui);
-        IwGxSetScreenSpaceSlot(-1); 
+        IwGxSetScreenSpaceSlot(1); 
         IwGxDrawRectScreenSpace(&ui_offset, &ui_wh, &uv, &duv);
         
 		if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {
 			game->rotate(worldScrollSpeed);
-            worldScrollSpeed *= worldScrollMultiplier;
+			worldScrollSpeed *= worldScrollMultiplier;
 		}
 	
         if(frameCount % FRAMES_PER_UPDATE == 0) {

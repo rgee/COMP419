@@ -44,6 +44,7 @@ CIwResGroup* palateGroup = NULL;
 RemotePlayer* opponentPlayer = NULL;
 
 #define MAX_TOUCHES 10
+
 CTouch touches[MAX_TOUCHES];
 
 float worldScrollSpeed = 0;

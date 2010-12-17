@@ -62,8 +62,13 @@ assets
 	projectile_sprite_sheet.png
 	icing.png
 	background.png  
+	background_clean.png
 	TAKE2.png
+	TAKE2_MINUS_MUNCHER.png
 	TAKE2_MINUS_WRECKER.png
+	TAKE2_MINUS_SHOOTER.png
+	TAKE2_MINUS_SPREADER.png
+	TAKE2_MINUS_THROWER.png
 	
 	(data/resource_groups)
 	game.group

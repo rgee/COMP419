@@ -1,17 +1,18 @@
 #include "game.h"
 #include "unit.h"
+#include "s3eExt_IPhoneGameKit.h"
 
- 
 Game::Game(Player* _local, RemotePlayer* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
-        innerRadius(72), outerRadius(288), timesteps(0) {
-	IwGetResManager()->LoadGroup("resource_groups/game.group");
+        innerRadius(112*.85), outerRadius(358*.85), timesteps(0) {
+
+    IwGetResManager()->LoadGroup("resource_groups/game.group");
 	sprites = IwGetResManager()->GetGroupNamed("Sprites");
 	game = IwGetResManager()->GetGroupNamed("Game");
 	initRenderState();
             
     localIcing.clear();
     opponentIcing.clear();
-
+                    
 	CIwResList* resources = sprites->GetListHashed(IwHashString("CIwTexture"));
 	for(CIwManaged** itr = resources->m_Resources.GetBegin(); itr != resources->m_Resources.GetEnd(); ++itr) {
 		unitBucket[(*itr)->m_Hash] = new std::set<Unit*>();
@@ -59,7 +60,7 @@ void Game::initRenderState() {
 	IwGxSetPerspMul(9);
 	IwGxSetFarZNearZ(12, 8);
 	view = CIwMat::g_Identity;
-	view.SetTrans(CIwVec3(w/2 + innerRadius - 10, 0, -9));
+	view.SetTrans(CIwVec3(innerRadius+w/2-30, 0, -9));
 	IwGxSetViewMatrix(&view);
 }
 
@@ -105,13 +106,15 @@ void Game::addUnit(Unit *u, bool pay){
             }
         }
         
-    if(!paid_for)
-        return;
+    if(!paid_for) {
+		delete u;
+		return;
+	}
 
     u->setId(numUnits++);
 
 	//mirror player
-	if (u->getType() != WRECKER && u->getType() != PROJECTILE) {
+	if (!s3eExtIPhoneGameKitAvailable() && u->getType() != WRECKER && u->getType() != PROJECTILE) {
 		Unit* mirror = u->spawnCopy();
 		if (mirror != NULL) {
 			mirror->setOwner(opponentPlayer);
@@ -125,8 +128,8 @@ void Game::addUnit(Unit *u, bool pay){
 
 void Game::tick(){
     
-    if(timesteps % 6 == 0){
-        opponentPlayer->sendSync();
+    if(timesteps % 2 == 0){
+        //opponentPlayer->sendSync();
         opponentPlayer->applyUpdates();
     }
 
@@ -238,7 +241,7 @@ void Game::renderWorld() {
 	mat->SetAlphaMode(CIwMaterial::ALPHA_DEFAULT);
 	IwGxSetMaterial(mat);
 
-	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.6, 960, rotation, 0, 1, 0.0f);
+	renderImageWorldSpace(CIwFVec2::g_Zero, 0.0, 0.85, 960, rotation, 0, 1, 0.0f);
 	
 	delete mat;
 }

@@ -90,3 +90,15 @@ void polarToXY(CIwFVec2& v) {
 	v.y = r * sin(theta);
 }
 
+
+template <class TList>
+void wrapIncr(TList& lst, typename TList::iterator itr){
+    itr++;
+    if(itr == lst.end()) itr = lst.begin();
+}
+
+template <class TList>
+void wrapDecr(TList& lst, typename TList::iterator itr){
+    if(itr == lst.begin()) itr = lst.end();
+    itr--;
+}
