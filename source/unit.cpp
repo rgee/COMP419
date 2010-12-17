@@ -348,7 +348,7 @@ void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
 	*/
     std::list<Unit*>::iterator incr_theta_itr = unit_itr;
     std::list<Unit*>::iterator decr_theta_itr = unit_itr;
-    while(incr_theta_itr != units->end() && sq_dist <= max_dist) {
+    while(incr_theta_itr != decr_theta_itr && sq_dist <= max_dist) {
 	// Look up theta, which means we're moving to the BACK of the container
 		if(&(*incr_theta_itr)->getOwner() != &(*unit_itr)->getOwner()) {
 			otherPos = (*incr_theta_itr)->getPosition();
@@ -360,12 +360,12 @@ void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
 				foundTarget = true;
 			}
 		}
-		++incr_theta_itr;
+		wrapIncr(*units, incr_theta_itr);
 	}
 
 	// Must reset the distance here since we're switching directions.
 	sq_dist = 0.0f;
-	while(decr_theta_itr != units->begin() && sq_dist <= max_dist) {
+    while(incr_theta_itr != decr_theta_itr && sq_dist <= max_dist) {
 		// Look down theta, which means we're moving to the FRONT of the container. 
 		if(&(*decr_theta_itr)->getOwner() != &(*unit_itr)->getOwner()) {
 			otherPos = (*decr_theta_itr)->getPosition();
@@ -377,7 +377,7 @@ void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
 				foundTarget = true;
 			}
 		}
-		--decr_theta_itr;
+		wrapDecr(*units, incr_theta_itr);
 	}
 	
 	

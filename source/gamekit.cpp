@@ -110,8 +110,6 @@ void GameKitPlayer::peerConnected(s3eGKSession* sess, s3eGKSessionPeerConnectAtt
 
     GameKitPlayer *player = (GameKitPlayer *) userData;
     
-    
-    
     CIwColour remote;
     remote.Set(player->getColor().Get());
     

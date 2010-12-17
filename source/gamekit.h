@@ -21,10 +21,6 @@ class GameKitPlayer;
 
 #define SESSION_ID_STRING "_s3echatexample._tcp"
 
-struct gk_data_t {
-    unit_type type;
-    float x, y;
-};
 
 // GameKit data -- move me into class plz
 static bool connected;
@@ -38,10 +34,10 @@ class GameKitPlayer : public RemotePlayer {
     
         // Callbacks
         static void sendData(const float*);
-        static void sessConnected(s3eGKSession*,       s3eGKSessionConnectResult*,         void*);
-        static void peerConnected(s3eGKSession*,       s3eGKSessionPeerConnectAttempt*,    void*);
-        static void receivedData(s3eGKSession*,        s3eGKSessionRecievedData*,          void*);
-        static void sessDisconnected(s3eGKSession*,    s3eGKSessionDisconnectInfo*,        void*);
+        static void sessConnected(s3eGKSession*,    s3eGKSessionConnectResult*,      void*);
+        static void peerConnected(s3eGKSession*,    s3eGKSessionPeerConnectAttempt*, void*);
+        static void receivedData(s3eGKSession*,     s3eGKSessionRecievedData*,       void*);
+        static void sessDisconnected(s3eGKSession*, s3eGKSessionDisconnectInfo*,     void*);
         
     public:
         GameKitPlayer(CIwColour& col);
