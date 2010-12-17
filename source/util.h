@@ -6,6 +6,7 @@
 
 #include "IwGx.h"
 #include "IwGeom.h"
+#include <list>
 
 float min(float x, float y);
 
@@ -28,4 +29,13 @@ float angle_diff(const CIwFVec2& pos1, const CIwFVec2& pos2);
 Check if a position sits within the world. The position is in x, y coordinates.
 */
 bool isInWorld(CIwFVec2 position, float innerRad, float outerRad);
+
+template <class TList>
+void wrapIncr(TList& lst, typename TList::iterator itr);
+
+template <class TList>
+void wrapDecr(TList& lst, typename TList::iterator itr);
+
+
 #endif
+

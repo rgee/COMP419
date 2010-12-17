@@ -60,7 +60,7 @@ bool renderUnitCreation(CTouch* touch) {
     }
     
     touch->unit->setPosition(modelCoords);
-	game->addUnit(touch->unit, false);
+	game->addUnit(touch->unit, true);
     
     touch->unit = NULL;
     touch->active = false;
@@ -111,19 +111,19 @@ void MultiTouchButtonCB(s3ePointerTouchEvent* event) {
                 switch (y / 55) {
                     case 0:
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_THROWER", IW_GX_RESTYPE_TEXTURE));
-                        touch->unit = new Thrower(localPlayer,  game, 0, 0);
+                        touch->unit = new Thrower(localPlayer, game, 0, 0);
                         break;
                     case 1:
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_WRECKER", IW_GX_RESTYPE_TEXTURE));
-                        touch->unit = new Wrecker(localPlayer,  game, 0, 0);
+                        touch->unit = new Wrecker(localPlayer, game, 0, 0);
                         break;
                     case 2: 
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_MUNCHER", IW_GX_RESTYPE_TEXTURE));
-                        touch->unit = new Muncher(localPlayer,  game, 0, 0);
+                        touch->unit = new Muncher(localPlayer, game, 0, 0);
                         break;
                     case 3:
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_SHOOTER", IW_GX_RESTYPE_TEXTURE));
-                        touch->unit = new Shooter(localPlayer,  game, 0, 0);
+                        touch->unit = new Shooter(localPlayer, game, 0, 0);
                         break;
                     case 4: 
                         unit_ui->SetTexture((CIwTexture*)palateGroup->GetResNamed("TAKE2_MINUS_SPREADER", IW_GX_RESTYPE_TEXTURE));

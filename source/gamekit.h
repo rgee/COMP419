@@ -30,7 +30,7 @@ struct gk_data_t {
 static bool connected;
 static s3eGKPeer* peers[2];
 static s3eGKSession *session;
-static std::list<float *> queued_units;
+static std::list<Unit *> queued_units;
 
 class GameKitPlayer : public RemotePlayer {
     private:

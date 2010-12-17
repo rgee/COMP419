@@ -1,14 +1,18 @@
 #include "player.h"
 
 Player::Player(CIwColour& col) {
-	
-    color = col;
     colors = (CIwColour*) malloc(4*sizeof(CIwColour));
-    colors[0] = colors[1] = colors[2] = colors[3] = col;
+    
+    setColor(col);
 }
 
 Player::~Player(){
     free(colors);
+}
+
+void Player::setColor(CIwColour& col){
+    color.Set(col.Get());
+    colors[0] = colors[1] = colors[2] = colors[3] = color;
 }
 
 CIwColour& Player::getColor() {

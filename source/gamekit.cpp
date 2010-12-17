@@ -52,7 +52,6 @@ bool GameKitPlayer::connect(){
 }
 
 void GameKitPlayer::sendUpdate(Unit *u){        
-//    gk_data_t data = {u->getType(), u->getPosition().x, u->getPosition().y};
     float data[] = {(float) u->getType(), u->getPosition().x, u->getPosition().y};
     sendData(data);
 }
@@ -74,27 +73,12 @@ void GameKitPlayer::applyUpdates(){
         s3eDeviceYield(0);
     }
     
-    for(std::list<float *>::iterator itr = queued_units.begin(); itr != queued_units.end(); ++itr){
-        Unit *u = NULL;
-        
-        //char *msg;
-//        asprintf(&msg, "Type, X, Y : %d, %f, %f", (*itr)->type, *(data + 1), *(data + 2));
-//        s3eDebugErrorShow(S3E_MESSAGE_CONTINUE, msg);
-        
-        float *data = *itr;
-                
-        switch ((int) (*data)) {
-            case MUNCHER:  u = new  Muncher(this, game, *(data + 1), *(data + 2)); break;
-            case SPREADER: u = new Spreader(this, game, *(data + 1), *(data + 2)); break;
-            case WRECKER:  u = new  Wrecker(this, game, *(data + 1), *(data + 2)); break;
-            case SHOOTER:  u = new  Shooter(this, game, *(data + 1), *(data + 2)); break;
-            case THROWER:  u = new  Thrower(this, game, *(data + 1), *(data + 2)); break;
-                
-            default: break;
+    for(std::list<Unit*>::iterator itr = queued_units.begin(); itr != queued_units.end(); ++itr){                
+        if((*itr) != NULL){
+            (*itr)->setPolarPosition((*itr)->getR(), (*itr)->getTheta() + PI);
+            
+            game->addUnit((*itr), true);
         }
-                
-        if(u != NULL)
-            game->addUnit(u, false);
     }
     
     
@@ -108,15 +92,10 @@ void GameKitPlayer::sendData(const float *data){
     if(!session) return;
 
     
-    if(data == NULL)
+    if(data == NULL){
         s3eGKSessionSendDataToAllPeers(session, 0, 1, S3E_GK_SEND_DATA_RELIABLE);
-    else {
+    } else {
         s3eGKSessionSendDataToAllPeers(session, data, sizeof(float)*3, S3E_GK_SEND_DATA_RELIABLE);
-        //int i[] = {4, 2, 3};
-//        s3eGKSessionSendDataToAllPeers(session, i, sizeof(int) * 3, S3E_GK_SEND_DATA_RELIABLE);
-//        char *msg;
-//        asprintf(&msg, "> %d %d %d", *i, *(i+1), *(i+2));
-//        s3eDebugErrorShow(S3E_MESSAGE_CONTINUE, msg);
     }
     
 }
@@ -129,20 +108,51 @@ void GameKitPlayer::peerConnected(s3eGKSession* sess, s3eGKSessionPeerConnectAtt
 
     s3eDebugErrorShow(S3E_MESSAGE_CONTINUE, pPeerName);
 
+    GameKitPlayer *player = (GameKitPlayer *) userData;
+    
+    
+    
+    CIwColour remote;
+    remote.Set(player->getColor().Get());
+    
+    CIwColour local;
+    local.Set(player->getGame()->getLocalPlayer()->getColor().Get());
+    
+    player->setColor(local);
+    player->getGame()->getLocalPlayer()->setColor(remote);
+
     connectInfo->m_accept = S3E_TRUE;     
 }
 
 void GameKitPlayer::receivedData(s3eGKSession* sess, s3eGKSessionRecievedData* data, void* userData){
-    char *msg;
-    float *i = (float *) data->m_data;
-    asprintf(&msg, "%f %f %f", *i, *(i+1), *(i+2));
-    s3eDebugErrorShow(S3E_MESSAGE_CONTINUE, msg);
-
     
-    if(data->m_dataSize < sizeof(float)*3)
+    if(data->m_dataSize < sizeof(float)*3){
         ((GameKitPlayer *)userData)->receiveSync();
-    else
-        queued_units.push_back((float *) data->m_data);
+    }else{
+        float *i = (float *) data->m_data;
+        Unit *u = NULL;
+        
+        int type = (int) *i;
+        float x = *(i + 1), y = *(i + 2);    
+        
+        GameKitPlayer *player = (GameKitPlayer *) userData;
+        Game *game = player->getGame();
+        
+        switch (type) {
+            case MUNCHER:  u = new  Muncher(player, game, x, y); break;
+            case SPREADER: u = new Spreader(player, game, x, y); break;
+            case WRECKER:  u = new  Wrecker(player, game, x, y); break;
+            case SHOOTER:  u = new  Shooter(player, game, x, y); break;
+            case THROWER:  u = new  Thrower(player, game, x, y); break;
+                
+            default: break;
+        }
+        
+        if(u != NULL){
+            queued_units.push_back(u);
+        }
+    }
+       
     
 }
 
