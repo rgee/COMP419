@@ -105,11 +105,11 @@ void Game::addUnit(Unit *u, bool pay){
                 break;
             }
         }
-        
-    if(!paid_for) {
+	
+    /*if(!paid_for) {
 		delete u;
 		return;
-	}
+	}*/
 
     u->setId(numUnits++);
 

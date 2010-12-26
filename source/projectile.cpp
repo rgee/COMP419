@@ -21,9 +21,11 @@ bool Projectile::update(std::list<Unit*>::iterator itr) {
 	setPosition(position + speed*velocity);
 	float r = getR();
 	
-	/*if (target->getPosition()) {
-		
-	}*/
+	if ((target->getPosition() - position).GetLengthSquared() < minTargetDist) {
+		target->receiveDamage(5, this);
+		hp = -1;
+		s3eDebugOutputString("hit!");
+	}
 	
 	if (r <= worldRad.x || r >= worldRad.y) {
 		hp = -1;

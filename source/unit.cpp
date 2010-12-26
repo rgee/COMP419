@@ -282,7 +282,7 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		velocity = force.GetNormalised();
 	}
 	else {
-		float curSpeed =10 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
+		float curSpeed = 10 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
 		curSpeed = (curSpeed <= speed) ? curSpeed : speed;
 		velocity = curSpeed * force.GetNormalised();
 		setPosition(position + velocity);
