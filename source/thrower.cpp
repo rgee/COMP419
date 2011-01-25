@@ -8,18 +8,8 @@ Thrower::Thrower(Player* owner, Game* game, float x, float y)
     curFrame = 0;
     scale = 0.5f;
     setPosition(x, y);
-
 	texture_names.push_back(IwHashString("thrower_walk_sprite_sheet"));
-    
-    statAttacks.insert(std::pair<unit_type, int>(MUNCHER,10));
-    statAttacks.insert(std::pair<unit_type, int>(WRECKER,10));
-    statAttacks.insert(std::pair<unit_type, int>(THROWER,10));
-    statAttacks.insert(std::pair<unit_type, int>(SHOOTER,10));
-    statAttacks.insert(std::pair<unit_type, int>(SPREADER,10));
-    statAttacks.insert(std::pair<unit_type, int>(LEADER,10));
-
     framesUntilUpdate = 0;
-
 }
 
 Thrower::Thrower(const Thrower& newThrower) : Unit(newThrower) { }
@@ -42,11 +32,4 @@ void Thrower::attack(){
     if((target->getPosition()-position).GetLength() <= range){
         target->receiveDamage(getDamage(target), this);
     }
-}
-
-
-int Thrower::getDamage(Unit* unit){
-    unit_type type = unit->getType();
-    return statAttacks[type];
-
 }

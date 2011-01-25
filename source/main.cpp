@@ -197,18 +197,10 @@ void init(){
 	CIwColour opponentCol = {180, 255, 160, 255};
 	
 	localPlayer = new Player(localCol);
-	opponentPlayer = new GameKitPlayer(opponentCol);
+	opponentPlayer = new Player(opponentCol);
     
     game = new Game(localPlayer, opponentPlayer);
-    
-    opponentPlayer->setGame(game);
-    
-    // Presumably, draw something before doing this
-    while(s3eExtIPhoneGameKitAvailable() && !opponentPlayer->connect()){
-        // Draw a loading thing in here
-        s3eDeviceYield();
-    }
-	
+    	
     CIwFVec2 pos(game->getWorldRadius().y, PI/30);
     polarToXY(pos);
 	Leader* localLeader = new Leader(localPlayer, game, pos.x, pos.y);

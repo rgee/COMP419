@@ -54,8 +54,3 @@ void Shooter::attack(){
     }
 }
 
-int Shooter::getDamage(Unit* unit){
-    unit_type type = unit->getType();
-    return statAttacks[type];
-}
-

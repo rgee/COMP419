@@ -2,7 +2,7 @@
 #include "unit.h"
 #include "s3eExt_IPhoneGameKit.h"
 
-Game::Game(Player* _local, RemotePlayer* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
+Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
         innerRadius(112*.85), outerRadius(358*.85), timesteps(0) {
 
     IwGetResManager()->LoadGroup("resource_groups/game.group");
@@ -93,8 +93,6 @@ void Game::addUnit(Unit *u, bool pay){
     
     if(&u->getOwner() == opponentPlayer)
         icing = &opponentIcing;
-    else
-        opponentPlayer->sendUpdate(u);
 
     bool paid_for = !pay;
     if(!paid_for && icing->size() > 0)
@@ -127,11 +125,6 @@ void Game::addUnit(Unit *u, bool pay){
 }
 
 void Game::tick(){
-    
-    if(timesteps % 2 == 0){
-        //opponentPlayer->sendSync();
-        opponentPlayer->applyUpdates();
-    }
 
 	for(std::list<Unit*>::iterator itr = units.begin(); itr != units.end(); ++itr) {
         (*itr)->update(itr);

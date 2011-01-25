@@ -10,9 +10,6 @@ class Thrower : public Unit {
 		Thrower(Player* owner, Game* game, float x, float y);
 		Thrower(const Thrower& newThrower);
 		~Thrower(){};
-
-
-        std::map<unit_type, int> statAttacks;
         
         virtual void attack();
         virtual int getDamage(Unit* unit);

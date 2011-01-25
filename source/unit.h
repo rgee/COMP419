@@ -23,6 +23,16 @@ class Unit;
 #define NAV_ATTRACT_FACTOR 1000
 #define NORMAL_FORCE_THRESHOLD 40000
 
+static float statAttacks[7][7] = {
+	// Muncher | Shooter | Spreader | Wrecker | Thrower | Leader | Projectile
+	{0		   , 20	     ,	0		,	30	  ,     50  ,     0  ,  0    }, // Muncher
+	{0		   , 10	     ,	0		,	20	  ,     30  ,     0  ,  0    }, // Shooter
+	{0		   , 10	     ,	0		,	20	  ,     30  ,     0  ,  0    }, // Spreader
+	{10		   , 15	     ,	0		,	20	  ,     10  ,     0  ,  0    }, // Wrecker
+	{0		   , 15	     ,	0		,	30	  ,     20  ,     0  ,  0    }, // Thrower
+	{0		   , 20	     ,	0		,	4	  ,     12  ,     0  ,  0    }, // Leader
+	{0		   , 0	     ,	0		,	0	  ,     0   ,     0  ,  0    }, // Projectile
+};
 
 /**
 This lets us quickly determine a unit's type at run time.
@@ -140,7 +150,7 @@ class Unit : public WorldObject {
 		virtual void attack();
 	
         void receiveDamage(float amount, Unit* attacker); 
-        virtual int getDamage(Unit* unit);
+        int getDamage(Unit* unit);
 
 
 		// Set the new sprite for this state
@@ -151,8 +161,8 @@ class Unit : public WorldObject {
 		// from base-class code. We want to do this as little as
 		// possible and immediately after knowing we need to. it's
 		// an expensive operation.
-		virtual void setAttackSprite(){}
-		virtual void setIdleSprite(){}
+		virtual void setAttackSprite(){};
+		virtual void setIdleSprite(){};
     
         float getSight();
         virtual float getAngle();
@@ -162,6 +172,8 @@ class Unit : public WorldObject {
 		void path(std::list<Unit*>::iterator itr);
 	
 		void detectEnemy(std::list<Unit*>::iterator unit_itr);
+
+
 };
 
 #endif

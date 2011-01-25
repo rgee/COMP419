@@ -16,8 +16,6 @@ class Muncher : public Unit {
 	
 		~Muncher() { s3eDebugOutputString("destroying muncher"); };
     
-        std::map<unit_type, int> statAttacks;
-
 		virtual bool update(std::list<Unit*>::iterator itr);
         
         virtual void attack();
