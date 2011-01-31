@@ -14,8 +14,6 @@
 #include "IwArray.h"
 #include "IwRandom.h"
 
-#include "s3eExt_OSReadString.h"
-
 class Game;
 
 #include "unit.h"
@@ -29,7 +27,7 @@ class Game {
     private:
 	
 		Player* localPlayer;
-		RemotePlayer* opponentPlayer;
+		Player* opponentPlayer;
 	
         int numPlayers;
 
@@ -73,7 +71,7 @@ class Game {
 	                    
     public:
 	
-        Game(Player* _local, RemotePlayer* _opponent);
+        Game(Player* _local, Player* _opponent);
 		~Game();
         
         void addUnit(Unit *u, bool pay = false);

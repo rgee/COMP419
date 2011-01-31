@@ -8,7 +8,6 @@
 #include "IwGeomMat.h"
 
 #include "game.h"
-#include "gamekit.h"
 
 #include "muncher.h"
 #include "shooter.h"
@@ -41,7 +40,7 @@ CIwMaterial* unit_ui;
 Game* game = NULL;
 Player* localPlayer = NULL;
 CIwResGroup* palateGroup = NULL;
-RemotePlayer* opponentPlayer = NULL;
+Player* opponentPlayer = NULL;
 
 #define MAX_TOUCHES 10
 

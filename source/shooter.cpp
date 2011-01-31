@@ -32,7 +32,7 @@ bool Shooter::update(std::list<Unit*>::iterator itr){
 		velocity = target->getPosition()-position;
 		projectileCount++;
 		if (projectileCount%6 == 0) {
-			Projectile* p = new Projectile(owner, game, position.x + velocity.x/4, position.y + velocity.y/4, velocity.GetNormalised(), NULL);
+			Projectile* p = new Projectile(owner, game, position.x + velocity.x/4, position.y + velocity.y/4, velocity.GetNormalised(), target);
 			game->addUnit(p, false);
 		}
 	}
@@ -52,10 +52,5 @@ void Shooter::attack(){
     if((target->getPosition()-position).GetLength() <= range){
         target->receiveDamage(getDamage(target), this);
     }
-}
-
-int Shooter::getDamage(Unit* unit){
-    unit_type type = unit->getType();
-    return statAttacks[type];
 }
 

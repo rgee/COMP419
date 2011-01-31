@@ -5,8 +5,6 @@ files
     (source)
     game.h
     game.cpp
-	gamekit.h
-	gamekit.cpp
     unit.h
     unit.cpp
     muncher.h
@@ -15,8 +13,6 @@ files
     player.cpp
 	main.h
     main.cpp
-	AI.h
-	AI.cpp
 	shooter.h
 	shooter.cpp
 	util.h

@@ -8,13 +8,6 @@ Muncher::Muncher(Player* owner, Game* game, float x, float y)
 	curFrame = 0;
     scale = 0.2f;
     setPosition(x, y);
-    /*statAttacks.insert(std::pair<unit_type, int>(MUNCHER,0));
-    statAttacks.insert(std::pair<unit_type, int>(WRECKER,10));
-    statAttacks.insert(std::pair<unit_type, int>(THROWER,0));
-    statAttacks.insert(std::pair<unit_type, int>(SHOOTER,0));
-    statAttacks.insert(std::pair<unit_type, int>(SPREADER,0));
-    statAttacks.insert(std::pair<unit_type, int>(LEADER,0));*/
-
 	texture_names.push_back(IwHashString("muncher_sprite_sheet"));
 }
 
@@ -29,11 +22,6 @@ void Muncher::attack(){
     if((target->getPosition()-position).GetLength() <= range){
         target->receiveDamage(getDamage(target), this);
     }
-}
-
-int Muncher::getDamage(Unit* unit){
-    unit_type type = unit->getType();
-    return statAttacks[type];
 }
 
 Unit* Muncher::spawnCopy() {

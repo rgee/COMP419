@@ -48,6 +48,12 @@ Unit::Unit(float hp, float cost, float attack, float speed,
 	}
 }
 
+int Unit::getDamage(Unit* unit){
+	return (int) statAttacks[unit->getType()][getType()];
+}
+
+
+
 void Unit::display(){
 	IwGxSetColStream(owner->getColors(), 4);
     renderImageWorldSpace(position, getAngle(), scale, spriteSize, game->getRotation(), curFrame, numFrames, 0.0f);
@@ -159,10 +165,6 @@ float Unit::getAngle(){
 }
 
 void Unit::attack(){}
-
-int Unit::getDamage(Unit* unit){
-    return 0;
-}
 
 
 void Unit::receiveDamage(float amount, Unit* attacker){
@@ -282,7 +284,7 @@ void Unit::path(std::list<Unit*>::iterator itr) {
 		velocity = force.GetNormalised();
 	}
 	else {
-		float curSpeed =10 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
+		float curSpeed = 10 * speed * force.GetLengthSquared()/(SQ(LEADER_ATTRACTION));
 		curSpeed = (curSpeed <= speed) ? curSpeed : speed;
 		velocity = curSpeed * force.GetNormalised();
 		setPosition(position + velocity);

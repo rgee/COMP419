@@ -6,7 +6,6 @@
 
 class Wrecker : public Unit {
 	public:
-        std::map<unit_type, int> statAttacks;
 		Wrecker(Player* owner, Game* game, float x, float y);
 		Wrecker(const Wrecker& wrecker);
 		~Wrecker(){};
