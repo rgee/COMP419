@@ -6,6 +6,7 @@
 
 #include "IwGx.h"
 #include "IwGeom.h"
+#include "worldobject.h"
 #include <list>
 
 float min(float x, float y);
@@ -36,6 +37,24 @@ void wrapIncr(TList& lst, typename TList::iterator itr);
 template <class TList>
 void wrapDecr(TList& lst, typename TList::iterator itr);
 
+class CNode {
+public:
+    WorldObject *value;
+    CNode *prev, *next;
+    
+    void remove();
+};
+
+class CList {
+public:
+    CList();
+    ~CList();
+    
+    void insert(WorldObject& w);
+    void sort();
+    
+    CNode *head;
+};
 
 #endif
 

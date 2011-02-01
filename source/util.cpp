@@ -102,3 +102,53 @@ void wrapDecr(TList& lst, typename TList::iterator itr){
     if(itr == lst.begin()) itr = lst.end();
     itr--;
 }
+
+void CNode::remove(){
+    prev->next = next;
+    next->prev = prev;
+    delete this;
+}
+
+CList::CList(){
+    head = NULL;
+}
+
+void CList::insert(WorldObject& w){
+    if(head == NULL){
+        head = new CNode();
+        head->value = &w;
+        head->next = head;
+        head->prev = head;
+    } else {
+        CNode *newNode = new CNode();
+        newNode->value = &w;
+        
+        newNode->prev = head->prev;
+        newNode->next = head;
+        
+        head->prev = newNode;        
+        newNode->prev->next = newNode;
+    }
+}
+
+void CList::sort(){
+    bool swapped = true;
+    
+    while(swapped){
+        swapped = false;
+        CNode *itr = head;
+        
+        while(itr->next != head){
+            if(itr->next->value->getTheta() < itr->value->getTheta()){
+                
+                WorldObject *w = itr->value;
+                itr->value = itr->next->value;
+                itr->next->value = w;
+                
+                swapped = true;
+            }
+            
+            itr = itr->next;
+        }   
+    }
+}
