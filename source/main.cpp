@@ -31,7 +31,7 @@ bool renderTouches() {
 	for(int i = 0; i < MAX_TOUCHES; ++i) {
         if(touches[i].active) {
             if(touches[i].gesture_type == CREATE_UNIT) {
-                successful_so_far &= renderDragUnit(&touches[i]);
+                //successful_so_far &= renderDragUnit(&touches[i]);
 			}
 		}else {
             all_active = false;
@@ -195,26 +195,28 @@ void init(){
     
     CIwColour localCol = {255, 180, 180, 255};
 	CIwColour opponentCol = {180, 255, 160, 255};
-	
+
+    game = new Game();
+
 	localPlayer = new Player(localCol);
 	opponentPlayer = new Player(opponentCol);
-    
-    game = new Game(localPlayer, opponentPlayer);
-    	
-    CIwFVec2 pos(game->getWorldRadius().y, PI/30);
-    polarToXY(pos);
-	Leader* localLeader = new Leader(localPlayer, game, pos.x, pos.y);
-    pos.x = game->getWorldRadius().y;
-    pos.y = PI - PI/30;
-    polarToXY(pos);
-	Leader* opponentLeader = new Leader(opponentPlayer, game, pos.x, pos.y);
-    
-	game->addUnit(localLeader);
-	game->addUnit(opponentLeader);
-	
+    game->setLocalPlayer(localPlayer);
+    game->setOpponentPlayer(opponentPlayer);
+
+    CIwFVec2 localLeaderPos(game->getWorldRadius().y, PI/30);
+    CIwFVec2 opponentLeaderPos(game->getWorldRadius().y, PI - PI/30);
+    polarToXY(localLeaderPos);
+    polarToXY(opponentLeaderPos);
+    game->setLeaderPositions(localLeaderPos, opponentLeaderPos);
+
+	Leader* localLeader = new Leader(localPlayer, game, localLeaderPos.x, localLeaderPos.y);
+	Leader* opponentLeader = new Leader(opponentPlayer, game, opponentLeaderPos.x, opponentLeaderPos.y);
 	localPlayer->setLeader(localLeader);
 	opponentPlayer->setLeader(opponentLeader);
-	
+
+    game->addUnit(localLeader);
+	game->addUnit(opponentLeader);
+    
     frameCount = 0;
 }
 

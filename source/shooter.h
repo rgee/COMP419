@@ -16,7 +16,6 @@ class Shooter : public Unit {
 		virtual Unit* spawnCopy();
 
         virtual void attack();
-        virtual int getDamage(Unit* unit);
         virtual bool shouldAIUpdate();
 	
 	private:

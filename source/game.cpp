@@ -2,7 +2,7 @@
 #include "unit.h"
 #include "s3eExt_IPhoneGameKit.h"
 
-Game::Game(Player* _local, Player* opponent) : localPlayer(_local), opponentPlayer(opponent), numUnits(0), rotation(0),
+Game::Game() : numUnits(0), rotation(0),
         innerRadius(112*.85), outerRadius(358*.85), timesteps(0) {
 
     IwGetResManager()->LoadGroup("resource_groups/game.group");
@@ -47,6 +47,27 @@ Game::~Game(){
     
     sprites->Finalise();
     game->Finalise();
+}
+
+void Game::setLocalPlayer(Player* local) {
+    localPlayer = local;
+}
+
+void Game::setOpponentPlayer(Player* opponent) {
+    opponentPlayer = opponent;
+}
+
+void Game::setLeaderPositions(CIwFVec2 &local, CIwFVec2 &opponent) {
+    localLeaderPos = local;
+    opponentLeaderPos = opponent;
+}
+
+CIwFVec2 Game::getLocalLeaderPos() {
+    return localLeaderPos;
+}
+
+CIwFVec2 Game::getOpponentLeaderPos() {
+    return opponentLeaderPos;
 }
 
 UnitBucket* Game::getUnitBucket() {

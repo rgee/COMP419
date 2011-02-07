@@ -19,7 +19,6 @@ class Muncher : public Unit {
 		virtual bool update(std::list<Unit*>::iterator itr);
         
         virtual void attack();
-        virtual int getDamage(Unit* unit);
 
 		virtual unit_type getType();
 	

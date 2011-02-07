@@ -12,7 +12,6 @@ class Thrower : public Unit {
 		~Thrower(){};
         
         virtual void attack();
-        virtual int getDamage(Unit* unit);
 
         virtual bool update(std::list<Unit*>::iterator itr);
 

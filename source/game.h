@@ -25,6 +25,8 @@ typedef std::map<unsigned int, std::set<Unit*>* > UnitBucket;
 class Game {
 	
     private:
+        CIwFVec2 localLeaderPos;
+        CIwFVec2 opponentLeaderPos;
 	
 		Player* localPlayer;
 		Player* opponentPlayer;
@@ -71,7 +73,7 @@ class Game {
 	                    
     public:
 	
-        Game(Player* _local, Player* _opponent);
+        Game();
 		~Game();
         
         void addUnit(Unit *u, bool pay = false);
@@ -105,6 +107,12 @@ class Game {
     
         Player *getLocalPlayer();
 		Player *getOpponentPlayer();
+
+        void setLocalPlayer(Player* local);
+        void setOpponentPlayer(Player* opponent);
+        void setLeaderPositions(CIwFVec2 &local, CIwFVec2 &opponent);
+        CIwFVec2 getLocalLeaderPos();
+        CIwFVec2 getOpponentLeaderPos();
 
 };
 

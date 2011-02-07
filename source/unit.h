@@ -14,6 +14,8 @@ class Unit;
 #include <math.h>
 #include "util.h"
 
+class Leader;
+
 //range in which we will consider repulsion/attraction for pathing
 #define PATH_THETA_RANGE PI
 #define THETA_DIFF(X, Y) (min(abs((X)-(Y)), 2*PI - abs((X) - (Y))))

@@ -1,4 +1,5 @@
 #include "unit.h"
+#include "leader.h"
 #include "IwGeom.h"
 
 Unit::Unit(const Unit& newUnit)
@@ -128,10 +129,10 @@ void Unit::setOwner(Player* p){
     localPlayedOwnsThis = owner == game->getLocalPlayer();
 	
 	if (localPlayedOwnsThis) {
-		enemyLeaderPos = ((Unit*)(game->getOpponentPlayer()->getLeader()))->getPosition();
+        enemyLeaderPos = game->getOpponentLeaderPos();
 	}
 	else {
-		enemyLeaderPos = ((Unit*)(game->getLocalPlayer()->getLeader()))->getPosition();
+        enemyLeaderPos = game->getLocalLeaderPos();
 	}
 }
 
@@ -334,6 +335,9 @@ void Unit::setEscapeTarget(CIwFVec2 toLeader, CIwFVec2 force) {
 
 void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
     std::list<Unit*>* units = game->getUnits();
+    if(units->empty()) {
+        return;
+    }
     CIwFVec2 position = (*unit_itr)->getPosition() + (*unit_itr)->getVelocity();
     CIwFVec2 otherPos = CIwFVec2::g_Zero;
     
@@ -357,6 +361,7 @@ void Unit::detectEnemy(std::list<Unit*>::iterator unit_itr) {
     std::list<Unit*>::iterator decr_theta_itr = unit_itr;
     
     incr_theta_itr++;
+    if(incr_theta_itr == units->end()) incr_theta_itr = units->begin();
     
     while(incr_theta_itr != unit_itr && sq_dist <= max_dist) {
 	// Look up theta, which means we're moving to the BACK of the container
