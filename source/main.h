@@ -8,7 +8,7 @@
 #include "IwGeomMat.h"
 
 #include "game.h"
-
+#include "mainmenu.h"
 #include "muncher.h"
 #include "shooter.h"
 #include "wrecker.h"
@@ -23,6 +23,7 @@
 int frameCount;
 
 enum gesture_t { CREATE_UNIT, DRAG_WORLD };
+enum GameState { MAIN_MENU, IN_GAME };
 
 // Structure to track touches.
 struct CTouch {
@@ -38,9 +39,11 @@ struct CTouch {
 
 CIwMaterial* unit_ui;
 Game* game = NULL;
+MainMenu* mainMenu = NULL;
 Player* localPlayer = NULL;
 CIwResGroup* palateGroup = NULL;
 Player* opponentPlayer = NULL;
+GameState currentState = MAIN_MENU;
 
 #define MAX_TOUCHES 10
 

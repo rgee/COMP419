@@ -31,7 +31,9 @@ files
 	leader.cpp
 	projectile.h
 	projectile.cpp
-	
+	mainmenu.h
+	mainmenu.cpp
+
 	(data/resource_groups)
 	game.group
 	sprites.group
@@ -42,6 +44,7 @@ subprojects
 {
 	iwresmanager
 	iwgx
+	iw2d
 }
 
 assets

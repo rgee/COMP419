@@ -19,10 +19,11 @@ class Game;
 #include "unit.h"
 #include "icing.h"
 #include "player.h"
+#include "screen.h"
 
 typedef std::map<unsigned int, std::set<Unit*>* > UnitBucket;
 
-class Game {
+class Game : Screen {
 	
     private:
         CIwFVec2 localLeaderPos;
@@ -93,7 +94,7 @@ class Game {
 		 */
 		CIwFVec2 getWorldRadius();
         	
-		void tick();
+		virtual void tick();
 
         long getTimesteps();
     
@@ -103,7 +104,7 @@ class Game {
     
         CIwResGroup* getSprites();
 	
-		void render();
+		virtual void render();
     
         Player *getLocalPlayer();
 		Player *getOpponentPlayer();

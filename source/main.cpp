@@ -197,6 +197,7 @@ void init(){
 	CIwColour opponentCol = {180, 255, 160, 255};
 
     game = new Game();
+    mainMenu = new MainMenu();
 
 	localPlayer = new Player(localCol);
 	opponentPlayer = new Player(opponentCol);
@@ -284,26 +285,42 @@ void doMain() {
 			
 		    break;
 		}
-        
-        IwGxSetMaterial(background);
-        IwGxSetScreenSpaceSlot(-1);
-        IwGxDrawRectScreenSpace(&CIwSVec2::g_Zero, &bg_wh, &uv, &duv);
-
-		IwGxSetMaterial(unit_ui);
-        IwGxSetScreenSpaceSlot(1); 
-        IwGxDrawRectScreenSpace(&ui_offset, &ui_wh, &uv, &duv);
-        
-		if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {
-			game->rotate(worldScrollSpeed);
-			worldScrollSpeed *= worldScrollMultiplier;
-		}
 	
-        if(frameCount % FRAMES_PER_UPDATE == 0) {
-			game->tick();
-		}
+        switch(currentState) {
+
+        case MAIN_MENU:
+            if(s3ePointerGetState(S3E_POINTER_BUTTON_SELECT) & S3E_POINTER_STATE_PRESSED) {
+                currentState = IN_GAME;
+            }
+            if(frameCount % FRAMES_PER_UPDATE == 0) {
+			    mainMenu->tick();
+		    }
+            mainMenu->render();
+            break;
+        case IN_GAME:
+            IwGxSetMaterial(background);
+            IwGxSetScreenSpaceSlot(-1);
+            IwGxDrawRectScreenSpace(&CIwSVec2::g_Zero, &bg_wh, &uv, &duv);
+
+		    IwGxSetMaterial(unit_ui);
+            IwGxSetScreenSpaceSlot(1); 
+            IwGxDrawRectScreenSpace(&ui_offset, &ui_wh, &uv, &duv);
+        
+		    if (worldScrollSpeed > .0005 || worldScrollSpeed < -.0005) {
+			    game->rotate(worldScrollSpeed);
+			    worldScrollSpeed *= worldScrollMultiplier;
+		    }
+            if(frameCount % FRAMES_PER_UPDATE == 0) {
+			    game->tick();
+		    }
 		
-		game->render();
-		if(!renderTouches()) break;
+		    game->render();
+		    if(!renderTouches()) {
+                break;
+            }
+
+            break;
+        }
         		
         IwGxFlush();
         
@@ -326,6 +343,7 @@ void doMain() {
 	}
     
 	delete game;
+    delete mainMenu;
 	delete localPlayer;
 	delete opponentPlayer;
     delete background;
